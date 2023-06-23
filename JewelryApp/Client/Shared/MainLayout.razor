@@ -1,0 +1,26 @@
+﻿@inherits LayoutComponentBase
+
+<div id="wrapper" class="@($"{(_isEnlarged ? "enlarged" : "")}")">
+    
+    <Topbar ToggleMenu="ToggleEnlargedClass" Title="صفحه اصلی"></Topbar>
+        
+    <SideMenu />
+
+    <div class="content-page">
+        <div class="content">
+            @Body
+            <Footer></Footer>
+        </div>
+    </div>
+
+</div>
+
+@code
+{
+    private bool _isEnlarged;
+
+    private void ToggleEnlargedClass()
+    {
+        _isEnlarged = !_isEnlarged;
+    }
+}

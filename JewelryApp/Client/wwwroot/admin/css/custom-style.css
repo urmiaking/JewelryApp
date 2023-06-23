@@ -1,0 +1,14 @@
+﻿﻿.field-validation-error {
+    color: red !important;
+}
+
+.input-validation-error {
+    border: 1px solid red !important;
+}
+
+.center-image {
+    max-height: 200px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}

@@ -1,0 +1,28 @@
+﻿<!-- ./col -->
+<div class="col-lg-4 col-md-4 col-sm-4">
+    <!-- small box -->
+    <div class="small-box bg-@Color">
+        <div class="inner">
+            <h3>@Body</h3>
+            <p>@Title</p>
+        </div>
+        <div class="icon">
+            <i class="fa fa-@Icon"></i>
+        </div>
+        <br />
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string? Body { get; set; }
+
+    [Parameter]
+    public string? Title { get; set; }
+
+    [Parameter]
+    public string? Icon { get; set; }
+
+    [Parameter]
+    public string? Color { get; set; }
+}

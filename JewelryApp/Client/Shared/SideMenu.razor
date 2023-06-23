@@ -1,0 +1,57 @@
+﻿<div class="left side-menu">
+    <div class="sidebar-inner slimscrollleft">
+        <div class="user-box">
+            <div class="user-img">
+                <img src="/img/logo.png" alt="user-img" title="حسن فانی" class="img-circle img-thumbnail img-responsive">
+            </div>
+            <h5><a href="#">حسن فانی</a> </h5>
+            <ul class="list-inline">
+                <li>
+                    <a asp-area="" asp-controller="Account" asp-action="Logout" class="text-custom">
+                        <i class="zmdi zmdi-power"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div id="sidebar-menu">
+            <ul>
+                <li class="text-muted menu-title">منو</li>
+                <li>
+                    <NavLink class="nav-link waves-effect" href="" Match="NavLinkMatch.All">
+                        <i class="zmdi zmdi-view-dashboard"></i> <span> داشبورد </span>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink class="nav-link waves-effect" href="products">
+                        <i class="fa fa-product-hunt"></i> <span> اجناس من </span>
+                    </NavLink>
+                </li>
+
+                <li>
+                    <NavLink class="nav-link waves-effect" href="invoices">
+                        <i class="fa fa-money"></i> <span> فاکتورهای من </span>
+                    </NavLink>
+                </li>
+
+                <li> 
+                    <NavLink class="nav-link waves-effect" href="logout">
+                        <i class="fa fa-home"></i> <span> خروج </span>
+                    </NavLink>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

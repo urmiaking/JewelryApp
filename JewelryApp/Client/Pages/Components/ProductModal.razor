@@ -1,0 +1,58 @@
+﻿@using JewelryApp.Data.Models
+<div class="@ModalClass" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: @ModalDisplay">
+    <div class="modal-dialog">
+        <EditForm Model="@Product" OnValidSubmit="@HandleValidSubmit">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button @onclick="@(CloseModal)" type="button" class="close" aria-hidden="true" data-dismiss="modal">×</button>
+                    <h4 class="modal-title">افزودن جنس جدید</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="name">نام:</label>
+                        <InputText id="name" @bind-Value="@Product.BarcodeText" class="form-control" placeholder="نام جنس را بنویسید" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">شرح:</label>
+                        <InputTextArea id="description" @bind-Value="@Product.Description" class="form-control" placeholder="شرح جنس را بنویسید" />
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" @onclick="@(CloseModal)" class="btn btn-default waves-effect" data-dismiss="modal">بستن</button>
+                        <button type="submit" class="btn btn-info waves-effect waves-light">ذخیره</button>
+                    </div>
+                </div>
+            </div>
+            
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public bool IsVisible { get; set; }
+
+    private string ModalClass => IsVisible ? "modal fade in" : "modal";
+    private string ModalDisplay => IsVisible ? "block" : "none";
+
+    [Parameter]
+    public EventCallback<bool> IsVisibleChanged { get; set; }
+
+    [Parameter]
+    public Product Product { get; set; } = new ();
+
+    public async Task HandleValidSubmit()
+    {
+        // Handle the form submission here
+        // You can access the values of the Name and Description inputs via the MyModel property
+        // For example, you might save the values to a database or call an API to update the data
+        // Then, you can close the modal by setting IsVisible to false
+        await IsVisibleChanged.InvokeAsync(false);
+    }
+
+    private void CloseModal()
+    {
+        IsVisible = false;
+    }
+}

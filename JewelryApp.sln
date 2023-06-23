@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33414.496
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JewelryApp.Api", "JewelryApp\Server\JewelryApp.Api.csproj", "{8E3F392C-DCB4-43EB-9A99-6663794F3DBB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JewelryApp.Client", "JewelryApp\Client\JewelryApp.Client.csproj", "{A2E7C293-0E08-42BF-99D1-939358ABCE63}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JewelryApp.Common", "JewelryApp.Common\JewelryApp.Common.csproj", "{F4EA76E0-D641-4FD1-A001-72EC0B17279D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JewelryApp.Data", "JewelryApp.Data\JewelryApp.Data.csproj", "{BC55540D-336A-4587-8703-C11F0DA78B1E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JewelryApp.Models", "JewelryApp.Models\JewelryApp.Models.csproj", "{F2A6F7DB-7D43-47F6-A8B1-D389A88CF8B2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JewelryApp.Business", "JewelryApp.Business\JewelryApp.Business.csproj", "{7A029A13-5E00-4807-81FB-4BB5F83E499D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8E3F392C-DCB4-43EB-9A99-6663794F3DBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E3F392C-DCB4-43EB-9A99-6663794F3DBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E3F392C-DCB4-43EB-9A99-6663794F3DBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E3F392C-DCB4-43EB-9A99-6663794F3DBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2E7C293-0E08-42BF-99D1-939358ABCE63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2E7C293-0E08-42BF-99D1-939358ABCE63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2E7C293-0E08-42BF-99D1-939358ABCE63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2E7C293-0E08-42BF-99D1-939358ABCE63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4EA76E0-D641-4FD1-A001-72EC0B17279D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4EA76E0-D641-4FD1-A001-72EC0B17279D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4EA76E0-D641-4FD1-A001-72EC0B17279D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4EA76E0-D641-4FD1-A001-72EC0B17279D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC55540D-336A-4587-8703-C11F0DA78B1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC55540D-336A-4587-8703-C11F0DA78B1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC55540D-336A-4587-8703-C11F0DA78B1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC55540D-336A-4587-8703-C11F0DA78B1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2A6F7DB-7D43-47F6-A8B1-D389A88CF8B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2A6F7DB-7D43-47F6-A8B1-D389A88CF8B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2A6F7DB-7D43-47F6-A8B1-D389A88CF8B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2A6F7DB-7D43-47F6-A8B1-D389A88CF8B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A029A13-5E00-4807-81FB-4BB5F83E499D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A029A13-5E00-4807-81FB-4BB5F83E499D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A029A13-5E00-4807-81FB-4BB5F83E499D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A029A13-5E00-4807-81FB-4BB5F83E499D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A5C77FE9-8D36-476E-8862-EFF4848E56E9}
+	EndGlobalSection
+EndGlobal

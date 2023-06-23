@@ -1,0 +1,44 @@
+﻿@page "/"
+@using JewelryApp.Data.Models
+
+@inject IPriceService PriceService
+
+<div class="container">
+    <div class="row">
+        <CardBox Title="تعداد کل فاکتورها" Color="green" Icon="print" Body="@_invoiceCount.ToString()"></CardBox>
+        <CardBox Title="نرخ گرم روز" Color="blue" Icon="money" Body="@_dailyGramPrice"></CardBox>
+        <CardBox Title="آخرین بروز رسانی گرم" Color="red" Icon="calendar" Body="@_lastUpdate"></CardBox>
+    </div>
+    
+    <div class="row text-center" style="margin:10px">
+        <button style="margin-bottom: 10px" class="btn btn-block btn-primary btn-rounded waves-effect waves-light" @onclick="@(() => IsModalVisible = true)">
+            <i class="fa fa-pencil m-l-5"></i>
+            <span style="margin-right: 5px;">افزودن جنس جدید</span>
+        </button>
+    </div>
+    
+    <ProductModal IsVisible="@IsModalVisible" IsVisibleChanged="@(value => IsModalVisible = value)" Product="@Product" />
+
+</div>
+
+
+@code
+{
+    private int _invoiceCount;
+    private string? _dailyGramPrice;
+    private string? _lastUpdate;
+
+    private bool IsModalVisible { get; set; }
+    private Product Product { get; set; } = new ();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var priceModel = await PriceService.GetPriceModel();
+
+        if (priceModel is not null)
+        {
+            _dailyGramPrice = priceModel.Price.ToString("N0");
+            _lastUpdate = priceModel.LastUpdate;
+        }
+    }
+}
