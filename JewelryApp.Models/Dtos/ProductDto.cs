@@ -6,8 +6,8 @@ namespace JewelryApp.Models.Dtos;
 public class ProductDto
 {
     public int Id { get; set; }
-    [Display(Name = "شرح جنس")]
-    public string Description { get; set; } = string.Empty;
+    [Display(Name = "نام جنس")]
+    public string Name { get; set; } = string.Empty;
 
     [Display(Name = "عیار")]
     public Caret Caret { get; set; }
@@ -39,8 +39,8 @@ public class ProductDto
         {
             return ProductType switch
             {
-                ProductType.Gold => Weight * ((Wage * GramPrice) + (Profit * GramPrice) * (TaxOffset / 100) ),
-                ProductType.Jewelry => Wage + (GramPrice * Profit) * (TaxOffset / 100),
+                ProductType.Gold => Weight * (((TaxOffset / 100.0) * (Profit + Wage)) / 100) * GramPrice,
+                ProductType.Jewelry => (Wage + (GramPrice * Profit)) * (TaxOffset / 100),
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
@@ -48,20 +48,20 @@ public class ProductDto
 
     private double _finalPrice;
 
-    private double Price
+    private double Price // قیمت بدون مالیات
     {
         get
         {
             return ProductType switch
             {
-                ProductType.Gold => ((GramPrice + (Wage * GramPrice) + ((Profit / 100) * GramPrice)) * Weight),
-                ProductType.Jewelry => (GramPrice + Wage + ((Profit / 100) * GramPrice)) * Weight,
+                ProductType.Gold => (Weight + (Weight * Profit / 100.0) + (Weight + (Weight * Profit / 100.0)) * Wage / 100.0) * GramPrice,
+                ProductType.Jewelry => (GramPrice + Wage + (Profit * GramPrice)) * Weight,
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
     }
 
-    public double FinalPrice
+    public double FinalPrice // قیمت با مالیات
     {
         get => Price + Tax;
         set => _finalPrice = value;

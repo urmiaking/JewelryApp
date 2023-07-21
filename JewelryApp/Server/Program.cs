@@ -1,9 +1,12 @@
+using JewelryApp.Api.Extensions;
+using JewelryApp.Business.AppServices;
 using JewelryApp.Business.Repositories.Implementations;
 using JewelryApp.Business.Repositories.Interfaces;
 using JewelryApp.Data;
 using JewelryApp.Data.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.ResponseCompression;
+using JewelryApp.Models.AppModels;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,21 +14,26 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-builder.Services.AddSqlServer<AppDbContext>(builder.Configuration.GetConnectionString("Default"));
+
+var connectionString = builder.Configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+builder.Services.AddDbContext<AppDbContext>(options => options
+    .UseSqlServer(connectionString));
+
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddHttpClient<IApiPrice, ApiPrice>();
 builder.Services.AddScoped<IPriceRepository, PriceRepository>();
+builder.Services.AddScoped<IBarcodeRepository, BarcodeRepository>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+builder.Services.AddScoped<IRepository<RefreshToken>, RefreshTokenRepository>();
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-{
-    options.SignIn.RequireConfirmedAccount = true;
-    options.Password.RequireDigit = false;
-    options.Password.RequireLowercase = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequiredLength = 4;
-}).AddEntityFrameworkStores<AppDbContext>();
+builder.Services.AddCustomIdentity();
+builder.Services.AddCustomAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
@@ -46,6 +54,11 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseInitializer();
 
 
 app.MapRazorPages();

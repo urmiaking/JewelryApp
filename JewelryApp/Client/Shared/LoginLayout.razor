@@ -1,0 +1,44 @@
+﻿@inherits LayoutComponentBase
+
+
+
+<MudRTLProvider RightToLeft="true">
+    <MudThemeProvider @ref="@_mudThemeProvider" Theme="customTheme" />
+    <MudDialogProvider />
+    <MudSnackbarProvider />
+
+    <MudLayout Class="login-background">
+        @Body
+    </MudLayout>
+</MudRTLProvider>
+
+@code {
+    private MudThemeProvider? _mudThemeProvider;
+    private MudTheme? customTheme = new()
+    {
+        Palette = new PaletteLight()
+        {
+            Primary = Colors.Blue.Default,
+            Secondary = Colors.Green.Accent4,
+            AppbarBackground = Colors.Purple.Darken2,
+        },
+        PaletteDark = new PaletteDark()
+        {
+            Primary = Colors.Blue.Lighten1
+        },
+
+        LayoutProperties = new LayoutProperties()
+        {
+            DrawerWidthLeft = "260px",
+            DrawerWidthRight = "300px"
+        },
+        Typography = new Typography()
+        {
+            Default = new Default()
+            {
+                FontFamily = new[] { "IRANSans", "Poppins", "Helvetica", "Arial", "sans-serif" }
+            }
+        }
+    };
+    
+}

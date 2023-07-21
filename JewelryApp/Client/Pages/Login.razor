@@ -1,0 +1,56 @@
+﻿@page "/login"
+@using Microsoft.AspNetCore.Components
+@using JewelryApp.Models.Dtos
+
+@layout LoginLayout
+
+
+
+<EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    
+    <div class="center-grid">
+        
+        <MudItem xs="12" sm="7">
+            
+            <MudStack Justify="Justify.Center">
+                
+                <MudCard Elevation="24" Square="true" Outlined="true" Class="round-card">
+                    <div class="text-center">
+                        <img style="width: 150px; height: 150px;" src="/img/logo.png" alt="logo"><br>
+                        <MudText Typo="Typo.h5" Color="Color.Info">جواهری فانی</MudText>
+                    </div>
+                    
+                    <MudCardContent>
+                        <MudTextField Label="نام کاربری"
+                                      @bind-Value="model.Username" For="@(() => model.Username)" />
+
+                        <MudTextField Label="رمز عبور" Class="mt-3"
+                                      @bind-Value="model.Password" For="@(() => model.Password)" InputType="InputType.Password" />
+                    </MudCardContent>
+                    <MudCardActions Class="m-4">
+                        <MudButton EndIcon="@Icons.Material.Filled.Login" ButtonType="ButtonType.Submit" Variant="Variant.Filled"
+                                   Color="Color.Primary" Class="ml-auto">ورود به سیستم</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudStack>
+            
+        </MudItem>
+    </div>
+</EditForm>
+
+
+
+@code {
+    LoginDto model = new LoginDto();
+    bool success;
+
+
+
+    private void OnValidSubmit(EditContext context)
+    {
+        success = true;
+        StateHasChanged();
+    }
+
+}

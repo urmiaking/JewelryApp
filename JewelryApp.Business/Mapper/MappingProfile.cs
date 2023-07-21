@@ -10,5 +10,6 @@ public class MappingProfile : Profile
 	{
         CreateMap<Product, ProductDto>().ReverseMap();
         CreateMap<ProductDto, InvoiceProduct>().ReverseMap();
+        CreateProjection<RefreshToken, RefreshTokenDto>();
     }
 }

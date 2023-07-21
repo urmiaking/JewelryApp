@@ -1,26 +1,95 @@
 ﻿@inherits LayoutComponentBase
 
-<div id="wrapper" class="@($"{(_isEnlarged ? "enlarged" : "")}")">
-    
-    <Topbar ToggleMenu="ToggleEnlargedClass" Title="صفحه اصلی"></Topbar>
-        
-    <SideMenu />
+<MudRTLProvider RightToLeft="true">
+    <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="_darkMode" Theme="customTheme" />
+    <MudDialogProvider />
+    <MudSnackbarProvider />
 
-    <div class="content-page">
-        <div class="content">
-            @Body
-            <Footer></Footer>
-        </div>
-    </div>
+    <MudLayout>
+        <MudAppBar Elevation="5">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Style="color: white" Edge="Edge.Start"
+                           OnClick="@((e) => DrawerToggle())" />
+            <MudText Typo="Typo.h5" Class="ml-3">جواهری فانی</MudText>
+            <MudSpacer />
 
-</div>
+            <MudButton EndIcon="@Icons.Material.Filled.Logout" Variant="Variant.Text" Size="Size.Large" Color="Color.Inherit">خروج</MudButton>
 
-@code
-{
-    private bool _isEnlarged;
+            <MudTooltip Text="تنظیمات حساب" Color="Color.Tertiary" Placement="Placement.Bottom" Arrow="true">
+                <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit"></MudIconButton>
+            </MudTooltip>
 
-    private void ToggleEnlargedClass()
+            <MudTooltip Text="حالت شب" Color="Color.Tertiary" Placement="Placement.Right" Arrow="true">
+                <MudIconButton Icon="@Icons.Material.Filled.DarkMode" Color="Color.Inherit" Edge="Edge.End"
+                               OnClick="@((e) => DarkModeToggle())" />
+            </MudTooltip>
+
+        </MudAppBar>
+
+        <SideMenu DrawerOpen="_drawerOpen"></SideMenu>
+
+        <MudMainContent>
+            <MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
+                @Body
+            </MudContainer>
+        </MudMainContent>
+    </MudLayout>
+
+</MudRTLProvider>
+
+@code {
+    bool _drawerOpen = false;
+    bool _darkMode = false;
+    private MudThemeProvider? _mudThemeProvider;
+    private MudTheme? customTheme = new()
+        {
+            Palette = new PaletteLight()
+            {
+                Primary = Colors.Blue.Default,
+                Secondary = Colors.Green.Accent4,
+                AppbarBackground = Colors.Purple.Darken2,
+            },
+            PaletteDark = new PaletteDark()
+            {
+                Primary = Colors.Blue.Lighten1
+            },
+
+            LayoutProperties = new LayoutProperties()
+            {
+                DrawerWidthLeft = "260px",
+                DrawerWidthRight = "300px"
+            },
+            Typography = new Typography()
+            {
+                Default = new Default()
+                {
+                    FontFamily = new[] { "IRANSans", "Poppins", "Helvetica", "Arial", "sans-serif" }
+                }
+            }
+        };
+
+    void DrawerToggle()
     {
-        _isEnlarged = !_isEnlarged;
+        _drawerOpen = !_drawerOpen;
+    }
+
+    void DarkModeToggle()
+    {
+        _darkMode = !_darkMode;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _darkMode = await _mudThemeProvider!.GetSystemPreference();
+            await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnSystemPreferenceChanged(bool newValue)
+    {
+        _darkMode = newValue;
+        StateHasChanged();
     }
 }

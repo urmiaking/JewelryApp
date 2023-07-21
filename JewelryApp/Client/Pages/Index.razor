@@ -3,24 +3,29 @@
 
 @inject IPriceService PriceService
 
-<div class="container">
-    <div class="row">
-        <CardBox Title="تعداد کل فاکتورها" Color="green" Icon="print" Body="@_invoiceCount.ToString()"></CardBox>
-        <CardBox Title="نرخ گرم روز" Color="blue" Icon="money" Body="@_dailyGramPrice"></CardBox>
-        <CardBox Title="آخرین بروز رسانی گرم" Color="red" Icon="calendar" Body="@_lastUpdate"></CardBox>
-    </div>
-    
-    <div class="row text-center" style="margin:10px">
-        <button style="margin-bottom: 10px" class="btn btn-block btn-primary btn-rounded waves-effect waves-light" @onclick="@(() => IsModalVisible = true)">
-            <i class="fa fa-pencil m-l-5"></i>
-            <span style="margin-right: 5px;">افزودن جنس جدید</span>
-        </button>
-    </div>
-    
-    <ProductModal IsVisible="@IsModalVisible" IsVisibleChanged="@(value => IsModalVisible = value)" Product="@Product" />
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: #00a65a">
+            <MudText Typo="Typo.h6" Class="text-white">تعداد کل فاکتورها</MudText>
+            <MudText Typo="Typo.h4" Align="Align.Left" Class="mt-5 text-white">@_invoiceCount</MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: #0073b7">
+            <MudText Typo="Typo.h6" Class="text-white">نرخ گرم روز</MudText>
+            <MudText Typo="Typo.h4" Align="Align.Left" Class="mt-5 text-white">@_dailyGramPrice</MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="12" md="4">
+        <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: #dd4b39 !important">
+            <MudText Typo="Typo.h6" Class="text-white">آخرین بروز رسانی گرم</MudText>
+            <MudText Typo="Typo.h4" Align="Align.Left" Class="mt-5 text-white">@_lastUpdate</MudText>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
 
-</div>
-
+<ProductsTable Class="mt-5"></ProductsTable>
+<InvoicesTable Class="mt-5"></InvoicesTable>
 
 @code
 {

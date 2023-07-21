@@ -13,4 +13,8 @@
 	<ItemGroup>
 		<ProjectReference Include="..\JewelryApp.Data\JewelryApp.Data.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="AppModels\" />
+	</ItemGroup>
 </Project>

@@ -1,0 +1,37 @@
+﻿@using System.Net.Http.Json
+@using JewelryApp.Models.Dtos
+@using JewelryApp.Common.Extensions
+
+@inject IProductService ProductService
+
+<MudDataGrid Outlined="true" Class="@Class" Items="@_products?.Take(4)" Dense="true" Hover="true" Bordered="true" Filterable="true">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">لیست اجناس</MudText>
+        <MudSpacer />
+        <MudButton Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowBack" Variant="Variant.Filled">بیشتر</MudButton>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.Index" Title="ردیف"/>
+        <PropertyColumn Property="x => x.BarcodeText" Title="کد جنس"/>
+        <PropertyColumn Property="x => x.Name" Title="نام جنس"/>
+        <PropertyColumn Property="x => x.ProductType.GetDisplayName()" Title="نوع جنس"/>
+        <TemplateColumn CellClass="justify-center" Title="چاپ بارکد">
+            <CellTemplate>
+                <MudStack Row>
+                    <MudButton Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Primary">چاپ</MudButton>
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+@code {
+    [Parameter]
+    public string? Class { get; set; }
+
+    private IEnumerable<ProductTableItemDto>? _products;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _products = await ProductService.GetProductsAsync(5);
+    }
+}

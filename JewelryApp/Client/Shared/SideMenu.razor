@@ -1,57 +1,31 @@
-﻿<div class="left side-menu">
-    <div class="sidebar-inner slimscrollleft">
-        <div class="user-box">
-            <div class="user-img">
-                <img src="/img/logo.png" alt="user-img" title="حسن فانی" class="img-circle img-thumbnail img-responsive">
-            </div>
-            <h5><a href="#">حسن فانی</a> </h5>
-            <ul class="list-inline">
-                <li>
-                    <a asp-area="" asp-controller="Account" asp-action="Logout" class="text-custom">
-                        <i class="zmdi zmdi-power"></i>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <div id="sidebar-menu">
-            <ul>
-                <li class="text-muted menu-title">منو</li>
-                <li>
-                    <NavLink class="nav-link waves-effect" href="" Match="NavLinkMatch.All">
-                        <i class="zmdi zmdi-view-dashboard"></i> <span> داشبورد </span>
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink class="nav-link waves-effect" href="products">
-                        <i class="fa fa-product-hunt"></i> <span> اجناس من </span>
-                    </NavLink>
-                </li>
+﻿<MudDrawer @bind-Open="@DrawerOpen" ClipMode="DrawerClipMode.Always" Elevation="5">
+    <MudNavMenu Color="Color.Primary">
+        <MudSpacer></MudSpacer>
+        <MudContainer Class="mt-5 mb-5 text-center">
+            <MudBadge Color="Color.Success" Overlap="true" Bordered="true">
+                <MudAvatar Rounded="true" Size="Size.Large" Elevation="5">
+                    <MudImage Src="img/logo.png"></MudImage>
+                </MudAvatar>
+            </MudBadge>
+        </MudContainer>
+        <MudDivider />
+        <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">داشبورد</MudNavLink>
+        <MudDivider />
+        <MudNavLink Href="/products" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.ProductionQuantityLimits">اجناس</MudNavLink>
+        <MudDivider />
+        <MudNavLink Href="/invoices" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.AttachMoney">فاکتورها</MudNavLink>
+        <MudDivider />
+        <MudNavGroup Title="تنظیمات" Expanded="false" Icon="@Icons.Material.Filled.Settings">
+            <MudNavLink Href="/accountsettings" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.ManageAccounts">حساب کاربری</MudNavLink>
+            <MudDivider />
 
-                <li>
-                    <NavLink class="nav-link waves-effect" href="invoices">
-                        <i class="fa fa-money"></i> <span> فاکتورهای من </span>
-                    </NavLink>
-                </li>
+            <MudNavLink Href="/apisettings" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Api">API</MudNavLink>
+        </MudNavGroup>
+    </MudNavMenu>
+</MudDrawer>
 
-                <li> 
-                    <NavLink class="nav-link waves-effect" href="logout">
-                        <i class="fa fa-home"></i> <span> خروج </span>
-                    </NavLink>
-                </li>
-            </ul>
-            <div class="clearfix"></div>
-        </div>
-        <div class="clearfix"></div>
-    </div>
-</div>
-
-@code {
-    private bool collapseNavMenu = true;
-
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
+@code
+{
+    [Parameter]
+    public bool DrawerOpen { get; set; } = false;
 }
