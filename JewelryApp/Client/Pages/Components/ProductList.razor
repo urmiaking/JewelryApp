@@ -1,0 +1,198 @@
+﻿@using JewelryApp.Models.Dtos
+@using JewelryApp.Common.Enums
+
+@inject ISnackbar Snackbar
+@inject IDialogService Dialog
+@inject IProductService Product
+
+
+<MudTable Class="@Class" ServerData="@(new Func<TableState, Task<TableData<ProductTableItemDto>>>(ServerReload))" Hover="true" @ref="table">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">لیست اجناس</MudText>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="جستجو" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Style="max-width: 200px;" Class="mt-0"></MudTextField>
+        <MudSpacer />
+        @if (IsInProductPage)
+        {
+            <MudButton Color="Color.Primary" OnClick="@((e) => OpenDialog(fullScreen, "افزودن جنس"))"
+                       EndIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled">افزودن</MudButton>
+        }
+        else
+        {
+            <MudButton Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowBack" Variant="Variant.Filled">بیشتر</MudButton>
+        }
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="index_field" T="ProductTableItemDto">ردیف</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="barcodetext_field" T="ProductTableItemDto">کد جنس</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="name_field" T="ProductTableItemDto">نام جنس</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="weight_field" T="ProductTableItemDto">وزن</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="wage_field" T="ProductTableItemDto">اجرت ساخت</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="productType_field" T="ProductTableItemDto">نوع جنس</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="caret_field" T="ProductTableItemDto">عیار</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="ProductTableItemDto">عملیات</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="ردیف">@context.Index</MudTd>
+        <MudTd DataLabel="بارکد جنس">@context.BarcodeText</MudTd>
+        <MudTd DataLabel="نام جنس">@context.Name</MudTd>
+        <MudTd DataLabel="وزن">@context.Weight</MudTd>
+        <MudTd DataLabel="اجرت">@context.Wage</MudTd>
+        <MudTd DataLabel="نوع جنس">@context.ProductType.ToDisplay()</MudTd>
+        <MudTd DataLabel="عیار">@context.Caret.ToDisplay()</MudTd>
+        <MudTd DataLabel="عملیات">
+            <MudButton Size="@Size.Small" Variant="@Variant.Filled" EndIcon="@Icons.Material.Filled.Print" Color="@Color.Primary">چاپ بارکد</MudButton>
+            @if (IsInProductPage)
+            {
+                <MudButton Size="@Size.Small" Variant="@Variant.Filled" EndIcon="@Icons.Material.Filled.Edit" Color="@Color.Success">ویرایش</MudButton>
+                <MudButton Size="@Size.Small" Variant="@Variant.Filled" EndIcon="@Icons.Material.Filled.Delete" Color="@Color.Error">حذف</MudButton>
+            }
+        </MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd DataLabel="ردیف">@context.Index</MudTd>
+        <MudTd DataLabel="بارکد جنس">@context.BarcodeText</MudTd>
+        <MudTd DataLabel="نام جنس">
+            <MudTextField @bind-Value="@context.Name" Required />
+        </MudTd>
+        <MudTd DataLabel="وزن">
+            <MudNumericField @bind-Value="@context.Weight" Required Min="0.01" />
+        </MudTd>
+        <MudTd DataLabel="اجرت">
+            <MudNumericField @bind-Value="@context.Wage" Required Min="1" />
+        </MudTd>
+        <MudTd DataLabel="نوع جنس">
+            <MudSelect T="ProductType" Label="نوع جنس" @bind-Value="context.ProductType" Variant="Variant.Text">
+                @foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
+                {
+                    <MudSelectItem T="ProductType" Value="productType">@productType.ToDisplay()</MudSelectItem>
+                }
+            </MudSelect>
+        </MudTd>
+        <MudTd DataLabel="عیار">
+            <MudSelect T="Caret" Label="عیار" @bind-Value="context.Caret" Variant="Variant.Text">
+                @foreach (Caret caret in Enum.GetValues(typeof(Caret)))
+                {
+                    <MudSelectItem T="Caret" Value="caret">@caret.ToDisplay()</MudSelectItem>
+                }
+            </MudSelect>
+        </MudTd>
+        
+    </RowEditingTemplate>
+    <NoRecordsContent>
+        <MudText>هیچ جنسی یافت نشد</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>در حال بارگذاری</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+    <EditButtonContent Context="button">
+        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
+    </EditButtonContent>
+</MudTable>
+
+@code
+{
+    private IEnumerable<ProductTableItemDto> pagedData;
+    private MudTable<ProductTableItemDto> table;
+
+    private int totalItems;
+    private string searchString = null;
+
+    /// <summary>
+    /// Here we simulate getting the paged, filtered and ordered data from the server
+    /// </summary>
+    private async Task<TableData<ProductTableItemDto>> ServerReload(TableState state)
+    {
+        var data = await Product.GetProductsAsync();
+        await Task.Delay(300);
+        data = data.Where(product =>
+        {
+            if (string.IsNullOrWhiteSpace(searchString))
+                return true;
+            if (product.BarcodeText.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+            if (product.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+            if ($"{product.Weight} {product.Wage} {product.ProductType.ToDisplay()} {product.Caret.ToDisplay()}".Contains(searchString))
+                return true;
+            return false;
+        }).ToArray();
+        totalItems = data.Count();
+        switch (state.SortLabel)
+        {
+            case "index_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.Index);
+                break;
+            case "barcodetext_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.BarcodeText);
+                break;
+            case "name_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.Name);
+                break;
+            case "weight_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.Weight);
+                break;
+            case "wage_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.Wage);
+                break;
+            case "productType_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.ProductType);
+                break;
+            case "caret_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.Caret);
+                break;
+        }
+
+        pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        return new TableData<ProductTableItemDto>() { TotalItems = totalItems, Items = pagedData };
+    }
+
+    private void OnSearch(string text)
+    {
+        searchString = text;
+        table.ReloadServerData();
+    }
+
+    [Parameter]
+    public string? Class { get; set; }
+
+    [Parameter]
+    public int Count { get; set; } = 0;
+
+    [Parameter]
+    public bool IsInProductPage { get; set; }
+
+    [Parameter]
+    public bool Filterable { get; set; }
+
+
+    private IEnumerable<ProductTableItemDto>? _products;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Refresh();
+    }
+
+    DialogOptions fullScreen = new DialogOptions() { CloseButton = true, ClassBackground = "my-custom-class", FullWidth = true };
+
+    private async Task OpenDialog(DialogOptions options, string dialogTitle)
+    {
+        var dialog = await Dialog.ShowAsync<ProductDialog>(dialogTitle, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            Snackbar.Add("جنس با موفقیت افزوده شد", Severity.Success);
+            await Refresh();
+        }
+    }
+
+    private async Task Refresh()
+    {
+        _products = await Product.GetProductsAsync(Count);
+    }
+}

@@ -8,19 +8,14 @@
 
 <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
-    
     <div class="center-grid">
-        
         <MudItem xs="12" sm="7">
-            
             <MudStack Justify="Justify.Center">
-                
                 <MudCard Elevation="24" Square="true" Outlined="true" Class="round-card">
                     <div class="text-center">
                         <img style="width: 150px; height: 150px;" src="/img/logo.png" alt="logo"><br>
                         <MudText Typo="Typo.h5" Color="Color.Info">جواهری فانی</MudText>
                     </div>
-                    
                     <MudCardContent>
                         <MudTextField Label="نام کاربری"
                                       @bind-Value="model.Username" For="@(() => model.Username)" />
@@ -43,13 +38,11 @@
 
 @code {
     LoginDto model = new LoginDto();
-    bool success;
-
-
-
+    bool _success;
+    
     private void OnValidSubmit(EditContext context)
     {
-        success = true;
+        _success = true;
         StateHasChanged();
     }
 

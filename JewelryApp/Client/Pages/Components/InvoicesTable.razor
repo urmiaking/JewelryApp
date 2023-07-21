@@ -4,11 +4,19 @@
 
 @inject IInvoiceService InvoiceService
 
-<MudDataGrid Outlined="true" Class="@Class" Items="@_invoices?.Take(4)" Dense="true" Hover="true" Bordered="true" Filterable="true">
+<MudDataGrid Outlined="true" Class="@Class" Items="@_invoices?.Take(4)" Dense="true" Hover="true" Bordered="true" Filterable="Filterable">
     <ToolBarContent>
         <MudText Typo="Typo.h6">لیست فاکتورها</MudText>
         <MudSpacer />
-        <MudButton Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowBack" Variant="Variant.Filled">بیشتر</MudButton>
+        @if (IsInInvoicePage)
+        {
+            <MudButton Color="Color.Primary" EndIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled">افزودن</MudButton>
+        }
+        else
+        {
+            <MudButton Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowBack" Variant="Variant.Filled">بیشتر</MudButton>
+            
+        }
     </ToolBarContent>
     <Columns>
         <PropertyColumn Property="x => x.Index" Title="ردیف" />
@@ -33,10 +41,19 @@
     [Parameter]
     public string? Class { get; set; }
 
+    [Parameter]
+    public int Count { get; set; } = 0;
+
+    [Parameter]
+    public bool IsInInvoicePage { get; set; }
+
+    [Parameter]
+    public bool Filterable { get; set; }
+
     private IEnumerable<InvoiceTableItemDto>? _invoices;
 
     protected override async Task OnInitializedAsync()
     {
-        _invoices = await InvoiceService.GetInvoicesAsync(5);
+        _invoices = await InvoiceService.GetInvoicesAsync(Count);
     }
 }

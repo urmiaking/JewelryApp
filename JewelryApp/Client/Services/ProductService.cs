@@ -1,5 +1,7 @@
 ﻿using JewelryApp.Models.Dtos;
+using Newtonsoft.Json;
 using System.Net.Http.Json;
+using System.Text;
 
 namespace JewelryApp.Client.Services;
 
@@ -21,6 +23,22 @@ public class ProductService : IProductService
         catch
         {
             return new List<ProductTableItemDto>();
+        }
+    }
+
+    public async Task<bool> AddOrEditProductAsync(AddProductDto productDto)
+    {
+        try
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(productDto), Encoding.UTF8, "application/json");
+
+            var result = await _httpClient.PostAsync($"/api/Products/AddOrEditProduct", content);
+
+            return result.IsSuccessStatusCode;
+        }
+        catch
+        {
+            return false;
         }
     }
 }

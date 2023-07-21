@@ -1,0 +1,74 @@
+﻿@using JewelryApp.Models.Dtos
+@using JewelryApp.Common.Enums
+
+@inject IProductService ProductService
+
+<MudDialog>
+    <DialogContent>
+        <EditForm Model="@Model" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator />
+
+            <MudTextField @bind-Value="Model.Id" InputType="InputType.Hidden" For="@(() => Model.Id)" Variant="Variant.Outlined" />
+            <MudTextField Label="نام جنس" @bind-Value="Model.Name" For="@(() => Model.Name)" Variant="Variant.Outlined" Class="mt-5" />
+            <MudNumericField Label="وزن" @bind-Value="Model.Weight" For="@(() => Model.Weight)" Variant="Variant.Outlined" Class="mt-5" Min="0.01" />
+            <MudNumericField Label="اجرت" @bind-Value="Model.Wage" For="@(() => Model.Wage)" Variant="Variant.Outlined" Class="mt-5" Min="1" />
+            <MudSelect T="ProductType" Label="نوع جنس" @bind-Value="Model.ProductType" For="() => Model.ProductType" Variant="Variant.Outlined" Class="mt-5">
+                @foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
+                {
+                    <MudSelectItem T="ProductType" Value="productType">@productType.ToDisplay()</MudSelectItem>
+                }
+            </MudSelect>
+            <MudSelect T="Caret" Label="عیار" @bind-Value="Model.Caret" For="() => Model.Caret" Variant="Variant.Outlined" Class="mt-5">
+                @foreach (Caret caret in Enum.GetValues(typeof(Caret)))
+                {
+                    <MudSelectItem T="Caret" Value="caret">@caret.ToDisplay()</MudSelectItem>
+                }
+            </MudSelect>
+        </EditForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">لغو</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit" Variant="Variant.Filled" Disabled="@_processing">
+            @if (_processing)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+                <MudText Class="ms-2">در حال ذخیره</MudText>
+            }
+            else
+            {
+                <MudText>ذخیره</MudText>
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public AddProductDto Model { get; set; } = new();
+
+    private bool _processing = false;
+    
+    void Cancel() => MudDialog.Cancel();
+
+    private void OnValidSubmit()
+    {
+
+        StateHasChanged();
+    }
+
+    async Task Submit()
+    {
+        _processing = true;
+        var succeeded = await ProductService.AddOrEditProductAsync(Model);
+
+        if (!succeeded)
+        {
+            MudDialog.Cancel();
+        }
+
+        MudDialog.Close(DialogResult.Ok(true));
+        _processing = false;
+    }
+
+}
