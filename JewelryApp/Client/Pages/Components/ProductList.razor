@@ -172,9 +172,12 @@
 
     private IEnumerable<ProductTableItemDto>? _products;
 
-    protected override async Task OnInitializedAsync()
+    
+
+    protected override async Task OnParametersSetAsync()
     {
         await Refresh();
+        await base.OnParametersSetAsync();
     }
 
     DialogOptions fullScreen = new DialogOptions() { CloseButton = true, ClassBackground = "my-custom-class", FullWidth = true };
@@ -187,7 +190,7 @@
         if (!result.Canceled)
         {
             Snackbar.Add("جنس با موفقیت افزوده شد", Severity.Success);
-            await Refresh();
+            StateHasChanged();
         }
     }
 
