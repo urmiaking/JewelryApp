@@ -13,41 +13,31 @@ namespace JewelryApp.Api.Controllers;
 [ApiController]
 public class ProductsController : ControllerBase
 {
-    private readonly AppDbContext _context;
     private readonly IMapper _mapper;
     private readonly IBarcodeRepository _barcodeRepository;
+    private readonly IRepository<Product> _productRepository;
 
-    public ProductsController(AppDbContext context, IMapper mapper, IBarcodeRepository barcodeRepository)
+    public ProductsController(IRepository<Product> productRepository, IMapper mapper, IBarcodeRepository barcodeRepository)
     {
-        _context = context;
         _mapper = mapper;
+        _productRepository = productRepository;
         _barcodeRepository = barcodeRepository;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetProducts(int count = 0)
     {
-        var query = _context.Products.OrderByDescending(a => a.AddedDateTime);
+        var query = _productRepository.Entities.OrderByDescending(a => a.AddedDateTime);
 
         query = count == 0 ? query : query.Take(count).OrderByDescending(a => a.AddedDateTime);
 
-        var result = (await query.ToListAsync()).Select((a, i) => new ProductTableItemDto
-        {
-            BarcodeText = a.BarcodeText,
-            Id = a.Id,
-            Index = i + 1,
-            Name = a.Name,
-            ProductType = a.ProductType,
-            Caret = a.Caret,
-            Wage = a.Wage,
-            Weight = a.Weight
-        });
+        var products = _mapper.Map<List<Product>, List<ProductTableItemDto>>((await query.ToListAsync()));
 
-        return Ok(result);
+        return Ok(products);
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddOrEditProduct(AddProductDto productDto)
+    public async Task<IActionResult> AddOrEditProduct(AddProductDto productDto, CancellationToken cancellationToken)
     {
         var productModel = _mapper.Map<AddProductDto, Product>(productDto);
 
@@ -57,12 +47,12 @@ public class ProductsController : ControllerBase
             productModel.AddedDateTime = DateTime.Now;
             productModel.BarcodeText = await _barcodeRepository.GetBarcodeAsync(productModel);
             
-            await _context.Products.AddAsync(productModel);
+            await _productRepository.AddAsync(productModel, cancellationToken);
         }
         // Update
         else
         {
-            var productDb = await _context.Products.FirstOrDefaultAsync(a => a.Id == productDto.Id);
+            var productDb = await _productRepository.GetByIdAsync(cancellationToken, productDto.Id);
 
             if (productDb is not null)
             {
@@ -72,15 +62,13 @@ public class ProductsController : ControllerBase
                 productDb.Wage = productModel.Wage;
                 productDb.Weight = productModel.Weight;
 
-                _context.Products.Update(productDb);
+                await _productRepository.UpdateAsync(productDb, cancellationToken);
             }
             else
             {
                 return BadRequest();
             }
         }
-
-        await _context.SaveChangesAsync();
 
         return Ok();
     }

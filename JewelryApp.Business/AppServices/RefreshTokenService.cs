@@ -27,22 +27,21 @@ public class RefreshTokenService : IRefreshTokenService
             JwtId = jwtId
         };
 
-        _repository.Add(model);
-        await _repository.SaveChangesAsync();
+        await _repository.AddAsync(model, CancellationToken.None);
 
         return model.Id;
     }
 
     public async Task<RefreshTokenDto?> FindAsync(Guid id)
     {
-        var query = _repository.Get().Where(x => x.Id == id);
+        var query = _repository.TableNoTracking.Where(x => x.Id == id);
 
         return await _mapper.ProjectTo<RefreshTokenDto>(query).FirstOrDefaultAsync();
     }
 
     public async Task SetUsedAsync(Guid id)
     {
-        var model = await _repository.Get()
+        var model = await _repository.Entities
             .AsTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
 
@@ -50,13 +49,13 @@ public class RefreshTokenService : IRefreshTokenService
         {
             model.Used = true;
 
-            await _repository.SaveChangesAsync();
+            await _repository.UpdateAsync(model, CancellationToken.None);
         }
     }
 
     public async Task SetInvalidatedAsync(Guid id)
     {
-        var model = await _repository.Get()
+        var model = await _repository.Entities
             .AsTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
 
@@ -64,7 +63,7 @@ public class RefreshTokenService : IRefreshTokenService
         {
             model.Invalidated = true;
 
-            await _repository.SaveChangesAsync();
+            await _repository.UpdateAsync(model, CancellationToken.None);
         }
     }
 }

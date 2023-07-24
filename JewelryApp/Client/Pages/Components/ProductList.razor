@@ -6,7 +6,8 @@
 @inject IProductService Product
 
 
-<MudTable Class="@Class" ServerData="@(new Func<TableState, Task<TableData<ProductTableItemDto>>>(ServerReload))" Hover="true" @ref="table">
+<MudTable Class="@Class" ServerData="@(new Func<TableState, Task<TableData<ProductTableItemDto>>>(ServerReload))"
+          Hover="true" @ref="table" RowEditCommit="async e => await CommitItemAsync(e)">
     <ToolBarContent>
         <MudText Typo="Typo.h6">لیست اجناس</MudText>
         <MudSpacer />
@@ -24,7 +25,6 @@
         }
     </ToolBarContent>
     <HeaderContent>
-        <MudTh><MudTableSortLabel SortLabel="index_field" T="ProductTableItemDto">ردیف</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortLabel="barcodetext_field" T="ProductTableItemDto">کد جنس</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortLabel="name_field" T="ProductTableItemDto">نام جنس</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortLabel="weight_field" T="ProductTableItemDto">وزن</MudTableSortLabel></MudTh>
@@ -34,7 +34,6 @@
         <MudTh><MudTableSortLabel T="ProductTableItemDto">عملیات</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="ردیف">@context.Index</MudTd>
         <MudTd DataLabel="بارکد جنس">@context.BarcodeText</MudTd>
         <MudTd DataLabel="نام جنس">@context.Name</MudTd>
         <MudTd DataLabel="وزن">@context.Weight</MudTd>
@@ -51,7 +50,6 @@
         </MudTd>
     </RowTemplate>
     <RowEditingTemplate>
-        <MudTd DataLabel="ردیف">@context.Index</MudTd>
         <MudTd DataLabel="بارکد جنس">@context.BarcodeText</MudTd>
         <MudTd DataLabel="نام جنس">
             <MudTextField @bind-Value="@context.Name" Required />
@@ -124,9 +122,6 @@
         totalItems = data.Count();
         switch (state.SortLabel)
         {
-            case "index_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.Index);
-                break;
             case "barcodetext_field":
                 data = data.OrderByDirection(state.SortDirection, o => o.BarcodeText);
                 break;
@@ -172,7 +167,7 @@
 
     private IEnumerable<ProductTableItemDto>? _products;
 
-    
+
 
     protected override async Task OnParametersSetAsync()
     {
@@ -197,5 +192,30 @@
     private async Task Refresh()
     {
         _products = await Product.GetProductsAsync(Count);
+    }
+
+    private async Task CommitItemAsync(object elemnt)
+    {
+        var product = elemnt as ProductTableItemDto;
+
+        var productDto = new AddProductDto()
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Caret = product.Caret,
+                ProductType = product.ProductType,
+                Wage = product.Wage,
+                Weight = product.Weight
+            };
+        var success = await Product.AddOrEditProductAsync(productDto);
+
+        if (success)
+        {
+            Snackbar.Add("جنس با موفقیت ویرایش شد", Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add("خطا در ویرایش جنس، لطفا پارامترهای موردنیاز را پر کنید", Severity.Error);
+        }
     }
 }

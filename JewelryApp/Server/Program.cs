@@ -32,6 +32,7 @@ builder.Services.AddScoped<IBarcodeRepository, BarcodeRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IRepository<RefreshToken>, RefreshTokenRepository>();
+builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
 
 builder.Services.AddCustomIdentity();
 builder.Services.AddCustomAuthentication(builder.Configuration);
