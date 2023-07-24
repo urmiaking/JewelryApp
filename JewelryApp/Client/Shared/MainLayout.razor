@@ -14,14 +14,10 @@
 
             <MudButton EndIcon="@Icons.Material.Filled.Logout" Variant="Variant.Text" Size="Size.Large" Color="Color.Inherit">خروج</MudButton>
 
-            <MudTooltip Text="تنظیمات حساب" Color="Color.Tertiary" Placement="Placement.Bottom" Arrow="true">
-                <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit"></MudIconButton>
-            </MudTooltip>
+            <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit"></MudIconButton>
 
-            <MudTooltip Text="حالت شب" Color="Color.Tertiary" Placement="Placement.Right" Arrow="true">
-                <MudIconButton Icon="@Icons.Material.Filled.DarkMode" Color="Color.Inherit" Edge="Edge.End"
-                               OnClick="@((e) => DarkModeToggle())" />
-            </MudTooltip>
+            <MudIconButton Icon="@Icons.Material.Filled.DarkMode" Color="Color.Inherit" Edge="Edge.End"
+                           OnClick="@((e) => DarkModeToggle())" />
 
         </MudAppBar>
 

@@ -3,10 +3,11 @@ using JewelryApp.Models.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace JewelryApp.Api.Controllers;
 
-[Route("api/[controller]/[action]")]
+[Route("/")]
 [ApiController]
 public class AccountController : ControllerBase
 {
@@ -36,15 +37,27 @@ public class AccountController : ControllerBase
     [HttpPost("refresh")]
     public async Task<IActionResult> Refresh(UserTokenDto request)
     {
-        if (!ModelState.IsValid)
-            return ValidationProblem(ModelState);
+        try
+        {
+            if (!ModelState.IsValid)
+                return ValidationProblem(ModelState);
 
-        var response = await _service.RefreshAsync(request);
+            var response = await _service.RefreshAsync(request);
 
-        if (response != null)
-            return Ok(response);
+            if (response != null)
+                return Ok(response);
 
-        return Unauthorized();
+            return Unauthorized();
+        }
+        catch (ValidationException e)
+        {
+            ModelState.AddModelError(nameof(request.RefreshToken), e.Message);
+            return Unauthorized(ModelState);
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
     }
 
 }

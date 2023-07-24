@@ -1,6 +1,6 @@
 ﻿namespace JewelryApp.Models.Dtos;
 
-public abstract record RefreshTokenDto
+public record RefreshTokenDto
 {
     public Guid Id { get; set; }
 

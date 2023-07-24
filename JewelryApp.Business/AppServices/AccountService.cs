@@ -42,11 +42,11 @@ public class AccountService : IAccountService
 
     public async Task<UserTokenDto?> AuthenticateAsync(LoginDto request)
     {
-        var signinResult = await _signinManager.PasswordSignInAsync(request.Username, request.Password, false, true);
+        var signinResult = await _signinManager.PasswordSignInAsync(request.UserName, request.Password, false, true);
 
         if (signinResult.Succeeded)
         {
-            return await GenerateTokenForUserAsync(request.Username);
+            return await GenerateTokenForUserAsync(request.UserName);
         }
 
         return null;
@@ -119,24 +119,15 @@ public class AccountService : IAccountService
 
     private async Task<UserTokenDto?> GenerateTokenForUserAsync(ApplicationUser user)
     {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var claims = await GetUserClaimsAsync(user);
         var signingCredentials = GetSigningCredentials();
+        var claims = await GetUserClaimsAsync(user);
+        var tokenOptions = GenerateTokenOptions(signingCredentials, claims);
+        var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.Add(_jwtSettings.TokenLifeTime),
-            SigningCredentials = signingCredentials,
-            Issuer = _jwtSettings.Issuer,
-            Audience = _jwtSettings.Audience
-        };
-        var securityToken = tokenHandler.CreateToken(tokenDescriptor);
-        var token = tokenHandler.WriteToken(securityToken);
+        var jti = Guid.Parse(claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value);
 
         var refreshToken =
-            await _refreshTokenService.AddAsync(user.Id, _jwtSettings.RefreshTokenLifeTime,
-                Guid.Parse(securityToken.Id));
+            await _refreshTokenService.AddAsync(user.Id, _jwtSettings.RefreshTokenLifeTime, jti);
 
         return new UserTokenDto(token, refreshToken);
     }
@@ -153,7 +144,7 @@ public class AccountService : IAccountService
 
             return principal;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return null;
         }
@@ -210,5 +201,17 @@ public class AccountService : IAccountService
         }
 
         return claims;
+    }
+    private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, IEnumerable<Claim> claims)
+    {
+        var tokenOptions = new JwtSecurityToken(
+            issuer: _jwtSettings.Issuer,
+            audience: _jwtSettings.Audience,
+            claims: claims,
+            expires: DateTime.UtcNow.Add(_jwtSettings.TokenLifeTime),
+            signingCredentials: signingCredentials);
+
+        return tokenOptions;
+
     }
 }

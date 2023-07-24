@@ -6,7 +6,6 @@ using JewelryApp.Data;
 using JewelryApp.Data.Models;
 using JewelryApp.Models.AppModels;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var connectionString = builder.Configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
@@ -40,6 +41,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseSwagger();
+    app.UseSwaggerUI();
     app.UseWebAssemblyDebugging();
 }
 else
@@ -62,7 +65,7 @@ app.UseInitializer();
 
 
 app.MapRazorPages();
-app.MapControllers();
+app.MapControllers().RequireAuthorization();
 app.MapFallbackToFile("index.html");
 
 app.Run();

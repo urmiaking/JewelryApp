@@ -7,7 +7,7 @@ public class LoginDto
     [Required(ErrorMessage = "لطفا {0} را وارد نمایید")]
     [Display(Name = "نام کاربری")]
     [MaxLength(50, ErrorMessage = "لطفا حداکثر 50 کاراکتر وارد نمایید")]
-    public string Username { get; set; }
+    public string UserName { get; set; }
 
     [Required(ErrorMessage = "لطفا {0} را وارد نمایید")]
     [Display(Name = "رمز عبور")]
