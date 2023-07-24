@@ -6,13 +6,13 @@
     <MudSnackbarProvider />
 
     <MudLayout>
-        <MudAppBar Elevation="5">
+        <MudAppBar Elevation="1">
             <MudIconButton Icon="@Icons.Material.Filled.Menu" Style="color: white" Edge="Edge.Start"
                            OnClick="@((e) => DrawerToggle())" />
             <MudText Typo="Typo.h5" Class="ml-3">جواهری فانی</MudText>
             <MudSpacer />
 
-            <MudButton EndIcon="@Icons.Material.Filled.Logout" Variant="Variant.Text" Size="Size.Large" Color="Color.Inherit">خروج</MudButton>
+            <MudButton Href="/logout" EndIcon="@Icons.Material.Filled.Logout" Variant="Variant.Text" Size="Size.Large" Color="Color.Inherit">خروج</MudButton>
 
             <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit"></MudIconButton>
 
