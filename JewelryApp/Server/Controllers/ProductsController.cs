@@ -16,11 +16,13 @@ public class ProductsController : ControllerBase
     private readonly IMapper _mapper;
     private readonly IBarcodeRepository _barcodeRepository;
     private readonly IRepository<Product> _productRepository;
+    private readonly IRepository<InvoiceProduct> _invoiceProductRepository;
 
-    public ProductsController(IRepository<Product> productRepository, IMapper mapper, IBarcodeRepository barcodeRepository)
+    public ProductsController(IRepository<InvoiceProduct> invoiceProductRepository, IRepository<Product> productRepository, IMapper mapper, IBarcodeRepository barcodeRepository)
     {
         _mapper = mapper;
         _productRepository = productRepository;
+        _invoiceProductRepository = invoiceProductRepository;
         _barcodeRepository = barcodeRepository;
     }
 
@@ -69,6 +71,26 @@ public class ProductsController : ControllerBase
                 return BadRequest();
             }
         }
+
+        return Ok();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(CancellationToken cancellationToken, int id = 0)
+    {
+        if (id == 0)
+        {
+            return BadRequest();
+        }
+
+        var isInInvoice = await _invoiceProductRepository.TableNoTracking.AnyAsync(x => x.ProductId == id);
+
+        if (isInInvoice)
+        {
+            return BadRequest();
+        }
+
+        await _productRepository.DeleteAsync(new Product { Id = id }, cancellationToken);
 
         return Ok();
     }

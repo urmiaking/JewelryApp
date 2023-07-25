@@ -14,15 +14,10 @@
         <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="جستجو" Adornment="Adornment.Start"
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Style="max-width: 200px;" Class="mt-0"></MudTextField>
         <MudSpacer />
-        @if (IsInProductPage)
-        {
-            <MudButton Color="Color.Primary" OnClick="@((e) => OpenDialog(fullScreen, "افزودن جنس"))"
-                       EndIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled">افزودن</MudButton>
-        }
-        else
-        {
-            <MudButton Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowBack" Variant="Variant.Filled">بیشتر</MudButton>
-        }
+
+        <MudButton Color="Color.Primary" OnClick="@((e) => OpenAddProductDialog(fullScreen, "افزودن جنس"))"
+                   EndIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled">افزودن</MudButton>
+
     </ToolBarContent>
     <HeaderContent>
         <MudTh><MudTableSortLabel SortLabel="barcodetext_field" T="ProductTableItemDto">کد جنس</MudTableSortLabel></MudTh>
@@ -41,12 +36,10 @@
         <MudTd DataLabel="نوع جنس">@context.ProductType.ToDisplay()</MudTd>
         <MudTd DataLabel="عیار">@context.Caret.ToDisplay()</MudTd>
         <MudTd DataLabel="عملیات">
-            <MudButton Size="@Size.Small" Variant="@Variant.Filled" EndIcon="@Icons.Material.Filled.Print" Color="@Color.Primary">چاپ بارکد</MudButton>
-            @if (IsInProductPage)
-            {
-                <MudButton Size="@Size.Small" Variant="@Variant.Filled" EndIcon="@Icons.Material.Filled.Edit" Color="@Color.Success">ویرایش</MudButton>
-                <MudButton Size="@Size.Small" Variant="@Variant.Filled" EndIcon="@Icons.Material.Filled.Delete" Color="@Color.Error">حذف</MudButton>
-            }
+            <MudButton Size="@Size.Small" Variant="@Variant.Filled" EndIcon="@Icons.Material.Filled.Print"
+                       Color="@Color.Primary">چاپ بارکد</MudButton>
+            <MudButton OnClick="@((e) => OpenDeleteProductDialog(fullScreen, context.Id))" Size="@Size.Small" Variant="@Variant.Filled" EndIcon="@Icons.Material.Filled.Delete"
+                       Color="@Color.Error">حذف</MudButton>
         </MudTd>
     </RowTemplate>
     <RowEditingTemplate>
@@ -76,7 +69,7 @@
                 }
             </MudSelect>
         </MudTd>
-        
+
     </RowEditingTemplate>
     <NoRecordsContent>
         <MudText>هیچ جنسی یافت نشد</MudText>
@@ -85,7 +78,7 @@
         <MudText>در حال بارگذاری</MudText>
     </LoadingContent>
     <PagerContent>
-        <MudTablePager />
+        <MudTablePager HorizontalAlignment="HorizontalAlignment.Center" />
     </PagerContent>
     <EditButtonContent Context="button">
         <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
@@ -159,14 +152,9 @@
     public int Count { get; set; } = 0;
 
     [Parameter]
-    public bool IsInProductPage { get; set; }
-
-    [Parameter]
     public bool Filterable { get; set; }
 
-
     private IEnumerable<ProductTableItemDto>? _products;
-
 
 
     protected override async Task OnParametersSetAsync()
@@ -175,9 +163,9 @@
         await base.OnParametersSetAsync();
     }
 
-    DialogOptions fullScreen = new DialogOptions() { CloseButton = true, ClassBackground = "my-custom-class", FullWidth = true };
+    DialogOptions fullScreen = new DialogOptions() { CloseButton = true, FullWidth = true };
 
-    private async Task OpenDialog(DialogOptions options, string dialogTitle)
+    private async Task OpenAddProductDialog(DialogOptions options, string dialogTitle)
     {
         var dialog = await Dialog.ShowAsync<ProductDialog>(dialogTitle, options);
         var result = await dialog.Result;
@@ -185,7 +173,7 @@
         if (!result.Canceled)
         {
             Snackbar.Add("جنس با موفقیت افزوده شد", Severity.Success);
-            StateHasChanged();
+            table.ReloadServerData();
         }
     }
 
@@ -216,6 +204,25 @@
         else
         {
             Snackbar.Add("خطا در ویرایش جنس، لطفا پارامترهای موردنیاز را پر کنید", Severity.Error);
+        }
+    }
+
+    private async Task OpenDeleteProductDialog(DialogOptions options, int productId)
+    {
+        var parameters = new DialogParameters<PromptDialog>();
+        parameters.Add(x => x.ContentText, "آیا مطمئن هستید؟ تنها اجناسی قابل حذف می باشند که در فاکتوری استفاده نشده باشند");
+        parameters.Add(x => x.ButtonText, "حذف");
+        parameters.Add(x => x.Color, Color.Error);
+        parameters.Add(x => x.EndIcon, Icons.Material.Filled.Delete);
+        parameters.Add(x => x.ProductId, productId);
+
+        var dialog = await Dialog.ShowAsync<PromptDialog>("حذف جنس", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            Snackbar.Add("جنس با موفقیت حذف شد", Severity.Success);
+            table.ReloadServerData();
         }
     }
 }

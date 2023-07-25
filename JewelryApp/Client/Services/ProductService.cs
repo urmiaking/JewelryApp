@@ -41,4 +41,18 @@ public class ProductService : IProductService
             return false;
         }
     }
+
+    public async Task<bool> DeleteProductAsync(int productId)
+    {
+        try
+        {
+            var result = await _httpClient.DeleteAsync($"/api/Products/Delete/{productId}");
+
+            return result.IsSuccessStatusCode;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }

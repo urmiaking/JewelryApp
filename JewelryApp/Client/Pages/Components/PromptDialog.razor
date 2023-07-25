@@ -1,0 +1,42 @@
+﻿@inject IProductService ProductService
+
+<MudDialog>
+    <DialogContent>
+        <MudText>@ContentText</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">لغو</MudButton>
+        <MudButton Color="@Color" Variant="Variant.Filled" OnClick="Submit" EndIcon="@EndIcon">@ButtonText</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter] public string ContentText { get; set; } = string.Empty;
+
+    [Parameter] public string ButtonText { get; set; } = string.Empty;
+
+    [Parameter] public int ProductId { get; set; }
+
+    [Parameter] public Color Color { get; set; }
+
+    [Parameter] public string EndIcon { get; set; } = string.Empty;
+
+    private bool _processing = false;
+
+    async Task Submit()
+    {
+        _processing = true;
+        var succeeded = await ProductService.DeleteProductAsync(ProductId);
+
+        if (!succeeded)
+        {
+            MudDialog.Cancel();
+        }
+
+        MudDialog.Close(DialogResult.Ok(true));
+        _processing = false;
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

@@ -6,25 +6,12 @@
     <MudSnackbarProvider />
 
     <MudLayout>
-        <MudAppBar Elevation="1">
-            <MudIconButton Icon="@Icons.Material.Filled.Menu" Style="color: white" Edge="Edge.Start"
-                           OnClick="@((e) => DrawerToggle())" />
-            <MudText Typo="Typo.h5" Class="ml-3">جواهری فانی</MudText>
-            <MudSpacer />
-
-            <MudButton Href="/logout" EndIcon="@Icons.Material.Filled.Logout" Variant="Variant.Text" Size="Size.Large" Color="Color.Inherit">خروج</MudButton>
-
-            <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit"></MudIconButton>
-
-            <MudIconButton Icon="@Icons.Material.Filled.DarkMode" Color="Color.Inherit" Edge="Edge.End"
-                           OnClick="@((e) => DarkModeToggle())" />
-
-        </MudAppBar>
+        <AppBar @bind-DrawerOpen="_drawerOpen" @bind-DarkModeState="_darkMode"></AppBar>
 
         <SideMenu DrawerOpen="_drawerOpen"></SideMenu>
 
         <MudMainContent>
-            <MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
+            <MudContainer Class="mt-5" MaxWidth="MaxWidth.False">
                 @Body
             </MudContainer>
         </MudMainContent>
@@ -71,21 +58,5 @@
     void DarkModeToggle()
     {
         _darkMode = !_darkMode;
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            _darkMode = await _mudThemeProvider!.GetSystemPreference();
-            await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
-            StateHasChanged();
-        }
-    }
-
-    private async Task OnSystemPreferenceChanged(bool newValue)
-    {
-        _darkMode = newValue;
-        StateHasChanged();
     }
 }

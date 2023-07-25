@@ -1,0 +1,40 @@
+﻿<MudAppBar Elevation="1">
+    <MudIconButton Icon="@Icons.Material.Filled.Menu" Style="color: white" Edge="Edge.Start"
+                   OnClick="DrawerToggle" />
+    <MudText Typo="Typo.h5" Class="ml-3">جواهری فانی</MudText>
+    <MudSpacer />
+
+    <MudButton Href="/logout" EndIcon="@Icons.Material.Filled.Logout" Variant="Variant.Text" Size="Size.Large" Color="Color.Inherit">خروج</MudButton>
+
+    <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit"></MudIconButton>
+
+    <MudToggleIconButton ToggledChanged="DarkModeStateChanged"
+                         Icon="@Icons.Material.Filled.DarkMode" Color="@Color.Tertiary" Title="حالت شب"
+                         ToggledIcon="@Icons.Material.Filled.WbSunny" ToggledColor="@Color.Info" ToggledTitle="حالت روز" />
+
+
+</MudAppBar>
+
+@code {
+    [Parameter]
+    public bool DrawerOpen { get; set; }
+
+    [Parameter]
+    public bool DarkModeState { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> DrawerOpenChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> DarkModeStateChanged { get; set; }
+
+    private async Task DrawerToggle()
+    {
+        await DrawerOpenChanged.InvokeAsync(!DrawerOpen);
+    }
+
+    private async Task DarkModeToggle()
+    {
+        await DarkModeStateChanged.InvokeAsync(!DarkModeState);
+    }
+}
