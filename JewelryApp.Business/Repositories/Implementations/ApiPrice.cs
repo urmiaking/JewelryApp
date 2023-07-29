@@ -23,7 +23,7 @@ public class ApiPrice : IApiPrice
     {
         try
         {
-            var apiKey = await _db.ApiKeys.OrderByDescending(a => a.AddDateTime).FirstOrDefaultAsync();
+            var apiKey = await _db.ApiKeys.OrderByDescending(a => a.AddDateTime).FirstOrDefaultAsync(a => a.IsActive);
 
             var response = await _httpClient.GetAsync($"/latest/?api_key={apiKey!.Key}");
 

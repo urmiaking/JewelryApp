@@ -1,0 +1,146 @@
+﻿@page "/settings"
+
+@inject ISnackbar Snackbar
+@inject ISettingsService SettingsService
+@inject NavigationManager NavigationManager
+
+<MudGrid>
+
+    <MudItem xs="12" sm="6">
+        <MudGrid>
+            <MudItem xs="12">
+                <EditForm Model="@ApikeyModel" OnValidSubmit="OnApiKeySubmit">
+                    <DataAnnotationsValidator />
+                    <MudCard>
+                        <MudCardContent>
+                            <MudTextField Label="کلید API" HelperText="کلید گرفته شده از ربات تلگرامی"
+                                          @bind-Value="ApikeyModel.Key" For="@(() => ApikeyModel.Key)" />
+                            <MudCheckBox @bind-Checked="ApikeyModel.IsActive" For="@(() => ApikeyModel.IsActive)">تنظیم به عنوان کلید فعال</MudCheckBox>
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">ذخیره</MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </EditForm>
+            </MudItem>
+            <MudItem xs="12">
+                <EditForm Model="@PasswordModel" OnValidSubmit="OnPassowrdChangeSubmit">
+                    <DataAnnotationsValidator />
+                    <MudCard>
+                        <MudCardContent>
+                            <MudTextField Label="رمز عبور فعلی" HelperText="رمز عبور فعلی خود را وارد کنید" InputType="InputType.Password"
+                                          @bind-Value="PasswordModel.OldPassword" For="@(() => PasswordModel.OldPassword)" />
+                            <MudTextField Label="رمز عبور جدید" HelperText="رمز عبور جدید خود را وارد کنید" InputType="InputType.Password"
+                                          @bind-Value="PasswordModel.NewPassword" For="@(() => PasswordModel.NewPassword)" />
+                            <MudTextField Label="تکرار رمز عبور جدید" HelperText="تکرار رمز عبور جدید خود را وارد کنید" InputType="InputType.Password"
+                                          @bind-Value="PasswordModel.ConfirmPassword" For="@(() => PasswordModel.ConfirmPassword)" />
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">ذخیره</MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </EditForm>
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudPaper Elevation="2" Class="pa-4">
+            <MudCard>
+                <MudList Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue" Color="_color">
+                    <MudCardContent>
+                        <MudListSubheader>
+                            لیست کلیدهای API
+                        </MudListSubheader>
+
+                        @if (apiKeys == null)
+                        {
+                            <MudProgressCircular Color="Color.Info" Indeterminate="true" />
+                        }
+                        else
+                        {
+                            @foreach (var apiKey in apiKeys!)
+                            {
+                                <MudListItem Text="@apiKey.Key" Value="apiKey.Key" />
+                            }
+                        }
+
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton @onclick="@((e) => SetAsActiveKey())" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">تنظیم به عنوان کلید فعال</MudButton>
+                    </MudCardActions>
+                </MudList>
+            </MudCard>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    MudListItem selectedItem;
+    object selectedValue = 1;
+    Color _color = Color.Success;
+
+    [Parameter]
+    public ApiKeyDto ApikeyModel { get; set; } = new();
+
+    [Parameter]
+    public ChangePasswordDto PasswordModel { get; set; } = new();
+
+    private IEnumerable<ApiKeyDto>? apiKeys;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshApiKeys();
+        await base.OnInitializedAsync();
+    }
+
+    async Task RefreshApiKeys()
+    {
+        apiKeys = await SettingsService.GetApiKeys();
+    }
+
+    async Task OnApiKeySubmit()
+    {
+        var result = await SettingsService.AddApiKey(ApikeyModel);
+
+        if (result)
+        {
+            Snackbar.Add("کلید با موفقیت اضافه شد", Severity.Success);
+            await RefreshApiKeys();
+        }
+        else
+        {
+            Snackbar.Add("درج کلید با خطا مواجه شد", Severity.Error);
+        }
+    }
+
+    async Task SetAsActiveKey()
+    {
+        var apiKey = new ApiKeyDto() { Key = selectedItem.Value.ToString(), IsActive = true };
+
+        var result = await SettingsService.SetActiveApiKey(apiKey);
+
+        if (result)
+        {
+            Snackbar.Add("کلید با موفقیت فعال شد", Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add("فعالسازی کلید با خطا مواجه شد", Severity.Error);
+        }
+    }
+
+    async Task OnPassowrdChangeSubmit()
+    {
+        var result = await SettingsService.ChangePassowrdAsync(PasswordModel);
+
+        if (result)
+        {
+            Snackbar.Add("رمز عبور با موفقیت تغییر داده شد! لطفا مجددا با رمز جدید خود وارد شوید", Severity.Success);
+            NavigationManager.NavigateTo("/logout");
+        }
+        else
+        {
+            Snackbar.Add("تغییر رمز عبور با خطا مواجه شد! لطفا رمز خود را چک کنید", Severity.Error);
+        }
+    }
+}

@@ -9,4 +9,5 @@ public class ApiKey
     [Display(Name= "کلید API")]
     public string Key { get; set; }
     public DateTime AddDateTime { get; set; }
+    public bool IsActive { get; set; }
 }

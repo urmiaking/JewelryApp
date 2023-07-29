@@ -163,7 +163,7 @@
         await base.OnParametersSetAsync();
     }
 
-    DialogOptions fullScreen = new DialogOptions() { CloseButton = true, FullWidth = true };
+    DialogOptions fullScreen = new DialogOptions() { CloseButton = true, FullWidth = true, FullScreen = true };
 
     private async Task OpenAddProductDialog(DialogOptions options, string dialogTitle)
     {
@@ -173,7 +173,7 @@
         if (!result.Canceled)
         {
             Snackbar.Add("جنس با موفقیت افزوده شد", Severity.Success);
-            table.ReloadServerData();
+            await table.ReloadServerData();
         }
     }
 
@@ -222,7 +222,7 @@
         if (!result.Canceled)
         {
             Snackbar.Add("جنس با موفقیت حذف شد", Severity.Success);
-            table.ReloadServerData();
+            await table.ReloadServerData();
         }
     }
 }

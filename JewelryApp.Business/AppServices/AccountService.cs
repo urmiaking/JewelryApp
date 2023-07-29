@@ -42,7 +42,7 @@ public class AccountService : IAccountService
 
     public async Task<UserTokenDto?> AuthenticateAsync(LoginDto request)
     {
-        var signinResult = await _signinManager.PasswordSignInAsync(request.UserName, request.Password, false, true);
+        var signinResult = await _signinManager.PasswordSignInAsync(request.UserName, request.Password, false, false);
 
         if (signinResult.Succeeded)
         {

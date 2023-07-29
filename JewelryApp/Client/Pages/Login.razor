@@ -1,6 +1,7 @@
 ﻿@page "/login"
 @layout LoginLayout
 @inherits UserComponentBase
+@inject ISnackbar Snackbar
 
 <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
@@ -37,13 +38,15 @@
     bool _success;
 
     [Inject] private AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
-    
+
     private async Task OnValidSubmit(EditContext context)
     {
         var httpResponse = await UnauthorizedHttpClient.PostAsJsonAsync("login", model);
 
         if (httpResponse.IsSuccessStatusCode)
         {
+            Snackbar.Add("خوش آمدید!", Severity.Info);
+
             var responseContent = await httpResponse.Content.ReadAsStringAsync();
             var userToken = JsonSerializer.Deserialize<UserTokenDto>(responseContent, new JsonSerializerOptions
                 {
@@ -55,6 +58,10 @@
 
                 NavigationManager.NavigateTo("/");
             }
+        }
+        else
+        {
+            Snackbar.Add("نام کاربری یا رمز عبور اشتباه است!", Severity.Error);
         }
     }
 
