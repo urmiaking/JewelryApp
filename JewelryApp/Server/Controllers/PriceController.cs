@@ -19,13 +19,12 @@ public class PriceController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetPriceModel()
+    public async Task<IActionResult> GetPrice()
     {
         try
         {
             var result = new PriceModel
             {
-                LastUpdate = await _priceRepository.GetLastUpdateTime(),
                 Price = await _priceRepository.GetGramPrice()
             };
 

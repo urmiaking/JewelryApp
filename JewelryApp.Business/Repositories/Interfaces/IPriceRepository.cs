@@ -3,5 +3,4 @@
 public interface IPriceRepository
 {
     Task<double> GetGramPrice();
-    Task<string> GetLastUpdateTime();
 }

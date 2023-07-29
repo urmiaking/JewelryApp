@@ -22,28 +22,6 @@ namespace JewelryApp.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("JewelryApp.Data.Models.ApiKey", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("AddDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Key")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ApiKeys");
-                });
-
             modelBuilder.Entity("JewelryApp.Data.Models.ApplicationRole", b =>
                 {
                     b.Property<Guid>("Id")
@@ -252,20 +230,11 @@ namespace JewelryApp.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("Change")
-                        .HasColumnType("float");
-
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<DateTime>("RequestDateTime")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("UpdatedDateTime")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedDateTimeString")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

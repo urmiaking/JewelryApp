@@ -22,35 +22,17 @@ public class PriceRepository : IPriceRepository
     {
         try
         {
-            var latestPrice = await _context.GramPrices.OrderBy(a => a.RequestDateTime).LastOrDefaultAsync();
+            var latestPrice = await _context.GramPrices.OrderBy(a => a.UpdatedDateTime).LastOrDefaultAsync();
 
-            if (latestPrice is null)
+            var onlinePrice = await _apiPrice.GetGramPrice();
+
+            if (latestPrice is null || (onlinePrice != 0 && latestPrice.Price != onlinePrice))
             {
-                var item = await _apiPrice.GetGramPrice();
-
-                if (item is not null)
-                {
-                    var gramPrice = await AddGramPriceAsync(item);
-
-                    return gramPrice.Price;
-                }
-
-                return 0;
+                await AddGramPriceAsync(onlinePrice);
+                return onlinePrice;
             }
 
-            if (latestPrice.RequestDateTime <= DateTime.Now.AddHours(-2))
-            {
-                var item = await _apiPrice.GetGramPrice();
-
-                if (item is null)
-                    return 0;
-
-                var gramPrice = await AddGramPriceAsync(item);
-
-                return gramPrice.Price;
-            }
-
-            return latestPrice.Price;
+            return onlinePrice;
         }
         catch
         {
@@ -58,35 +40,12 @@ public class PriceRepository : IPriceRepository
         }
     }
 
-    public async Task<string> GetLastUpdateTime()
-    {
-        var gramPrice = await _context.GramPrices.OrderBy(a => a.RequestDateTime).LastOrDefaultAsync();
-
-        if (gramPrice is not null)
-        {
-            return gramPrice.UpdatedDateTimeString.ExtractTime();
-        }
-
-        var item = await _apiPrice.GetGramPrice();
-
-        if (item is null)
-            return "";
-
-        var gramPriceOnline = await AddGramPriceAsync(item);
-
-        return gramPriceOnline.UpdatedDateTimeString.ExtractTime();
-
-    }
-
-    public async Task<GramPrice> AddGramPriceAsync(Item item)
+    public async Task<GramPrice> AddGramPriceAsync(double value)
     {
         var gramPrice = new GramPrice
         {
-            Price = double.Parse(item.Value),
-            Change = item.Change,
-            RequestDateTime = DateTime.Now,
-            UpdatedDateTime = ShamsiDateTime.ParseShamsiDateTime(item.Date),
-            UpdatedDateTimeString = item.Date
+            Price = value,
+            UpdatedDateTime = DateTime.Now,
         };
 
         await _context.GramPrices.AddAsync(gramPrice);

@@ -5,35 +5,20 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace JewelryApp.Data.Migrations
 {
-    public partial class InitialMigration : Migration
+    /// <inheritdoc />
+    public partial class Initial : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "ApiKeys",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Key = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AddDateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ApiKeys", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "GramPrices",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RequestDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Price = table.Column<double>(type: "float", nullable: false),
-                    Change = table.Column<double>(type: "float", nullable: false),
-                    UpdatedDateTimeString = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Price = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -325,11 +310,9 @@ namespace JewelryApp.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "ApiKeys");
-
             migrationBuilder.DropTable(
                 name: "GramPrices");
 

@@ -1,4 +1,6 @@
-﻿using JewelryApp.Business.Repositories.Interfaces;
+﻿using HtmlAgilityPack;
+using JewelryApp.Business.Repositories.Interfaces;
+using JewelryApp.Common.DateFunctions;
 using JewelryApp.Data;
 using JewelryApp.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
@@ -16,31 +18,39 @@ public class ApiPrice : IApiPrice
     {
         _httpClient = httpClient;
         _db = db;
-        _httpClient.BaseAddress = new Uri("http://api.navasan.tech/");
     }
 
-    public async Task<Item> GetGramPrice()
+    public async Task<double> GetGramPrice()
     {
         try
         {
-            var apiKey = await _db.ApiKeys.OrderByDescending(a => a.AddDateTime).FirstOrDefaultAsync(a => a.IsActive);
-
-            var response = await _httpClient.GetAsync($"/latest/?api_key={apiKey!.Key}");
+            var response = await _httpClient.GetAsync("https://www.tala.ir/webservice/price_live.php");
 
             if (!response.IsSuccessStatusCode)
-                return null;
+                return 0;
 
-            var result = await response.Content.ReadAsStringAsync();
+            var htmlResponse = await response.Content.ReadAsStringAsync();
 
-            var priceResult = JsonConvert.DeserializeObject<PriceResult>(result);
+            var htmlDocument = new HtmlDocument();
+            htmlDocument.LoadHtml(htmlResponse);
+
+            var aTag = htmlDocument.GetElementbyId("gold_18k");
 
             _httpClient.Dispose();
 
-            return priceResult?.The18Ayar;
+            if (aTag != null)
+            {
+                var content = aTag.InnerHtml.Replace(",", "");
+                
+                return double.Parse(content);
+            }
+
+            return 0;
+
         }
         catch
         {
-            return null;
+            return 0;
         }
     }
 }

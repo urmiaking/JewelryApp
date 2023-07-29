@@ -4,5 +4,5 @@ namespace JewelryApp.Business.Repositories.Interfaces;
 
 public interface IApiPrice
 {
-    Task<Item> GetGramPrice();
+    Task<double> GetGramPrice();
 }

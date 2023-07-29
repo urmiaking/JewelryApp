@@ -17,13 +17,12 @@ public class PriceService : IPriceService
     {
         try
         {
-            return await _httpClient.GetFromJsonAsync<PriceModel>("/api/Price/GetPriceModel");
+            return await _httpClient.GetFromJsonAsync<PriceModel>("/api/Price/GetPrice");
         }
         catch
         {
             return new PriceModel
             {
-                LastUpdate = "نامشخص",
                 Price = 0
             };
         }

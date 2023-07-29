@@ -21,7 +21,6 @@ public class DbInitializer : IDbInitializer
 
     public void Initialize()
     {
-        SeedApiKeys(_db).GetAwaiter().GetResult();
         SeedIdentityAsync(_userManager, _roleManager).GetAwaiter().GetResult();
     }
 
@@ -42,21 +41,5 @@ public class DbInitializer : IDbInitializer
 
         if (!await userManager.IsInRoleAsync(adminUser, "Administrators"))
             await userManager.AddToRoleAsync(adminUser, "Administrators");
-    }
-
-    private async Task SeedApiKeys(AppDbContext context)
-    {
-        var apiKeyExist = await _db.ApiKeys.AnyAsync();
-        if (!apiKeyExist)
-        {
-            var apiKey = new ApiKey
-            {
-                AddDateTime = DateTime.Now,
-                Key = "freeM8O5H9tyfnlOZdTjAl49Aiv86j90"
-            };
-
-            await context.ApiKeys.AddAsync(apiKey);
-            await context.SaveChangesAsync();
-        }
     }
 }
