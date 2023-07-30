@@ -1,44 +1,54 @@
 ﻿@page "/"
+@using JewelryApp.Models.AppModels
 
 @inject IPriceService PriceService
 
-<MudGrid>
-    <MudItem xs="12" sm="6" md="4">
-        <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: #00a65a">
-            <MudText Typo="Typo.h6" Class="text-white">تعداد کل فاکتورها</MudText>
-            <MudText Typo="Typo.h4" Align="Align.Left" Class="mt-5 text-white">@_invoiceCount</MudText>
-        </MudPaper>
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: #0073b7">
-            <MudText Typo="Typo.h6" Class="text-white">نرخ گرم روز</MudText>
-            <MudText Typo="Typo.h4" Align="Align.Left" Class="mt-5 text-white">@_dailyGramPrice</MudText>
-        </MudPaper>
-    </MudItem>
-    <MudItem xs="12" sm="12" md="4">
-        <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: #dd4b39 !important">
-            <MudText Typo="Typo.h6" Class="text-white">آخرین بروز رسانی گرم</MudText>
-            <MudText Typo="Typo.h4" Align="Align.Left" Class="mt-5 text-white">@_lastUpdate</MudText>
-        </MudPaper>
-    </MudItem>
-</MudGrid>
+@if (_priceModel is null)
+{
+    
+}
+else
+{
+    <MudGrid>
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: #00a65a">
+                <MudText Typo="Typo.h6" Class="text-white">تعداد کل فاکتورها</MudText>
+                <MudText Typo="Typo.h4" Align="Align.Left" Class="mt-5 text-white">@(_priceModel!.Gold18K)</MudText>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+                <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: #0073b7">
+                    <MudText Typo="Typo.h6" Class="text-white">نرخ گرم روز</MudText>
+                    <MudText Typo="Typo.h4" Align="Align.Left" Class="mt-5 text-white">@_dailyGramPrice</MudText>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" sm="12" md="4">
+                <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: #dd4b39 !important">
+                    <MudText Typo="Typo.h6" Class="text-white">آخرین بروز رسانی گرم</MudText>
+                    <MudText Typo="Typo.h4" Align="Align.Left" Class="mt-5 text-white">@_lastUpdate</MudText>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+}
+
 
 <ProductList Class="mt-5" Count="5" Filterable="false"></ProductList>
 <InvoicesTable Class="mt-5" Count="5" IsInInvoicePage="false" Filterable="false"></InvoicesTable>
 
 @code
 {
-    private int _invoiceCount;
-    private string? _dailyGramPrice;
-    private string? _lastUpdate;
+    private PriceModel? _priceModel;
+    Timer _timer = default!;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        var priceModel = await PriceService.GetPrice();
-
-        if (priceModel is not null)
-        {
-            _dailyGramPrice = priceModel.Price.ToString("N0");
-        }
+        _timer = new Timer(TimerCallback, new AutoResetEvent(false), 2000, 2000);
     }
+
+    private async void TimerCallback(object? stateInfo)
+    {
+        _priceModel = await PriceService.GetPrice();
+        StateHasChanged();
+    }
+
 }
