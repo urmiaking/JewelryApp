@@ -16,5 +16,6 @@
 
 	<ItemGroup>
 	  <Folder Include="AppModels\" />
+	  <Folder Include="ViewModels\" />
 	</ItemGroup>
 </Project>

@@ -34,7 +34,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var priceModel = await PriceService.GetPriceModel();
+        var priceModel = await PriceService.GetPrice();
 
         if (priceModel is not null)
         {

@@ -9,13 +9,11 @@ namespace JewelryApp.Api.Controllers;
 [ApiController]
 public class PriceController : ControllerBase
 {
-    private readonly AppDbContext _context;
-    private readonly IPriceRepository _priceRepository;
+    private readonly IApiPrice _apiPrice;
 
-    public PriceController(AppDbContext context, IPriceRepository priceRepository)
+    public PriceController(IApiPrice apiPrice)
     {
-        _context = context;
-        _priceRepository = priceRepository;
+        _apiPrice = apiPrice;
     }
 
     [HttpGet]
@@ -25,7 +23,7 @@ public class PriceController : ControllerBase
         {
             var result = new PriceModel
             {
-                Price = await _priceRepository.GetGramPrice()
+                Price = await _apiPrice.GetGramPrice()
             };
 
             return Ok(result);

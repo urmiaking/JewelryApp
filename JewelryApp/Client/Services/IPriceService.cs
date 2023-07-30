@@ -1,8 +1,8 @@
-﻿using JewelryApp.Models.Dtos;
+﻿using JewelryApp.Models.AppModels;
 
 namespace JewelryApp.Client.Services;
 
 public interface IPriceService
 {
-    public Task<PriceModel?> GetPriceModel();
+    public Task<PriceModel?> GetPrice();
 }
