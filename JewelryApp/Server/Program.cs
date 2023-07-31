@@ -26,15 +26,10 @@ builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSet
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
-builder.Services.AddHttpClient<IApiPrice, ApiPrice>();
-builder.Services.AddScoped<IPriceRepository, PriceRepository>();
 builder.Services.AddScoped<IBarcodeRepository, BarcodeRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IRepository<RefreshToken>, RefreshTokenRepository>();
-builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
-builder.Services.AddScoped<IRepository<Invoice>, InvoiceRepository>();
-builder.Services.AddScoped<IRepository<InvoiceProduct>, InvoiceProductRepository>();
 
 builder.Services.AddCustomIdentity();
 builder.Services.AddCustomAuthentication(builder.Configuration);

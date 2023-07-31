@@ -50,11 +50,11 @@ public class PriceService : IPriceService
                 GramCoin = double.Parse(gramCoinTag.InnerHtml.Replace(",", "")),
             };
 
-
             return priceModel;
         }
-        catch
+        catch (Exception ex)
         {
+            Console.WriteLine(ex.Message);
             return null;
         }
     }
