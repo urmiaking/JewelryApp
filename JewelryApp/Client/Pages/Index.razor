@@ -1,59 +1,146 @@
 ﻿@page "/"
-@using JewelryApp.Models.AppModels
 
-@inject IPriceService PriceService
+@inject HttpClient HttpClient
+@inject ISnackbar SnackBar
 
-@if (_priceModel is null)
-{
-
-}
-else
+@if (_priceDto is null)
 {
     <MudGrid>
-        <MudItem xs="12" sm="4" md="2">
+        <MudItem xs="12" sm="6" md="3">
             <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: #00a65a">
-                <MudText Typo="Typo.h6" Class="text-white">گرم 18 عیار</MudText>
-                <MudText Typo="Typo.h4" Align="Align.Left" Class="mt-5 text-white">@(_priceModel!.Gold18K)</MudText>
+                <MudSkeleton Width="30%" Height="42px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="50%" Height="52px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
-        <MudItem xs="12" sm="4" md="2">
+        <MudItem xs="12" sm="6" md="3">
             <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: #0073b7">
-                <MudText Typo="Typo.h6" Class="text-white">گرم 24 عیار</MudText>
-                <MudText Typo="Typo.h4" Align="Align.Left" Class="mt-5 text-white">@(_priceModel!.Gold24K)</MudText>
+                <MudSkeleton Width="30%" Height="42px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="50%" Height="52px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
-        <MudItem xs="12" sm="4" md="2">
-            <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: #dd4b39 !important">
-                <MudText Typo="Typo.h6" Class="text-white">انس طلا</MudText>
-                <MudText Typo="Typo.h4" Align="Align.Left" Class="mt-5 text-white">@(_priceModel!.GoldOunce)</MudText>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: purple">
+                <MudSkeleton Width="30%" Height="42px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="50%" Height="52px;" Animation="Animation.Wave" />
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: green">
+                <MudSkeleton Width="30%" Height="42px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="50%" Height="52px;" Animation="Animation.Wave" />
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: chocolate">
+                <MudSkeleton Width="30%" Height="42px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="50%" Height="52px;" Animation="Animation.Wave" />
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: darkorange">
+                <MudSkeleton Width="30%" Height="42px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="50%" Height="52px;" Animation="Animation.Wave" />
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: darkturquoise">
+                <MudSkeleton Width="30%" Height="42px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="50%" Height="52px;" Animation="Animation.Wave" />
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: darkgoldenrod">
+                <MudSkeleton Width="30%" Height="42px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="50%" Height="52px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
     </MudGrid>
 }
+else
+{
+    <MudGrid>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: #00a65a">
+                <MudText Typo="Typo.h6" Class="text-white">گرم 18 عیار</MudText>
+                <MudText Typo="Typo.h4" Align="Align.Left" Class="mt-5 text-white">@(_priceDto!.Gold18K.ToString("N0"))</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: #0073b7">
+                <MudText Typo="Typo.h6" Class="text-white">گرم 24 عیار</MudText>
+                <MudText Typo="Typo.h4" Align="Align.Left" Class="mt-5 text-white">@(_priceDto!.Gold24K.ToString("N0"))</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: purple">
+                <MudText Typo="Typo.h6" Class="text-white">انس طلا</MudText>
+                <MudText Typo="Typo.h4" Align="Align.Left" Class="mt-5 text-white">@(_priceDto!.GoldOunce)</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: green">
+                <MudText Typo="Typo.h6" Class="text-white">سکه گرمی</MudText>
+                <MudText Typo="Typo.h4" Align="Align.Left" Class="mt-5 text-white">@(_priceDto!.GramCoin.ToString("N0"))</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: chocolate">
+                <MudText Typo="Typo.h6" Class="text-white">سکه جدید</MudText>
+                <MudText Typo="Typo.h4" Align="Align.Left" Class="mt-5 text-white">@(_priceDto!.NewCoin.ToString("N0"))</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: darkorange">
+                <MudText Typo="Typo.h6" Class="text-white">سکه قدیم</MudText>
+                <MudText Typo="Typo.h4" Align="Align.Left" Class="mt-5 text-white">@(_priceDto!.OldCoin.ToString("N0"))</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: darkturquoise">
+                <MudText Typo="Typo.h6" Class="text-white">نیم سکه</MudText>
+                <MudText Typo="Typo.h4" Align="Align.Left" Class="mt-5 text-white">@(_priceDto!.HalfCoin.ToString("N0"))</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 120px; background-color: darkgoldenrod">
+                <MudText Typo="Typo.h6" Class="text-white">ربع سکه</MudText>
+                <MudText Typo="Typo.h4" Align="Align.Left" Class="mt-5 text-white">@(_priceDto!.QuarterCoin.ToString("N0"))</MudText>
+            </MudPaper>
+        </MudItem>
+        </MudGrid>
+}
 
-<ProductList Class="mt-5" Count="5" Filterable="false"></ProductList>
+<ProductList Class="mt-5" Filterable="false"></ProductList>
 <InvoicesTable Class="mt-5" Count="5" IsInInvoicePage="false" Filterable="false"></InvoicesTable>
 
 @code
 {
-    private PriceModel? _priceModel;
-    Timer _timer = default!;
+    private PriceDto? _priceDto;
+    private Timer? _timer;
 
     protected override async Task OnInitializedAsync()
     {
-        _priceModel = await PriceService.GetPrice();
-        await base.OnInitializedAsync();
+        await Task.Delay(5000);
+        await RefreshHeaderData();
+
+        _timer = new Timer(async (_) => await RefreshHeaderData(), null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
     }
 
-    protected override void OnInitialized()
+    private async Task RefreshHeaderData()
     {
-        //_timer = new Timer(TimerCallback, new AutoResetEvent(false), 2000, 2000);
+        try
+        {
+            _priceDto = await HttpClient.GetFromJsonAsync<PriceDto>("api/Price");
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            SnackBar.Add(ex.Message, Severity.Error);
+        }
     }
 
-    private async void TimerCallback(object? stateInfo)
+    public void Dispose()
     {
-        
-        StateHasChanged();
+        _timer?.Dispose();
     }
-
 }

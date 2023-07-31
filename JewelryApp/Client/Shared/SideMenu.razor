@@ -1,12 +1,26 @@
-﻿<MudDrawer @bind-Open="@DrawerOpen" ClipMode="DrawerClipMode.Always" Elevation="5">
+﻿@using System.Timers
+@using System.Globalization
+@using System.Security.Claims
+@using JewelryApp.Common.DateFunctions
+
+<MudDrawer @bind-Open="@DrawerOpen" ClipMode="DrawerClipMode.Always" Elevation="5">
     <MudNavMenu Color="Color.Primary">
         <MudSpacer></MudSpacer>
-        <MudContainer Class="mt-5 mb-5 text-center">
-            <MudBadge Color="Color.Success" Overlap="true" Bordered="true">
-                <MudAvatar Rounded="true" Size="Size.Large" Elevation="5">
-                    <MudImage Src="img/logo.png"></MudImage>
-                </MudAvatar>
-            </MudBadge>
+        <MudContainer Class="mt-5 mb-5">
+            <MudStack Row>
+                <MudBadge Color="Color.Success" Overlap="true" Bordered="true">
+                    <MudAvatar Rounded="true" Size="Size.Large" Elevation="5">
+                        <MudImage Src="img/avatar.png"></MudImage>
+                    </MudAvatar>
+                </MudBadge>
+                <MudStack AlignItems="AlignItems.Start" Spacing="0">
+                    <MudText Typo="Typo.h6">کاربر @_username</MudText>
+                    
+                    <MudText Class="mt-2">@_currentDateTime</MudText>
+                </MudStack>
+                
+            </MudStack>
+            
         </MudContainer>
         <MudDivider />
         <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">داشبورد</MudNavLink>
@@ -22,8 +36,41 @@
     </MudNavMenu>
 </MudDrawer>
 
-@code
-{
+
+@code {
     [Parameter]
     public bool DrawerOpen { get; set; } = false;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+    private Timer? _timer;
+    private string? _currentDateTime;
+    private string? _username;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _timer = new Timer(1000);
+        _timer.Elapsed += TimerElapsed;
+        _timer.Start();
+
+        _currentDateTime = DateTime.Now.ToShamsiDateTimeString();
+
+        var authenticationState = await AuthenticationStateTask;
+        var user = authenticationState.User;
+        
+        _username = user.FindFirstValue(ClaimTypes.Name);
+        await base.OnInitializedAsync();
+    }
+
+    private void TimerElapsed(object? sender, ElapsedEventArgs e)
+    {;
+        _currentDateTime = DateTime.Now.ToShamsiDateTimeString();
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+    }
 }

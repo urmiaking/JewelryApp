@@ -17,8 +17,4 @@
 		<ProjectReference Include="..\JewelryApp.Models\JewelryApp.Models.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="AppServices\" />
-	</ItemGroup>
-
 </Project>

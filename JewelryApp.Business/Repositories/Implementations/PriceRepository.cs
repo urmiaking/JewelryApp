@@ -1,19 +1,19 @@
-﻿using System.Net.Http.Json;
-using HtmlAgilityPack;
-using JewelryApp.Models.AppModels;
+﻿using HtmlAgilityPack;
+using JewelryApp.Business.Repositories.Interfaces;
+using JewelryApp.Models.Dtos;
 
-namespace JewelryApp.Client.Services;
+namespace JewelryApp.Business.Repositories.Implementations;
 
-public class PriceService : IPriceService
+public class PriceRepository : IPriceRepository
 {
     private readonly HttpClient _httpClient;
 
-    public PriceService(HttpClient httpClient)
+    public PriceRepository(HttpClient httpClient)
     {
         _httpClient = httpClient;
     }
 
-    public async Task<PriceModel?> GetPrice()
+    public async Task<PriceDto> GetPriceAsync()
     {
         try
         {
@@ -37,8 +37,8 @@ public class PriceService : IPriceService
             var gramCoinTag = htmlDocument.GetElementbyId("sekke-grm");
 
             _httpClient.Dispose();
-            
-            var priceModel = new PriceModel
+
+            var priceModel = new PriceDto
             {
                 Gold18K = double.Parse(gold18KTag.InnerHtml.Replace(",", "")),
                 Gold24K = double.Parse(gold24KTag.InnerHtml.Replace(",", "")),
@@ -58,5 +58,4 @@ public class PriceService : IPriceService
             return null;
         }
     }
-
 }

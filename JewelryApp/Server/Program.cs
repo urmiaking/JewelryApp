@@ -29,7 +29,12 @@ builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddScoped<IBarcodeRepository, BarcodeRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+builder.Services.AddHttpClient<IPriceRepository, PriceRepository>();
 builder.Services.AddScoped<IRepository<RefreshToken>, RefreshTokenRepository>();
+builder.Services.AddScoped<IRepository<Invoice>, InvoiceRepository>();
+builder.Services.AddScoped<IRepository<InvoiceProduct>, InvoiceProductRepository>();
+builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 builder.Services.AddCustomIdentity();
 builder.Services.AddCustomAuthentication(builder.Configuration);

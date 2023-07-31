@@ -1,7 +1,7 @@
 ﻿@using JewelryApp.Models.Dtos
 @using JewelryApp.Common.Enums
 
-@inject IProductService ProductService
+@inject HttpClient Http
 
 <MudDialog>
     <DialogContent>
@@ -45,9 +45,9 @@
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     [Parameter]
-    public AddProductDto Model { get; set; } = new();
+    public SetProductDto Model { get; set; } = new();
 
-    private bool _processing = false;
+    private bool _processing;
     
     void Cancel() => MudDialog.Cancel();
 
@@ -59,15 +59,15 @@
     async Task Submit()
     {
         _processing = true;
-        var succeeded = await ProductService.AddOrEditProductAsync(Model);
 
-        if (!succeeded)
-        {
-            MudDialog.Cancel();
-        }
+        var httpResponseMessage = await Http.PostAsJsonAsync("api/Products", Model);
+
+        _processing = false;
+
+        if (!httpResponseMessage.IsSuccessStatusCode)
+            MudDialog.Close(DialogResult.Ok(false));
 
         MudDialog.Close(DialogResult.Ok(true));
-        _processing = false;
     }
 
 }

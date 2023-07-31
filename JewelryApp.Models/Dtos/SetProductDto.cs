@@ -4,7 +4,7 @@ using System.Xml.Linq;
 
 namespace JewelryApp.Models.Dtos;
 
-public class AddProductDto
+public class SetProductDto
 {
     public int Id { get; set; } = 0;
 

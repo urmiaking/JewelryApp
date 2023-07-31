@@ -1,6 +1,6 @@
-﻿namespace JewelryApp.Models.AppModels;
+﻿namespace JewelryApp.Models.Dtos;
 
-public class PriceModel
+public class PriceDto
 {
     public double Gold18K { get; set; }
     public double Gold24K { get; set; }

@@ -14,11 +14,11 @@ public class ProductService : IProductService
         _httpClient = httpClient;
     }
 
-    public async Task<IEnumerable<ProductTableItemDto>?> GetProductsAsync(int count = 0)
+    public async Task<IEnumerable<ProductTableItemDto>?> GetProductsAsync()
     {
         try
         {
-            return await _httpClient.GetFromJsonAsync<IEnumerable<ProductTableItemDto>>($"/api/Products/GetProducts?count={count}");
+            return await _httpClient.GetFromJsonAsync<IEnumerable<ProductTableItemDto>>("/api/Products");
         }
         catch
         {
@@ -26,13 +26,13 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task<bool> AddOrEditProductAsync(AddProductDto productDto)
+    public async Task<bool> AddOrEditProductAsync(SetProductDto productDto)
     {
         try
         {
             var content = new StringContent(JsonConvert.SerializeObject(productDto), Encoding.UTF8, "application/json");
 
-            var result = await _httpClient.PostAsync($"/api/Products/AddOrEditProduct", content);
+            var result = await _httpClient.PostAsync($"/api/Products", content);
 
             return result.IsSuccessStatusCode;
         }
@@ -46,7 +46,7 @@ public class ProductService : IProductService
     {
         try
         {
-            var result = await _httpClient.DeleteAsync($"/api/Products/Delete/{productId}");
+            var result = await _httpClient.DeleteAsync($"/api/Products/{productId}");
 
             return result.IsSuccessStatusCode;
         }

@@ -36,24 +36,18 @@ public static class ShamsiDateTime
 
         return persianDateString;
     }
-    public static DateTime ToGregorianDateTime(this string shamsiDateTime)
+
+    public static string ToShamsiDateTimeString(this DateTime dateTime)
     {
-        try
-        {
-            var persianCalendar = new PersianCalendar();
+        // Get the Persian calendar
+        var persianCalendar = new PersianCalendar();
 
-            var shamsiDateParts = shamsiDateTime.Split('/');
-            var year = int.Parse(shamsiDateParts[0]);
-            var month = int.Parse(shamsiDateParts[1]);
-            var day = int.Parse(shamsiDateParts[2]);
+        // Convert the current date and time to a Persian date
+        var persianYear = persianCalendar.GetYear(dateTime);
+        var persianMonth = persianCalendar.GetMonth(dateTime);
+        var persianDay = persianCalendar.GetDayOfMonth(dateTime);
+        var persianDateString = $"{dateTime.Hour:00}:{dateTime.Minute:00}:{dateTime.Second:00} {persianYear:D4}/{persianMonth:D2}/{persianDay:D2} ";
 
-            var gregorianDateTime = persianCalendar.ToDateTime(year, month, day, 0, 0, 0, 0);
-            return gregorianDateTime;
-        }
-        catch
-        {
-            return DateTime.MinValue;
-        }
-        
+        return persianDateString;
     }
 }

@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using JewelryApp.Business.AppServices;
 using JewelryApp.Business.Repositories.Interfaces;
+using JewelryApp.Common.Enums;
 using JewelryApp.Data;
 using JewelryApp.Data.Models;
 using JewelryApp.Models.Dtos;
@@ -9,90 +11,40 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Api.Controllers;
 
-[Route("api/[controller]/[action]")]
+[Route("api/[controller]")]
 [ApiController]
 public class ProductsController : ControllerBase
 {
-    private readonly IMapper _mapper;
-    private readonly IBarcodeRepository _barcodeRepository;
-    private readonly IRepository<Product> _productRepository;
-    private readonly IRepository<InvoiceProduct> _invoiceProductRepository;
+    private readonly IProductService _productService;
 
-    public ProductsController(IRepository<InvoiceProduct> invoiceProductRepository, IRepository<Product> productRepository, IMapper mapper, IBarcodeRepository barcodeRepository)
+    public ProductsController(IProductService productService)
     {
-        _mapper = mapper;
-        _productRepository = productRepository;
-        _invoiceProductRepository = invoiceProductRepository;
-        _barcodeRepository = barcodeRepository;
+        _productService = productService;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetProducts(int count = 0)
-    {
-        var query = _productRepository.Entities.OrderByDescending(a => a.AddedDateTime);
-
-        query = count == 0 ? query : query.Take(count).OrderByDescending(a => a.AddedDateTime);
-
-        var products = _mapper.Map<List<Product>, List<ProductTableItemDto>>((await query.ToListAsync()));
-
-        return Ok(products);
-    }
+    public async Task<IActionResult> Get()
+        => Ok(await _productService.GetProductsAsync());
 
     [HttpPost]
-    public async Task<IActionResult> AddOrEditProduct(AddProductDto productDto, CancellationToken cancellationToken)
-    {
-        var productModel = _mapper.Map<AddProductDto, Product>(productDto);
-
-        // Add
-        if (productDto.Id == 0)
-        {
-            productModel.AddedDateTime = DateTime.Now;
-            productModel.BarcodeText = await _barcodeRepository.GetBarcodeAsync(productModel);
-            
-            await _productRepository.AddAsync(productModel, cancellationToken);
-        }
-        // Update
-        else
-        {
-            var productDb = await _productRepository.GetByIdAsync(cancellationToken, productDto.Id);
-
-            if (productDb is not null)
-            {
-                productDb.ProductType = productModel.ProductType;
-                productDb.Caret = productModel.Caret;
-                productDb.Name = productModel.Name;
-                productDb.Wage = productModel.Wage;
-                productDb.Weight = productModel.Weight;
-
-                await _productRepository.UpdateAsync(productDb, cancellationToken);
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
-
-        return Ok();
-    }
+    public async Task<IActionResult> AddOrEditProduct(SetProductDto productDto)
+        => Ok(await _productService.SetProductAsync(productDto));
+    
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(CancellationToken cancellationToken, int id = 0)
     {
         if (id == 0)
-        {
             return BadRequest();
-        }
 
-        var isInInvoice = await _invoiceProductRepository.TableNoTracking.AnyAsync(x => x.ProductId == id);
+        var deleteResult = await _productService.DeleteProductAsync(id, cancellationToken);
 
-        if (isInInvoice)
+        return deleteResult switch
         {
-            return BadRequest();
-        }
-
-        await _productRepository.DeleteAsync(new Product { Id = id }, cancellationToken);
-
-        return Ok();
+            DeleteResult.CanNotDelete => ValidationProblem(),
+            DeleteResult.IsNotAvailable => BadRequest(),
+            _ => Ok(deleteResult)
+        };
     }
 }
 

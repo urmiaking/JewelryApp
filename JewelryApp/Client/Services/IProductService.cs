@@ -4,9 +4,9 @@ namespace JewelryApp.Client.Services;
 
 public interface IProductService
 {
-    Task<IEnumerable<ProductTableItemDto>?> GetProductsAsync(int count = 0);
+    Task<IEnumerable<ProductTableItemDto>?> GetProductsAsync();
 
-    Task<bool> AddOrEditProductAsync(AddProductDto productDto);
+    Task<bool> AddOrEditProductAsync(SetProductDto productDto);
 
     Task<bool> DeleteProductAsync(int productId);
 }

@@ -15,7 +15,7 @@
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Style="max-width: 200px;" Class="mt-0"></MudTextField>
         <MudSpacer />
 
-        <MudButton Color="Color.Primary" OnClick="@((e) => OpenAddProductDialog(fullScreen, "افزودن جنس"))"
+        <MudButton Color="Color.Primary" OnClick="@((e) => OpenAddProductDialog(_dialogOptions, "افزودن جنس"))"
                    EndIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled">افزودن</MudButton>
 
     </ToolBarContent>
@@ -38,7 +38,7 @@
         <MudTd DataLabel="عملیات">
             <MudButton Size="@Size.Small" Variant="@Variant.Filled" EndIcon="@Icons.Material.Filled.Print"
                        Color="@Color.Primary">چاپ بارکد</MudButton>
-            <MudButton OnClick="@((e) => OpenDeleteProductDialog(fullScreen, context.Id))" Size="@Size.Small" Variant="@Variant.Filled" EndIcon="@Icons.Material.Filled.Delete"
+            <MudButton OnClick="@((e) => OpenDeleteProductDialog(_dialogOptions, context.Id))" Size="@Size.Small" Variant="@Variant.Filled" EndIcon="@Icons.Material.Filled.Delete"
                        Color="@Color.Error">حذف</MudButton>
         </MudTd>
     </RowTemplate>
@@ -149,9 +149,6 @@
     public string? Class { get; set; }
 
     [Parameter]
-    public int Count { get; set; } = 0;
-
-    [Parameter]
     public bool Filterable { get; set; }
 
     private IEnumerable<ProductTableItemDto>? _products;
@@ -163,7 +160,7 @@
         await base.OnParametersSetAsync();
     }
 
-    DialogOptions fullScreen = new DialogOptions() { CloseButton = true, FullWidth = true, FullScreen = true };
+    DialogOptions _dialogOptions = new() { CloseButton = true, FullWidth = true, FullScreen = false };
 
     private async Task OpenAddProductDialog(DialogOptions options, string dialogTitle)
     {
@@ -172,21 +169,28 @@
 
         if (!result.Canceled)
         {
-            Snackbar.Add("جنس با موفقیت افزوده شد", Severity.Success);
-            await table.ReloadServerData();
+            if ((bool)result.Data == true)
+            {
+                Snackbar.Add("جنس با موفقیت افزوده شد", Severity.Success);
+                await table.ReloadServerData();
+            }
+            else
+            {
+                Snackbar.Add("افزودن جنس با خطا مواجه شد", Severity.Error);
+            }
         }
     }
 
     private async Task Refresh()
     {
-        _products = await Product.GetProductsAsync(Count);
+        _products = await Product.GetProductsAsync();
     }
 
     private async Task CommitItemAsync(object elemnt)
     {
         var product = elemnt as ProductTableItemDto;
 
-        var productDto = new AddProductDto()
+        var productDto = new SetProductDto()
             {
                 Id = product.Id,
                 Name = product.Name,

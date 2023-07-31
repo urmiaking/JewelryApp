@@ -9,7 +9,7 @@ public class MappingProfile : Profile
 	public MappingProfile()
 	{
         CreateMap<Product, ProductDto>().ReverseMap();
-        CreateMap<Product, AddProductDto>().ReverseMap();
+        CreateMap<Product, SetProductDto>().ReverseMap();
         CreateMap<ProductDto, InvoiceProduct>().ReverseMap();
         CreateMap<Product, ProductTableItemDto>().ReverseMap();
         CreateProjection<RefreshToken, RefreshTokenDto>();
