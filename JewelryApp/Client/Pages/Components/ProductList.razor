@@ -92,10 +92,7 @@
 
     private int totalItems;
     private string searchString = null;
-
-    /// <summary>
-    /// Here we simulate getting the paged, filtered and ordered data from the server
-    /// </summary>
+    
     private async Task<TableData<ProductTableItemDto>> ServerReload(TableState state)
     {
         await LoadData();
@@ -203,7 +200,7 @@
 
         if (httpResponseMessage.IsSuccessStatusCode)
         {
-            Snackbar.Add("جنس با موفقیت ویرایش شد" + IsMobile, Severity.Success);
+            Snackbar.Add("جنس با موفقیت ویرایش شد", Severity.Success);
         }
         else
         {
@@ -225,8 +222,16 @@
 
         if (!result.Canceled)
         {
-            Snackbar.Add("جنس با موفقیت حذف شد", Severity.Success);
-            await table.ReloadServerData();
+            if ((bool)result.Data == true)
+            {
+                Snackbar.Add("جنس با موفقیت حذف شد", Severity.Success);
+                await table.ReloadServerData();
+            }
+            else
+            {
+                Snackbar.Add("جنس مورد نظر حذف نشد", Severity.Success);
+            }
+            
         }
     }
 }

@@ -13,9 +13,7 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
-builder.Services.AddScoped<ISettingsService, SettingsService>();
 builder.Services.AddMudServices();
 builder.Services.AddBlazoredLocalStorage();
 

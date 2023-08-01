@@ -22,31 +22,22 @@ public class SettingsController : ControllerBase
         _userManager = userManager;
     }
 
-    [HttpPost]
+    [HttpPut]
     [Route("/changepassword")]
     public async Task<IActionResult> ChangePassword(ChangePasswordDto passwordDto)
     {
-        if (passwordDto is null)
-        {
-            return BadRequest();
-        }
-
         var userName = User.Identity!.Name;
 
         var user = await _context.Users.FirstOrDefaultAsync(a => a.UserName == userName);
 
         if (user is null)
-        {
             return BadRequest();
-        }
 
         var result = await _userManager.ChangePasswordAsync(user, passwordDto.OldPassword, passwordDto.NewPassword);
 
         if (result.Succeeded)
-        {
             return Ok();
-        }
-
+        
         return BadRequest();
     }
 }

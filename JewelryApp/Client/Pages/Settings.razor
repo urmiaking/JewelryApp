@@ -1,8 +1,7 @@
 ﻿@page "/settings"
+@inherits UserComponentBase
 
 @inject ISnackbar Snackbar
-@inject ISettingsService SettingsService
-@inject NavigationManager NavigationManager
 
 <MudGrid>
 
@@ -43,13 +42,11 @@
         await base.OnInitializedAsync();
     }
     
-
-
     async Task OnPasswordChangeSubmit()
     {
-        var result = await SettingsService.ChangePasswordAsync(PasswordModel);
+        var httpResponseMessage = await AuthorizedHttpClient.PutAsJsonAsync("/changepassword", PasswordModel);
 
-        if (result)
+        if (httpResponseMessage.IsSuccessStatusCode)
         {
             Snackbar.Add("رمز عبور با موفقیت تغییر داده شد! لطفا مجددا با رمز جدید خود وارد شوید", Severity.Success);
             NavigationManager.NavigateTo("/logout");
