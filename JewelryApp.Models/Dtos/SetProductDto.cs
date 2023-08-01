@@ -25,4 +25,6 @@ public class SetProductDto
     [Display(Name = "اجرت")]
     [Required(ErrorMessage = "{0} را وارد کنید")]
     public double Wage { get; set; }
+
+    public string BarcodeText { get; set; } = string.Empty;
 }

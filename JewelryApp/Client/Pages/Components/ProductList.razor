@@ -1,10 +1,10 @@
 ﻿@using JewelryApp.Models.Dtos
 @using JewelryApp.Common.Enums
 
+@inherits UserComponentBase
+
 @inject ISnackbar Snackbar
 @inject IDialogService Dialog
-@inject IProductService Product
-
 
 <MudTable Class="@Class" ServerData="@(new Func<TableState, Task<TableData<ProductTableItemDto>>>(ServerReload))"
           Hover="true" @ref="table" RowEditCommit="async e => await CommitItemAsync(e)">
@@ -98,9 +98,8 @@
     /// </summary>
     private async Task<TableData<ProductTableItemDto>> ServerReload(TableState state)
     {
-        var data = await Product.GetProductsAsync();
-        await Task.Delay(300);
-        data = data.Where(product =>
+        await LoadData();
+        _products = _products.Where(product =>
         {
             if (string.IsNullOrWhiteSpace(searchString))
                 return true;
@@ -112,30 +111,30 @@
                 return true;
             return false;
         }).ToArray();
-        totalItems = data.Count();
+        totalItems = _products.Count();
         switch (state.SortLabel)
         {
             case "barcodetext_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.BarcodeText);
+                _products = _products.OrderByDirection(state.SortDirection, o => o.BarcodeText);
                 break;
             case "name_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.Name);
+                _products = _products.OrderByDirection(state.SortDirection, o => o.Name);
                 break;
             case "weight_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.Weight);
+                _products = _products.OrderByDirection(state.SortDirection, o => o.Weight);
                 break;
             case "wage_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.Wage);
+                _products = _products.OrderByDirection(state.SortDirection, o => o.Wage);
                 break;
             case "productType_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.ProductType);
+                _products = _products.OrderByDirection(state.SortDirection, o => o.ProductType);
                 break;
             case "caret_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.Caret);
+                _products = _products.OrderByDirection(state.SortDirection, o => o.Caret);
                 break;
         }
 
-        pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        pagedData = _products.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
         return new TableData<ProductTableItemDto>() { TotalItems = totalItems, Items = pagedData };
     }
 
@@ -156,7 +155,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        await Refresh();
+        await LoadData();
         await base.OnParametersSetAsync();
     }
 
@@ -181,9 +180,9 @@
         }
     }
 
-    private async Task Refresh()
+    private async Task LoadData()
     {
-        _products = await Product.GetProductsAsync();
+        _products = await AuthorizedHttpClient.GetFromJsonAsync<IEnumerable<ProductTableItemDto>>("/api/Products");
     }
 
     private async Task CommitItemAsync(object elemnt)
@@ -197,17 +196,18 @@
                 Caret = product.Caret,
                 ProductType = product.ProductType,
                 Wage = product.Wage,
-                Weight = product.Weight
+                Weight = product.Weight,
+                BarcodeText = product.BarcodeText
             };
-        var success = await Product.AddOrEditProductAsync(productDto);
+        var httpResponseMessage = await AuthorizedHttpClient.PostAsJsonAsync($"/api/Products", productDto);
 
-        if (success)
+        if (httpResponseMessage.IsSuccessStatusCode)
         {
-            Snackbar.Add("جنس با موفقیت ویرایش شد", Severity.Success);
+            Snackbar.Add("جنس با موفقیت ویرایش شد" + IsMobile, Severity.Success);
         }
         else
         {
-            Snackbar.Add("خطا در ویرایش جنس، لطفا پارامترهای موردنیاز را پر کنید", Severity.Error);
+            Snackbar.Add("خطا در ویرایش جنس، لطفا مجددا امتحان کنید", Severity.Error);
         }
     }
 
