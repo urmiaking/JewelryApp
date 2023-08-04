@@ -8,13 +8,17 @@ using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 using System.Net.Http.Headers;
+using MudBlazor;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
-builder.Services.AddMudServices();
+builder.Services.AddMudServices(opt =>
+{
+    opt.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
+});
 builder.Services.AddBlazoredLocalStorage();
 
 builder.Services.AddScoped<AppAuthorizationMessageHandler>();

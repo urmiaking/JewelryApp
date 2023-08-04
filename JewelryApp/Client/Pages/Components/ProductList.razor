@@ -7,7 +7,7 @@
 @inject IDialogService Dialog
 
 <MudTable Class="@Class" ServerData="@(new Func<TableState, Task<TableData<ProductTableItemDto>>>(ServerReload))"
-          Hover="true" @ref="table" RowEditCommit="async e => await CommitItemAsync(e)">
+          Hover="true" @ref="table" RowEditCommit="async e => await CommitItemAsync(e)" Dense="true">
     <ToolBarContent>
         <MudText Typo="Typo.h6">لیست اجناس</MudText>
         <MudSpacer />
@@ -160,7 +160,7 @@
 
     private async Task OpenAddProductDialog(DialogOptions options, string dialogTitle)
     {
-        var dialog = await Dialog.ShowAsync<ProductDialog>(dialogTitle, options);
+        var dialog = await Dialog.ShowAsync<AddProductDialog>(dialogTitle, options);
         var result = await dialog.Result;
 
         if (!result.Canceled)
@@ -186,7 +186,7 @@
     {
         var product = elemnt as ProductTableItemDto;
 
-        var productDto = new SetProductDto()
+        var productDto = new SetProductDto
             {
                 Id = product.Id,
                 Name = product.Name,
@@ -210,12 +210,14 @@
 
     private async Task OpenDeleteProductDialog(DialogOptions options, int productId)
     {
-        var parameters = new DialogParameters<PromptDialog>();
-        parameters.Add(x => x.ContentText, "آیا مطمئن هستید؟ تنها اجناسی قابل حذف می باشند که در فاکتوری استفاده نشده باشند");
-        parameters.Add(x => x.ButtonText, "حذف");
-        parameters.Add(x => x.Color, Color.Error);
-        parameters.Add(x => x.EndIcon, Icons.Material.Filled.Delete);
-        parameters.Add(x => x.ProductId, productId);
+        var parameters = new DialogParameters<PromptDialog>
+        {
+            { x => x.ContentText, "آیا مطمئن هستید؟ تنها اجناسی قابل حذف می باشند که در فاکتوری استفاده نشده باشند" },
+            { x => x.ButtonText, "حذف" },
+            { x => x.Color, Color.Error },
+            { x => x.EndIcon, Icons.Material.Filled.Delete },
+            { x => x.EndpointUrl, $"/api/Products/{productId}"}
+        };
 
         var dialog = await Dialog.ShowAsync<PromptDialog>("حذف جنس", parameters, options);
         var result = await dialog.Result;

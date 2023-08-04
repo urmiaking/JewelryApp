@@ -1,0 +1,46 @@
+﻿@using JewelryApp.Common.DateFunctions
+@using System.Security.Claims
+@using System.Timers
+
+<MudStack AlignItems="AlignItems.Start" Spacing="0">
+    <MudText Typo="Typo.h6">کاربر @_username</MudText>
+                    
+    <MudText Class="mt-2">@_currentDateTime</MudText>
+</MudStack>
+
+@code
+{
+    private Timer? _timer;
+    private string? _currentDateTime;
+    private string? _username;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _timer = new Timer(1000);
+        _timer.Elapsed += TimerElapsed;
+        _timer.Start();
+
+        _currentDateTime = DateTime.Now.ToShamsiDateTimeString();
+
+        var authenticationState = await AuthenticationStateTask;
+        var user = authenticationState.User;
+
+        _username = user.FindFirstValue(ClaimTypes.Name);
+        await base.OnInitializedAsync();
+    }
+
+    private void TimerElapsed(object? sender, ElapsedEventArgs e)
+    {
+        ;
+        _currentDateTime = DateTime.Now.ToShamsiDateTimeString();
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+    }
+}

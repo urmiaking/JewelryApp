@@ -13,14 +13,8 @@
                         <MudImage Src="img/avatar.png"></MudImage>
                     </MudAvatar>
                 </MudBadge>
-                <MudStack AlignItems="AlignItems.Start" Spacing="0">
-                    <MudText Typo="Typo.h6">کاربر @_username</MudText>
-                    
-                    <MudText Class="mt-2">@_currentDateTime</MudText>
-                </MudStack>
-                
+                <Profile></Profile>
             </MudStack>
-            
         </MudContainer>
         <MudDivider />
         <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">داشبورد</MudNavLink>
@@ -28,7 +22,6 @@
         <MudNavGroup Title="فاکتورها" Expanded="false" Icon="@Icons.Material.Filled.AttachMoney">
             <MudNavLink Href="/invoices" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.ManageAccounts">مدیریت فاکتورها</MudNavLink>
             <MudDivider />
-
             <MudNavLink Href="/addoreditinvoice" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.ManageAccounts">افزودن فاکتور</MudNavLink>
         </MudNavGroup>
     </MudNavMenu>
@@ -36,39 +29,7 @@
 
 
 @code {
+
     [Parameter]
     public bool DrawerOpen { get; set; } = false;
-
-    [CascadingParameter]
-    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
-
-    private Timer? _timer;
-    private string? _currentDateTime;
-    private string? _username;
-
-    protected override async Task OnInitializedAsync()
-    {
-        _timer = new Timer(1000);
-        _timer.Elapsed += TimerElapsed;
-        _timer.Start();
-
-        _currentDateTime = DateTime.Now.ToShamsiDateTimeString();
-
-        var authenticationState = await AuthenticationStateTask;
-        var user = authenticationState.User;
-        
-        _username = user.FindFirstValue(ClaimTypes.Name);
-        await base.OnInitializedAsync();
-    }
-
-    private void TimerElapsed(object? sender, ElapsedEventArgs e)
-    {;
-        _currentDateTime = DateTime.Now.ToShamsiDateTimeString();
-        InvokeAsync(StateHasChanged);
-    }
-
-    public void Dispose()
-    {
-        _timer?.Dispose();
-    }
 }

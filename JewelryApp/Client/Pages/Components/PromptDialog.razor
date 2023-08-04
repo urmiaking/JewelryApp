@@ -17,18 +17,18 @@
 
     [Parameter] public string ButtonText { get; set; } = string.Empty;
 
-    [Parameter] public int ProductId { get; set; }
+    [Parameter] public string EndpointUrl { get; set; } = default!;
 
     [Parameter] public Color Color { get; set; }
 
     [Parameter] public string EndIcon { get; set; } = string.Empty;
 
-    private bool _processing = false;
+    private bool _processing;
 
     async Task Submit()
     {
         _processing = true;
-        var httpResponseMessage = await AuthorizedHttpClient.DeleteAsync($"/api/Products/{ProductId}");
+        var httpResponseMessage = await AuthorizedHttpClient.DeleteAsync($"{EndpointUrl}");
         _processing = false;
 
         MudDialog.Close(!httpResponseMessage.IsSuccessStatusCode ? DialogResult.Ok(false) : DialogResult.Ok(true));

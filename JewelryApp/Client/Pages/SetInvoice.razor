@@ -1,0 +1,10 @@
+﻿@page "/invoices/add"
+@page "/invoices/edit/{id:int}"
+
+<h1>@Id</h1>
+
+@code
+{
+    [Parameter]
+    public int? Id { get; set; }
+}
