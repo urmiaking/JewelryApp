@@ -70,40 +70,22 @@ public partial class ProductList
 
     [Parameter]
     public bool Filterable { get; set; }
-
+    
     private IEnumerable<ProductTableItemDto>? _products;
 
-
-    protected override async Task OnParametersSetAsync()
-    {
-        await LoadData();
-        await base.OnParametersSetAsync();
-    }
 
     DialogOptions _dialogOptions = new() { CloseButton = true, FullWidth = true, FullScreen = false };
 
     private async Task OpenAddProductDialog(DialogOptions options, string dialogTitle)
     {
-        var dialog = await Dialog.ShowAsync<AddProductDialog>(dialogTitle, options);
-        var result = await dialog.Result;
-
-        if (!result.Canceled)
-        {
-            if ((bool)result.Data == true)
-            {
-                SnackBar.Add("جنس با موفقیت افزوده شد", Severity.Success);
-                await table.ReloadServerData();
-            }
-            else
-            {
-                SnackBar.Add("افزودن جنس با خطا مواجه شد", Severity.Error);
-            }
-        }
+        await Dialog.ShowAsync<AddProductDialog>(dialogTitle, options);
+        await table.ReloadServerData();
     }
 
     private async Task LoadData()
     {
-        _products = await AuthorizedHttpClient.GetFromJsonAsync<IEnumerable<ProductTableItemDto>>("/api/Products");
+        _products = await GetAsync<IEnumerable<ProductTableItemDto>>("/api/Products");
+        StateHasChanged();
     }
 
     private async Task CommitItemAsync(object elemnt)
@@ -120,16 +102,8 @@ public partial class ProductList
             Weight = product.Weight,
             BarcodeText = product.BarcodeText
         };
-        var httpResponseMessage = await AuthorizedHttpClient.PostAsJsonAsync($"/api/Products", productDto);
 
-        if (httpResponseMessage.IsSuccessStatusCode)
-        {
-            SnackBar.Add("جنس با موفقیت ویرایش شد", Severity.Success);
-        }
-        else
-        {
-            SnackBar.Add("خطا در ویرایش جنس، لطفا مجددا امتحان کنید", Severity.Error);
-        }
+        await PostAsync("/api/Products", productDto);
     }
 
     private async Task OpenDeleteProductDialog(DialogOptions options, int productId)
@@ -143,21 +117,8 @@ public partial class ProductList
             { x => x.EndpointUrl, $"/api/Products/{productId}"}
         };
 
-        var dialog = await Dialog.ShowAsync<PromptDialog>("حذف جنس", parameters, options);
-        var result = await dialog.Result;
-
-        if (!result.Canceled)
-        {
-            if ((bool)result.Data == true)
-            {
-                SnackBar.Add("جنس با موفقیت حذف شد", Severity.Success);
-                await table.ReloadServerData();
-            }
-            else
-            {
-                SnackBar.Add("جنس مورد نظر حذف نشد", Severity.Success);
-            }
-        }
+        await Dialog.ShowAsync<PromptDialog>("حذف جنس", parameters, options);
+        await LoadData();
     }
 }
 

@@ -20,7 +20,7 @@ public partial class InvoicesTable
 
     protected override async Task OnInitializedAsync()
     {
-        _invoices = await AuthorizedHttpClient.GetFromJsonAsync<IEnumerable<InvoiceTableItemDto>>($"/api/Invoices/GetInvoices");
+        _invoices = await GetAsync<IEnumerable<InvoiceTableItemDto>>("/api/Invoices/GetInvoices");
     }
 }
 

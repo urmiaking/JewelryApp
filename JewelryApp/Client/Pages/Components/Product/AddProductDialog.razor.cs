@@ -26,12 +26,9 @@ public partial class AddProductDialog
     {
         _processing = true;
 
-        var httpResponseMessage = await AuthorizedHttpClient.PostAsJsonAsync("api/Products", Model);
+        await PostAsync("api/Products", Model);
 
         _processing = false;
-
-        if (!httpResponseMessage.IsSuccessStatusCode)
-            MudDialog.Close(DialogResult.Ok(false));
 
         MudDialog.Close(DialogResult.Ok(true));
     }

@@ -7,29 +7,33 @@ namespace JewelryApp.Client.Pages.Components.Dashboard;
 
 public partial class DashboardHeader
 {
-
     private PriceDto? _priceDto;
 
     private Timer? _timer;
 
     [Parameter] public int RefreshInterval { get; set; } = 5;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await RefreshHeaderData();
-        _timer = new Timer(async (_) => await RefreshHeaderData(), null, TimeSpan.Zero, TimeSpan.FromSeconds(RefreshInterval));
+        if (firstRender)
+        {
+            await RefreshHeaderData();
+            _timer = new Timer(async (_) => await RefreshHeaderData(), null, TimeSpan.Zero, TimeSpan.FromSeconds(RefreshInterval));
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task RefreshHeaderData()
     {
         try
         {
-            _priceDto = await AuthorizedHttpClient.GetFromJsonAsync<PriceDto>("api/Price");
+            _priceDto = await GetAsync<PriceDto>("api/Price");
             StateHasChanged();
         }
-        catch (Exception ex)
+        catch
         {
-            SnackBar.Add(ex.Message, Severity.Error);
+            Dispose();
         }
     }
 

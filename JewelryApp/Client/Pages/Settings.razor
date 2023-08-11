@@ -1,8 +1,6 @@
 ﻿@page "/settings"
 @inherits UserComponentBase
 
-@inject ISnackbar Snackbar
-
 <MudGrid>
 
     <MudItem xs="12" sm="6">
@@ -28,32 +26,3 @@
         </MudGrid>
     </MudItem>
 </MudGrid>
-
-@code {
-    MudListItem selectedItem;
-    object selectedValue = 1;
-    Color _color = Color.Success;
-
-    [Parameter]
-    public ChangePasswordDto PasswordModel { get; set; } = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-    }
-    
-    async Task OnPasswordChangeSubmit()
-    {
-        var httpResponseMessage = await AuthorizedHttpClient.PutAsJsonAsync("/changepassword", PasswordModel);
-
-        if (httpResponseMessage.IsSuccessStatusCode)
-        {
-            Snackbar.Add("رمز عبور با موفقیت تغییر داده شد! لطفا مجددا با رمز جدید خود وارد شوید", Severity.Success);
-            NavigationManager.NavigateTo("/logout");
-        }
-        else
-        {
-            Snackbar.Add("تغییر رمز عبور با خطا مواجه شد! لطفا رمز خود را چک کنید", Severity.Error);
-        }
-    }
-}
