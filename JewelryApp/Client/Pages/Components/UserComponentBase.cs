@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace JewelryApp.Client.Pages.Components;
 
@@ -9,6 +10,7 @@ public abstract class UserComponentBase : ComponentBase
 
     [Inject] private IHttpClientFactory ClientFactory { get; set; } = default!;
     [Inject] protected NavigationManager NavigationManager { get; set; } = default!;
+    [Inject] protected ISnackbar SnackBar { get; set; } = default!;
 
     protected HttpClient AuthorizedHttpClient
     {

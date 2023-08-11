@@ -17,7 +17,7 @@ public class Product
     public double Weight { get; set; }
 
     [Display(Name = "اجرت")]
-    public double Wage { get; set; } // اجرت جواهر به تومان است، اجرت طلا به درصد است
+    public double Wage { get; set; }
 
     public string BarcodeText { get; set; }
 

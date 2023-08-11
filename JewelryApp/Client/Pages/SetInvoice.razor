@@ -1,10 +1,88 @@
 ﻿@page "/invoices/add"
 @page "/invoices/edit/{id:int}"
 
-<h1>@Id</h1>
+@inherits UserComponentBase
 
-@code
-{
-    [Parameter]
-    public int? Id { get; set; }
-}
+<EditForm Model="@InvoiceModel">
+    <DataAnnotationsValidator />
+
+    <MudCard>
+        <MudCardHeader Class="d-flex flex-column">
+            <MudText Typo="Typo.h5">@(Id is null ? "ثبت فاکتور جدید" : "ویرایش فاکتور")</MudText>
+        </MudCardHeader>
+            <MudDivider />
+            <MudCardContent>
+                <MudPaper Class="m-1 p-4" Elevation="5">
+                    <div class="d-flex flex-column align-items-center">
+                        <MudText Typo="Typo.h6" Class="mb-3">مشخصات فردی مشتری</MudText>
+                    </div>
+                    
+                    <MudGrid>
+                        <MudItem lg="2" md="3" sm="6" xs="12">
+                            <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="نام" HelperText="نام خریدار" Clearable
+                                          @bind-Value="InvoiceModel.BuyerFirstName" For="@(() => InvoiceModel.BuyerFirstName)"/>
+                        </MudItem>
+                        <MudItem lg="2" md="3" sm="6" xs="12">
+                            <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="نام خانوادگی" HelperText="نام خانوادگی خریدار" Clearable
+                                          @bind-Value="InvoiceModel.BuyerLastName" For="@(() => InvoiceModel.BuyerLastName)"/>
+                        </MudItem>
+                        <MudItem lg="2" md="3" sm="6" xs="12">
+                            <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Mask="@NationalCodeMask" Label="کد ملی" HelperText="کد ملی خریدار" Clearable
+                                          @bind-Value="InvoiceModel.BuyerNationalCode" For="@(() => InvoiceModel.BuyerNationalCode)"/>
+                        </MudItem>
+                        <MudItem lg="2" md="3" sm="6" xs="12">
+                            <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="شماره همراه" Mask="@PhoneNumberMask" HelperText="شماره همراه خریدار" Clearable
+                                          @bind-Value="InvoiceModel.BuyerPhoneNumber" For="@(() => InvoiceModel.BuyerPhoneNumber)"/>
+                        </MudItem>
+                        <MudItem lg="2" md="3" sm="6" xs="12">
+                            <MudDatePicker Margin="Margin.Dense" Color="Color.Secondary" Rounded="true" HelperText="تاریخ ثبت فاکتور" Label="تاریخ فاکتور" @bind-Date="InvoiceModel.BuyDateTime" For="@(() => InvoiceModel.BuyDateTime)" Variant="Variant.Outlined" />
+                        </MudItem>
+                    </MudGrid>
+                </MudPaper>
+                <MudPaper Class="m-1 p-3" Elevation="5">
+                    
+                    <div class="d-flex flex-grow-1 gap-4">
+                        <div class="flex-grow-1" style="width: 64px">
+                            <MudText Typo="Typo.h6" Class="mb-3">لیست اجناس</MudText>
+                        </div>
+                        <MudPaper Width="40px" Elevation="0">
+                            <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Info" OnClick="@((e) => OpenAddProductDialog(_dialogOptions, "افزودن جنس"))"></MudIconButton>
+                        </MudPaper>
+                    </div>
+                    <MudDivider/>
+                        <table class="table table-bordered table-responsive">
+                        <thead>
+                            <tr>
+                                <td>کد</td>
+                                <td>نوع</td>
+                                <td>شرح</td>
+                                <td>وزن</td>
+                                <td>اجرت</td>
+                                <td>سود</td>
+                                <td>عیار</td>
+                                <td>مالیات</td>
+                                <td>حذف</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var productItem in InvoiceModel.InvoiceProducts)
+                            {
+                                <tr>
+                                    <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
+                                    <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
+                                    <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
+                                    <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
+                                    <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
+                                    <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
+                                    <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
+                                    <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
+                                    <td><MudIconButton Icon="@Icons.Material.Filled.RemoveCircleOutline" Size="Size.Small" Color="Color.Error" OnClick="@(() => RemoveRow(productItem))"></MudIconButton></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </MudPaper>
+        </MudCardContent>
+    </MudCard>
+</EditForm>
+

@@ -1,21 +1,20 @@
-﻿@using JewelryApp.Common.DateFunctions
-@using System.Security.Claims
-@using System.Timers
+﻿using System.Security.Claims;
+using System.Timers;
+using JewelryApp.Common.DateFunctions;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using Timer = System.Timers.Timer;
 
-<MudStack AlignItems="AlignItems.Start" Spacing="0">
-    <MudText Typo="Typo.h6">کاربر @_username</MudText>
-                    
-    <MudText Class="mt-2">@_currentDateTime</MudText>
-</MudStack>
+namespace JewelryApp.Client.Shared;
 
-@code
+public partial class Profile
 {
     private Timer? _timer;
     private string? _currentDateTime;
     private string? _username;
 
     [CascadingParameter]
-    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {

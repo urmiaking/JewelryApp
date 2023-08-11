@@ -1,0 +1,81 @@
+﻿@inherits UserComponentBase
+
+<MudTable Class="@Class" ServerData="@(new Func<TableState, Task<TableData<ProductTableItemDto>>>(ServerReload))"
+          Hover="true" @ref="table" RowEditCommit="async e => await CommitItemAsync(e)" Dense="true">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">لیست اجناس</MudText>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="جستجو" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Style="max-width: 200px;" Class="mt-0"></MudTextField>
+        <MudSpacer />
+
+        <MudButton Color="Color.Primary" OnClick="@((e) => OpenAddProductDialog(_dialogOptions, "افزودن جنس"))"
+                   EndIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled">افزودن</MudButton>
+
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="barcodetext_field" T="ProductTableItemDto">کد جنس</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="name_field" T="ProductTableItemDto">نام جنس</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="weight_field" T="ProductTableItemDto">وزن</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="wage_field" T="ProductTableItemDto">اجرت ساخت</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="productType_field" T="ProductTableItemDto">نوع جنس</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="caret_field" T="ProductTableItemDto">عیار</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="ProductTableItemDto">عملیات</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="بارکد جنس">@context.BarcodeText</MudTd>
+        <MudTd DataLabel="نام جنس">@context.Name</MudTd>
+        <MudTd DataLabel="وزن">@context.Weight</MudTd>
+        <MudTd DataLabel="اجرت">@context.Wage</MudTd>
+        <MudTd DataLabel="نوع جنس">@context.ProductType.ToDisplay()</MudTd>
+        <MudTd DataLabel="عیار">@context.Caret.ToDisplay()</MudTd>
+        <MudTd DataLabel="عملیات">
+            <MudButton Size="@Size.Small" Variant="@Variant.Filled" EndIcon="@Icons.Material.Filled.Print"
+                       Color="@Color.Primary">چاپ بارکد</MudButton>
+            <MudButton OnClick="@((e) => OpenDeleteProductDialog(_dialogOptions, context.Id))" Size="@Size.Small" Variant="@Variant.Filled" EndIcon="@Icons.Material.Filled.Delete"
+                       Color="@Color.Error">حذف</MudButton>
+        </MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd DataLabel="بارکد جنس">@context.BarcodeText</MudTd>
+        <MudTd DataLabel="نام جنس">
+            <MudTextField @bind-Value="@context.Name" Required />
+        </MudTd>
+        <MudTd DataLabel="وزن">
+            <MudNumericField @bind-Value="@context.Weight" Required Min="0.01" />
+        </MudTd>
+        <MudTd DataLabel="اجرت">
+            <MudNumericField @bind-Value="@context.Wage" Required Min="1" />
+        </MudTd>
+        <MudTd DataLabel="نوع جنس">
+            <MudSelect T="ProductType" Label="نوع جنس" @bind-Value="context.ProductType" Variant="Variant.Text">
+                @foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
+                {
+                    <MudSelectItem T="ProductType" Value="productType">@productType.ToDisplay()</MudSelectItem>
+                }
+            </MudSelect>
+        </MudTd>
+        <MudTd DataLabel="عیار">
+            <MudSelect T="Caret" Label="عیار" @bind-Value="context.Caret" Variant="Variant.Text">
+                @foreach (Caret caret in Enum.GetValues(typeof(Caret)))
+                {
+                    <MudSelectItem T="Caret" Value="caret">@caret.ToDisplay()</MudSelectItem>
+                }
+            </MudSelect>
+        </MudTd>
+
+    </RowEditingTemplate>
+    <NoRecordsContent>
+        <MudText>هیچ جنسی یافت نشد</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>در حال بارگذاری</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudTablePager HorizontalAlignment="HorizontalAlignment.Center" />
+    </PagerContent>
+    <EditButtonContent Context="button">
+        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
+    </EditButtonContent>
+</MudTable>
+

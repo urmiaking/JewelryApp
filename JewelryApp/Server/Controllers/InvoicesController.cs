@@ -29,7 +29,7 @@ public class InvoicesController : ControllerBase
         {
             InvoiceId = a.Id,
             Index = i + 1,
-            BuyDate = a.BuyDateTime.ToShamsiDateString(),
+            BuyDate = a.BuyDateTime.HasValue ? a.BuyDateTime.Value.ToShamsiDateString() : "",
             BuyerName = a.BuyerFirstName + " " + a.BuyerLastName,
             BuyerPhone = a.BuyerPhoneNumber,
             ProductsCount = a.InvoiceProducts.Count,

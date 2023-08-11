@@ -1,8 +1,4 @@
-﻿@using System.Net.Http.Json
-@using JewelryApp.Models.Dtos
-@using JewelryApp.Common.Extensions
-
-@inject IInvoiceService InvoiceService
+﻿@inherits UserComponentBase
 
 <MudDataGrid Outlined="true" Class="@Class" Items="@_invoices?.Take(4)" Dense="true" Hover="true" Bordered="true" Filterable="Filterable">
     <ToolBarContent>
@@ -10,7 +6,7 @@
         <MudSpacer />
         @if (IsInInvoicePage)
         {
-            <MudButton Color="Color.Primary" EndIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled">افزودن</MudButton>
+            <MudButton Color="Color.Primary" EndIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Href="/invoices/add">افزودن</MudButton>
         }
         else
         {
@@ -37,23 +33,3 @@
         </TemplateColumn>
     </Columns>
 </MudDataGrid>
-@code {
-    [Parameter]
-    public string? Class { get; set; }
-
-    [Parameter]
-    public int Count { get; set; } = 0;
-
-    [Parameter]
-    public bool IsInInvoicePage { get; set; }
-
-    [Parameter]
-    public bool Filterable { get; set; }
-
-    private IEnumerable<InvoiceTableItemDto>? _invoices;
-
-    protected override async Task OnInitializedAsync()
-    {
-        _invoices = await InvoiceService.GetInvoicesAsync(Count);
-    }
-}

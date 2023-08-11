@@ -25,5 +25,5 @@ public class Invoice
     public List<InvoiceProduct> InvoiceProducts { get; set; }
 
     [Display(Name = "تاریخ فاکتور")]
-    public DateTime BuyDateTime { get; set; }
+    public DateTime? BuyDateTime { get; set; }
 }

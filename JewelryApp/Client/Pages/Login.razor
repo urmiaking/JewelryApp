@@ -1,9 +1,8 @@
 ﻿@page "/login"
 @layout LoginLayout
 @inherits UserComponentBase
-@inject ISnackbar Snackbar
 
-<EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+<EditForm Model="@_model" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
     <div class="center-grid">
         <MudItem xs="12" sm="7">
@@ -15,10 +14,10 @@
                     </div>
                     <MudCardContent>
                         <MudTextField Label="نام کاربری"
-                                      @bind-Value="model.UserName" For="@(() => model.UserName)" />
+                                      @bind-Value="_model.UserName" For="@(() => _model.UserName)" />
 
                         <MudTextField Label="رمز عبور" Class="mt-3"
-                                      @bind-Value="model.Password" For="@(() => model.Password)" InputType="InputType.Password" />
+                                      @bind-Value="_model.Password" For="@(() => _model.Password)" InputType="InputType.Password" />
                     </MudCardContent>
                     <MudCardActions Class="m-4">
                         <MudButton EndIcon="@Icons.Material.Filled.Login" ButtonType="ButtonType.Submit" Variant="Variant.Filled"
@@ -26,43 +25,6 @@
                     </MudCardActions>
                 </MudCard>
             </MudStack>
-            
         </MudItem>
     </div>
 </EditForm>
-
-
-
-@code {
-    LoginDto model = new LoginDto();
-    bool _success;
-
-    [Inject] private AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
-
-    private async Task OnValidSubmit(EditContext context)
-    {
-        var httpResponse = await UnauthorizedHttpClient.PostAsJsonAsync("login", model);
-
-        if (httpResponse.IsSuccessStatusCode)
-        {
-            Snackbar.Add("خوش آمدید!", Severity.Info);
-
-            var responseContent = await httpResponse.Content.ReadAsStringAsync();
-            var userToken = JsonSerializer.Deserialize<UserTokenDto>(responseContent, new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                });
-            if (userToken != null && AuthStateProvider is AppAuthStateProvider authStateProvider)
-            {
-                await authStateProvider.LoginAsync(userToken.Token, userToken.RefreshToken);
-
-                NavigationManager.NavigateTo("/");
-            }
-        }
-        else
-        {
-            Snackbar.Add("نام کاربری یا رمز عبور اشتباه است!", Severity.Error);
-        }
-    }
-
-}

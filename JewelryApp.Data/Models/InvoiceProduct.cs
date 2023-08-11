@@ -3,11 +3,11 @@
 public class InvoiceProduct
 {
     public int InvoiceId { get; set; }
-    public Invoice Invoice { get; set; }
+    public Invoice Invoice { get; set; } = new();
     public int ProductId { get; set; }
-    public Product Product { get; set; }
+    public Product Product { get; set; } = new();
     public int Count { get; set; }
-    public double Profit { get; set; } // سود (درصدی) هستش مثلا 0.09
+    public double Profit { get; set; }
 
     public double Tax { get; set; }
 
