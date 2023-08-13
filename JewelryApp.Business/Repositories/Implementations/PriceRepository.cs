@@ -1,16 +1,24 @@
-﻿using HtmlAgilityPack;
+﻿using AutoMapper;
+using HtmlAgilityPack;
 using JewelryApp.Business.Repositories.Interfaces;
+using JewelryApp.Data;
+using JewelryApp.Data.Models;
 using JewelryApp.Models.Dtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Business.Repositories.Implementations;
 
 public class PriceRepository : IPriceRepository
 {
     private readonly HttpClient _httpClient;
+    private readonly AppDbContext _context;
+    private readonly IMapper _mapper;
 
-    public PriceRepository(HttpClient httpClient)
+    public PriceRepository(HttpClient httpClient, AppDbContext context, IMapper mapper)
     {
         _httpClient = httpClient;
+        _context = context;
+        _mapper = mapper;
     }
 
     public async Task<PriceDto> GetPriceAsync()
@@ -57,5 +65,32 @@ public class PriceRepository : IPriceRepository
             Console.WriteLine(ex.Message);
             return null;
         }
+    }
+
+    public async Task AddPriceAsync(PriceDto priceDto)
+    {
+        var prevPrice = await _context.Prices.OrderByDescending(a => a.DateTime).FirstOrDefaultAsync();
+
+        var price = _mapper.Map<PriceDto, Price>(priceDto);
+
+        if (ArePricesIdentical(prevPrice, price))
+            return;
+
+        price.DateTime = DateTime.Now;
+
+        _context.Prices.Add(price);
+        await _context.SaveChangesAsync();
+    }
+
+    private static bool ArePricesIdentical(Price price1, Price price2)
+    {
+        return price1.Gold18K == price2.Gold18K &&
+               price1.Gold24K == price2.Gold24K &&
+               price1.GoldOunce == price2.GoldOunce &&
+               price1.OldCoin == price2.OldCoin &&
+               price1.NewCoin == price2.NewCoin &&
+               price1.HalfCoin == price2.HalfCoin &&
+               price1.QuarterCoin == price2.QuarterCoin &&
+               price1.GramCoin == price2.GramCoin;
     }
 }

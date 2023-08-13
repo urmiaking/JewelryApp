@@ -19,6 +19,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 	public DbSet<Product> Products { get; set; }
 	public DbSet<InvoiceProduct> InvoiceProducts { get; set; }
 	public DbSet<RefreshToken> RefreshTokens { get; set; }
+	public DbSet<Price> Prices { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
