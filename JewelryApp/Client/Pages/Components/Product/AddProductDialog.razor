@@ -2,6 +2,15 @@
 
 <MudDialog>
     <DialogContent>
+        @if (ValidationProblems != null)
+        {
+            <ul>
+                @foreach (var item in ValidationProblems.Errors)
+                {
+                    <li><strong>@item.Key:</strong> @string.Join("<br/>", item.Value)</li>
+                }
+            </ul>
+        }
         <EditForm Model="@Model" OnValidSubmit="OnValidSubmit">
             <DataAnnotationsValidator />
 

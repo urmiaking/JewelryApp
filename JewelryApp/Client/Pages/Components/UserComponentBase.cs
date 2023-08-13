@@ -124,8 +124,10 @@ public abstract class UserComponentBase : ComponentBase
             {
                 SnackBar.Add("خطا در ارسال اطلاعات", Severity.Error);
             }
-
-            SnackBar.Add("عملیات با موفقیت انجام شد", Severity.Success);
+            else
+            {
+                SnackBar.Add("عملیات با موفقیت انجام شد", Severity.Success);
+            }
         }
         catch (Exception)
         {
@@ -156,8 +158,10 @@ public abstract class UserComponentBase : ComponentBase
             {
                 SnackBar.Add("خطا در ارسال اطلاعات", Severity.Error);
             }
-
-            SnackBar.Add("عملیات با موفقیت انجام شد", Severity.Success);
+            else
+            {
+                SnackBar.Add("عملیات با موفقیت انجام شد", Severity.Success);
+            }
         }
         catch (Exception)
         {

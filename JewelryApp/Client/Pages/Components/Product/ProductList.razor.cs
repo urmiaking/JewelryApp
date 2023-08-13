@@ -31,27 +31,27 @@ public partial class ProductList
             if ($"{product.Weight} {product.Wage} {product.ProductType.ToDisplay()} {product.Caret.ToDisplay()}".Contains(searchString))
                 return true;
             return false;
-        }).ToArray();
+        }).ToList();
         totalItems = _products.Count();
         switch (state.SortLabel)
         {
             case "barcodetext_field":
-                _products = _products.OrderByDirection(state.SortDirection, o => o.BarcodeText);
+                _products = _products.OrderByDirection(state.SortDirection, o => o.BarcodeText).ToList();
                 break;
             case "name_field":
-                _products = _products.OrderByDirection(state.SortDirection, o => o.Name);
+                _products = _products.OrderByDirection(state.SortDirection, o => o.Name).ToList();
                 break;
             case "weight_field":
-                _products = _products.OrderByDirection(state.SortDirection, o => o.Weight);
+                _products = _products.OrderByDirection(state.SortDirection, o => o.Weight).ToList();
                 break;
             case "wage_field":
-                _products = _products.OrderByDirection(state.SortDirection, o => o.Wage);
+                _products = _products.OrderByDirection(state.SortDirection, o => o.Wage).ToList();
                 break;
             case "productType_field":
-                _products = _products.OrderByDirection(state.SortDirection, o => o.ProductType);
+                _products = _products.OrderByDirection(state.SortDirection, o => o.ProductType).ToList();
                 break;
             case "caret_field":
-                _products = _products.OrderByDirection(state.SortDirection, o => o.Caret);
+                _products = _products.OrderByDirection(state.SortDirection, o => o.Caret).ToList();
                 break;
         }
 
@@ -70,21 +70,32 @@ public partial class ProductList
 
     [Parameter]
     public bool Filterable { get; set; }
-    
-    private IEnumerable<ProductTableItemDto>? _products;
 
+
+    private List<ProductTableItemDto>? _products;
 
     DialogOptions _dialogOptions = new() { CloseButton = true, FullWidth = true, FullScreen = false };
 
     private async Task OpenAddProductDialog(DialogOptions options, string dialogTitle)
     {
-        await Dialog.ShowAsync<AddProductDialog>(dialogTitle, options);
-        await table.ReloadServerData();
+        var dialog = await Dialog.ShowAsync<AddProductDialog>(dialogTitle, options);
+
+        if (!dialog.Result.IsCanceled)
+        {
+            var operationSuccessful = (bool)(await dialog.Result).Data;
+
+            if (!operationSuccessful)
+            {
+                SnackBar.Add("خطا در ثبت جنس", Severity.Error);
+            }
+
+            await table.ReloadServerData();
+        }
     }
 
     private async Task LoadData()
     {
-        _products = await GetAsync<IEnumerable<ProductTableItemDto>>("/api/Products");
+        _products = await GetAsync<List<ProductTableItemDto>>("/api/Products");
         StateHasChanged();
     }
 
