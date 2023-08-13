@@ -70,8 +70,8 @@ public partial class ProductList
 
     [Parameter]
     public bool Filterable { get; set; }
-    
-    
+
+
     private List<ProductTableItemDto>? _products;
 
     DialogOptions _dialogOptions = new() { CloseButton = true, FullWidth = true, FullScreen = false };
@@ -82,6 +82,13 @@ public partial class ProductList
 
         if (!dialog.Result.IsCanceled)
         {
+            var operationSuccessful = (bool)(await dialog.Result).Data;
+
+            if (!operationSuccessful)
+            {
+                SnackBar.Add("خطا در ثبت جنس", Severity.Error);
+            }
+
             await table.ReloadServerData();
         }
     }

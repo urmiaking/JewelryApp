@@ -30,8 +30,14 @@ public partial class AddProductDialog
 
         _processing = false;
 
-        MudDialog.Close(DialogResult.Ok(true));
+        if (ValidationProblems != null && ValidationProblems.Errors.Count > 0)
+        {
+            MudDialog.Close(DialogResult.Ok(false));
+        }
+        else
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
     }
-
 }
 
