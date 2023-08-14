@@ -73,7 +73,7 @@ public class PriceRepository : IPriceRepository
 
         var price = _mapper.Map<PriceDto, Price>(priceDto);
 
-        if (ArePricesIdentical(prevPrice, price))
+        if (prevPrice is not null && ArePricesIdentical(prevPrice, price))
             return;
 
         price.DateTime = DateTime.Now;

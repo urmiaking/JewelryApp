@@ -5,6 +5,7 @@ using System.Net;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using JewelryApp.Models.Dtos;
+using JewelryApp.Common.Enums;
 
 namespace JewelryApp.Client.Pages.Components;
 
@@ -21,8 +22,7 @@ public abstract class UserComponentBase : ComponentBase
     {
         get
         {
-            if (_cancellationTokenSource == null)
-                _cancellationTokenSource = new CancellationTokenSource();
+            _cancellationTokenSource ??= new CancellationTokenSource();
 
             return _cancellationTokenSource;
         }
@@ -32,8 +32,7 @@ public abstract class UserComponentBase : ComponentBase
     {
         get
         {
-            if (_authorizedHttpClient == null)
-                _authorizedHttpClient = ClientFactory.CreateClient("AuthorizedClient");
+            _authorizedHttpClient ??= ClientFactory.CreateClient("AuthorizedClient");
 
             return _authorizedHttpClient;
         }
@@ -161,6 +160,40 @@ public abstract class UserComponentBase : ComponentBase
             else
             {
                 SnackBar.Add("عملیات با موفقیت انجام شد", Severity.Success);
+            }
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+        finally
+        {
+            SetBusy(false);
+        }
+    }
+
+    protected async Task DeleteAsync(string url, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            SetBusy(true);
+            Reset();
+
+            var response = await AuthorizedHttpClient.DeleteFromJsonAsync<DeleteResult>(url, cancellationToken);
+
+            switch (response)
+            {
+                case DeleteResult.CanNotDelete:
+                    SnackBar.Add("امکان حذف این جنس وجود ندارد", Severity.Warning);
+                    break;
+                case DeleteResult.IsNotAvailable:
+                    SnackBar.Add("خطا در حذف جنس", Severity.Error);
+                    break;
+                case DeleteResult.Deleted:
+                    SnackBar.Add("حذف جنس با موفقیت انجام شد", Severity.Error);
+                    break;
+                default:
+                    break;
             }
         }
         catch (Exception)
