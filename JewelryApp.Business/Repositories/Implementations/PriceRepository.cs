@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HtmlAgilityPack;
 using JewelryApp.Business.Repositories.Interfaces;
+using JewelryApp.Common.Enums;
 using JewelryApp.Data;
 using JewelryApp.Data.Models;
 using JewelryApp.Models.Dtos;
@@ -80,6 +81,28 @@ public class PriceRepository : IPriceRepository
 
         _context.Prices.Add(price);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<LineChartDto> GetCaretChartDataAsync(CaretChartType caretChartType)
+    {
+        var result = new LineChartDto();
+
+        switch (caretChartType)
+        {
+            case CaretChartType.Weekly:
+                //Filter by days
+                break;
+            case CaretChartType.Monthly:
+                //Filter by weeks
+                break;
+            case CaretChartType.Yearly:
+                //Filter by month
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(caretChartType), caretChartType, null);
+        }
+
+        throw new NotImplementedException();
     }
 
     private static bool ArePricesIdentical(Price price1, Price price2)

@@ -17,5 +17,11 @@ public partial class Index
         options.YAxisFormat = "c2";
         base.OnInitialized();
     }
+
+    void OnClickMenu(InterpolationOption interpolationOption)
+    {
+        options.InterpolationOption = interpolationOption;
+        StateHasChanged();
+    }
 }
 

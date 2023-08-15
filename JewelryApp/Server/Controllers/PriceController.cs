@@ -1,4 +1,5 @@
 ﻿using JewelryApp.Business.Repositories.Interfaces;
+using JewelryApp.Common.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,6 +25,14 @@ public class PriceController : ControllerBase
             return BadRequest();
 
         await _priceRepository.AddPriceAsync(result);
+
+        return Ok(result);
+    }
+
+    [HttpGet(nameof(GetCaretData))]
+    public async Task<IActionResult> GetCaretData(CaretChartType caretChartType)
+    {
+        var result = await _priceRepository.GetCaretChartDataAsync(caretChartType);
 
         return Ok(result);
     }

@@ -8,6 +8,11 @@
     <MudItem xs="12" sm="6" lg="6" md="4">
         <MudPaper Elevation="2" Class="pa-4" >
             <MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="XAxisLabels" Width="100%" Height="300"></MudChart>
+            <MudMenu Label="نوع آمار" Dense="true" Size="Size.Small" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.KeyboardArrowUp">
+                <MudMenuItem IconSize="Size.Small" Icon="@Icons.Material.Filled.CalendarViewWeek" IconColor="Color.Success" OnClick="() => OnClickMenu(InterpolationOption.NaturalSpline)">هفتگی</MudMenuItem>
+                <MudMenuItem IconSize="Size.Small" Icon="@Icons.Material.Filled.CalendarViewMonth" IconColor="Color.Info" OnClick="() => OnClickMenu(InterpolationOption.EndSlope)">ماهانه</MudMenuItem>
+                <MudMenuItem IconSize="Size.Small" Icon="@Icons.Material.Filled.CalendarViewDay" IconColor="Color.Surface" OnClick="() => OnClickMenu(InterpolationOption.Periodic)">سالانه</MudMenuItem>
+            </MudMenu>
         </MudPaper>
     </MudItem>
 </MudGrid>
