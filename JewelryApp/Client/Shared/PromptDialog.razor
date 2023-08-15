@@ -28,6 +28,7 @@
     {
         _processing = true;
         var httpResponseMessage = await AuthorizedHttpClient.DeleteAsync($"{EndpointUrl}");
+
         _processing = false;
 
         MudDialog.Close(!httpResponseMessage.IsSuccessStatusCode ? DialogResult.Ok(false) : DialogResult.Ok(true));

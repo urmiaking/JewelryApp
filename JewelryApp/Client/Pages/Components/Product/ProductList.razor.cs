@@ -128,7 +128,20 @@ public partial class ProductList
             { x => x.EndpointUrl, $"/api/Products/{productId}"}
         };
 
-        await Dialog.ShowAsync<PromptDialog>("حذف جنس", parameters, options);
+        var dialog = await Dialog.ShowAsync<PromptDialog>("حذف جنس", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            var isDeleted = (bool)result.Data;
+
+            if (!isDeleted)
+            {
+                SnackBar.Add("حذف با خطا مواجه شد");
+            }
+        }
+
         await LoadData();
     }
 }
