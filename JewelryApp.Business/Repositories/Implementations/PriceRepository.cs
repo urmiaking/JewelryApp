@@ -93,8 +93,8 @@ public class PriceRepository : IPriceRepository
             case CaretChartType.Weekly:
                 //Filter by days
 
-                DateTime today = DateTime.Today.AddHours(23);
-                DateTime startOfWeek = today.AddDays(-7);
+                var today = DateTime.Today.AddHours(23);
+                var startOfWeek = today.AddDays(-7);
 
                 var prices = _context.Prices
                     .Where(p => p.DateTime >= startOfWeek && p.DateTime <= today)
@@ -110,8 +110,8 @@ public class PriceRepository : IPriceRepository
                 result.XAxisValues = prices.Select(a => a.Key.ToShamsiDateString()).ToArray();
                 result.Data = new List<Line>
                 {
-                    new Line { Name = "طلای 18 عیار", Data = prices.Select(a => a.gold18k).ToArray() },
-                    new Line { Name = "طلای 24 عیار", Data = prices.Select(a => a.gold24k).ToArray() }
+                    new() { Name = "طلای 18 عیار", Data = prices.Select(a => a.gold18k).ToArray() },
+                    new() { Name = "طلای 24 عیار", Data = prices.Select(a => a.gold24k).ToArray() }
                 };
 
                 break;
