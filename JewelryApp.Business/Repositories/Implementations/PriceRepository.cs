@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HtmlAgilityPack;
 using JewelryApp.Business.Repositories.Interfaces;
+using JewelryApp.Common.DateFunctions;
 using JewelryApp.Common.Enums;
 using JewelryApp.Data;
 using JewelryApp.Data.Models;
@@ -91,6 +92,28 @@ public class PriceRepository : IPriceRepository
         {
             case CaretChartType.Weekly:
                 //Filter by days
+
+                DateTime today = DateTime.Today.AddHours(23);
+                DateTime startOfWeek = today.AddDays(-7);
+
+                var prices = _context.Prices
+                    .Where(p => p.DateTime >= startOfWeek && p.DateTime <= today)
+                    .GroupBy(p => p.DateTime.Value.Date)
+                    .Select(p => new
+                    {
+                        p.Key,
+                        gold18k = p.Max(x => x.Gold18K),
+                        gold24k = p.Max(x => x.Gold24K)
+                    })
+                    .ToList();
+
+                result.XAxisValues = prices.Select(a => a.Key.ToShamsiDateString()).ToArray();
+                result.Data = new List<Line>
+                {
+                    new Line { Name = "طلای 18 عیار", Data = prices.Select(a => a.gold18k).ToArray() },
+                    new Line { Name = "طلای 24 عیار", Data = prices.Select(a => a.gold24k).ToArray() }
+                };
+
                 break;
             case CaretChartType.Monthly:
                 //Filter by weeks
@@ -102,7 +125,7 @@ public class PriceRepository : IPriceRepository
                 throw new ArgumentOutOfRangeException(nameof(caretChartType), caretChartType, null);
         }
 
-        throw new NotImplementedException();
+        return result;
     }
 
     private static bool ArePricesIdentical(Price price1, Price price2)
