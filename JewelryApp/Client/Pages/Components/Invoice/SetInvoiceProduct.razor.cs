@@ -35,8 +35,7 @@ public partial class SetInvoiceProduct
             Count = Model.Count,
             Profit = Model.Profit,
             TaxOffset = Model.TaxOffset,
-            GramPrice = Model.GramPrice,
-
+            GramPrice = Model.GramPrice
         };
 
         MudDialog.Close(DialogResult.Ok(result));

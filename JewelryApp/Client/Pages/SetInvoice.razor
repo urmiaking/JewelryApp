@@ -46,7 +46,7 @@
                             <MudText Typo="Typo.h6" Class="mb-3">لیست اجناس</MudText>
                         </div>
                         <MudPaper Width="40px" Elevation="0">
-                            <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Info" OnClick="@((e) => OpenAddProductDialog(_dialogOptions, "افزودن جنس"))"></MudIconButton>
+                            <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Info" OnClick="@((e) => AddRow())"></MudIconButton>
                         </MudPaper>
                     </div>
                     <MudDivider/>
@@ -68,7 +68,11 @@
                             @foreach (var productItem in InvoiceModel.InvoiceProducts)
                             {
                                 <tr>
-                                    <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
+                                    <td>
+                                        <MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"
+                                                  HelperText="کد جنس" HelperTextOnFocus="true" MaxLength="11">
+                                        </MudTextField>
+                                    </td>
                                     <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
                                     <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
                                     <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>

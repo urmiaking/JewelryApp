@@ -17,27 +17,19 @@ public partial class AddProductDialog
 
     void Cancel() => MudDialog.Cancel();
 
-    private void OnValidSubmit()
+    private async Task OnValidSubmit()
     {
-        StateHasChanged();
-    }
-
-    async Task Submit()
-    {
-        _processing = true;
-
         await PostAsync("api/Products", Model);
 
         _processing = false;
 
         if (ValidationProblems != null && ValidationProblems.Errors.Count > 0)
         {
-            MudDialog.Close(DialogResult.Ok(false));
+            MudDialog.Close(DialogResult.Ok(ValidationProblems));
         }
         else
         {
-            MudDialog.Close(DialogResult.Ok(true));
+            MudDialog.Close(DialogResult.Ok(1));
         }
     }
 }
-

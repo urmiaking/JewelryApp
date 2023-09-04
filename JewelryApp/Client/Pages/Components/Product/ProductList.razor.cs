@@ -80,16 +80,24 @@ public partial class ProductList
     {
         var dialog = await Dialog.ShowAsync<AddProductDialog>(dialogTitle, options);
 
-        if (!dialog.Result.IsCanceled)
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
         {
-            var operationSuccessful = (bool)(await dialog.Result).Data;
-
-            if (!operationSuccessful)
+            if (result.Data is ValidationProblemDetails validationProblems)
             {
-                SnackBar.Add("خطا در ثبت جنس", Severity.Error);
+                if (validationProblems is not null && validationProblems.Errors.Count > 0)
+                {
+                    foreach (var error in validationProblems.Errors)
+                    {
+                        SnackBar.Add(error.Value.FirstOrDefault()!.ToString(), Severity.Error);
+                    }
+                }
             }
-
-            await table.ReloadServerData();
+            else
+            {
+                await table.ReloadServerData();
+            }
         }
     }
 
@@ -142,7 +150,7 @@ public partial class ProductList
             }
         }
 
-        await LoadData();
+        await table.ReloadServerData();
     }
 }
 

@@ -88,15 +88,19 @@ public class PriceRepository : IPriceRepository
     {
         var result = new LineChartDto();
 
+
+        var today = DateTime.Today.AddHours(23);
+
+        DateTime startOfWeek;
+
         switch (caretChartType)
         {
             case CaretChartType.Weekly:
                 //Filter by days
 
-                var today = DateTime.Today.AddHours(23);
-                var startOfWeek = today.AddDays(-7);
+                startOfWeek = today.AddDays(-7);
 
-                var prices = _context.Prices
+                var prices = await _context.Prices
                     .Where(p => p.DateTime >= startOfWeek && p.DateTime <= today)
                     .GroupBy(p => p.DateTime.Value.Date)
                     .Select(p => new
@@ -105,7 +109,8 @@ public class PriceRepository : IPriceRepository
                         gold18k = p.Max(x => x.Gold18K),
                         gold24k = p.Max(x => x.Gold24K)
                     })
-                    .ToList();
+                    .OrderBy(p => p.Key)
+                    .ToListAsync();
 
                 result.XAxisValues = prices.Select(a => a.Key.ToShamsiDateString()).ToArray();
                 result.Data = new List<Line>
@@ -117,6 +122,30 @@ public class PriceRepository : IPriceRepository
                 break;
             case CaretChartType.Monthly:
                 //Filter by weeks
+
+                //var oneMonthAgo = today.AddMonths(-1);
+
+                //var startingDate = today.Date.AddHours(23);
+
+                //var weeklyPrices = _context.Prices
+                //    .Where(p => p.DateTime >= oneMonthAgo && p.DateTime <= startingDate) // Filter the data for the past month
+                //    .GroupBy(p => new { WeekNumber = EF.Functions.DatePartIsoWeek(p.DateTime), Year = p.DateTime.Value.Year }) // Group by week number and year
+                //    .Select(g => new
+                //    {
+                //        Week = g.Key.WeekNumber,
+                //        Year = g.Key.Year,
+                //        Gold18K = g.Min(p => p.Gold18K), // Get the minimum value of Gold18K for each week
+                //        Gold24K = g.Min(p => p.Gold24K)  // Get the minimum value of Gold24K for each week
+                //    })
+                //    .ToList();
+
+                //result.XAxisValues = monthlyPrices.Select(a => a.Key.ToShamsiDateString()).ToArray();
+                //result.Data = new List<Line>
+                //{
+                //    new() { Name = "طلای 18 عیار", Data = monthlyPrices.Select(a => a.gold18k).ToArray() },
+                //    new() { Name = "طلای 24 عیار", Data = monthlyPrices.Select(a => a.gold24k).ToArray() }
+                //};
+
                 break;
             case CaretChartType.Yearly:
                 //Filter by month

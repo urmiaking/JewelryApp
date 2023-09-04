@@ -17,14 +17,14 @@ public class SetProductDto
 
     [Display(Name = "وزن")]
     [Required(ErrorMessage = "{0} را وارد کنید")]
-    public double Weight { get; set; }
+    public double? Weight { get; set; }
 
     [Display(Name = "نوع")] 
     public ProductType ProductType { get; set; } = ProductType.Gold;
 
     [Display(Name = "اجرت")]
     [Required(ErrorMessage = "{0} را وارد کنید")]
-    public double Wage { get; set; }
+    public double? Wage { get; set; }
 
     public string BarcodeText { get; set; } = string.Empty;
 }
