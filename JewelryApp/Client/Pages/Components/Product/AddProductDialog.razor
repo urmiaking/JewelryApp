@@ -2,35 +2,38 @@
 
 <MudDialog>
     <DialogContent>
-        @if (ValidationProblems != null)
-        {
-            <ul>
-                @foreach (var item in ValidationProblems.Errors)
-                {
-                    <li><strong>@item.Key:</strong> @string.Join("<br/>", item.Value)</li>
-                }
-            </ul>
-        }
         <EditForm Model="@Model" OnValidSubmit="OnValidSubmit">
             <DataAnnotationsValidator />
-
             <MudTextField @bind-Value="Model.Id" InputType="InputType.Hidden" For="@(() => Model.Id)" Variant="Variant.Outlined" />
-            <MudTextField Label="نام جنس" @bind-Value="Model.Name" For="@(() => Model.Name)" Variant="Variant.Outlined" Class="mt-5" />
-            <MudNumericField Label="وزن" @bind-Value="Model.Weight" For="@(() => Model.Weight)" Variant="Variant.Outlined" Class="mt-5" Min="0.01" />
-            <MudNumericField Label="اجرت" @bind-Value="Model.Wage" For="@(() => Model.Wage)" Variant="Variant.Outlined" Class="mt-5" Min="1" />
-            <MudSelect T="ProductType" Label="نوع جنس" @bind-Value="Model.ProductType" For="() => Model.ProductType" Variant="Variant.Outlined" Class="mt-5">
-                @foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
-                {
-                    <MudSelectItem T="ProductType" Value="productType">@productType.ToDisplay()</MudSelectItem>
-                }
-            </MudSelect>
-            <MudSelect T="Caret" Label="عیار" @bind-Value="Model.Caret" For="() => Model.Caret" Variant="Variant.Outlined" Class="mt-5">
-                @foreach (Caret caret in Enum.GetValues(typeof(Caret)))
-                {
-                    <MudSelectItem T="Caret" Value="caret">@caret.ToDisplay()</MudSelectItem>
-                }
-            </MudSelect>
-            <MudStack Row Class="mt-5">
+            <MudGrid>
+                <MudItem md="12" lg="12" Class="mt-5">
+                    <MudTextField Label="نام جنس" @bind-Value="Model.Name" For="@(() => Model.Name)" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem md="12" lg="6">
+                    <MudNumericField Label="وزن" @bind-Value="Model.Weight" For="@(() => Model.Weight)" Variant="Variant.Outlined" Margin="Margin.Dense" Step="0.001" />
+                </MudItem>
+                <MudItem md="12" lg="6">
+                    <MudNumericField Label="اجرت" @bind-Value="Model.Wage" For="@(() => Model.Wage)" Variant="Variant.Outlined" Margin="Margin.Dense" Step="1" />
+                </MudItem>
+                <MudItem md="12" lg="6">
+                    <MudSelect T="ProductType" Label="نوع جنس" @bind-Value="Model.ProductType" For="() => Model.ProductType" Margin="Margin.Dense" Variant="Variant.Outlined">
+                        @foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
+                        {
+                            <MudSelectItem T="ProductType" Value="productType">@productType.ToDisplay()</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem md="12" lg="6">
+                    <MudSelect T="Caret" Label="عیار" @bind-Value="Model.Caret" For="() => Model.Caret" Variant="Variant.Outlined" Margin="Margin.Dense" >
+                        @foreach (Caret caret in Enum.GetValues(typeof(Caret)))
+                        {
+                            <MudSelectItem T="Caret" Value="caret">@caret.ToDisplay()</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+
+            <MudStack Row Justify="Justify.FlexEnd" Class="mt-5">
                 <MudButton OnClick="Cancel" Variant="Variant.Filled" Color="Color.Error">لغو</MudButton>
                 <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Disabled="@_processing">
                     @if (_processing)
