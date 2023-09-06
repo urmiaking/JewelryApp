@@ -11,8 +11,8 @@ public partial class ProductList
 {
     [Inject] public IDialogService Dialog { get; set; } = default!;
 
-    private IEnumerable<ProductTableItemDto> pagedData;
-    private MudTable<ProductTableItemDto> table;
+    private IEnumerable<ProductTableItemDto> _pagedData = new List<ProductTableItemDto>();
+    private MudTable<ProductTableItemDto> _table = new ();
 
     private int totalItems;
     private string searchString = null;
@@ -32,37 +32,26 @@ public partial class ProductList
                 return true;
             return false;
         }).ToList();
-        totalItems = _products.Count();
-        switch (state.SortLabel)
+        totalItems = _products.Count;
+        _products = state.SortLabel switch
         {
-            case "barcodetext_field":
-                _products = _products.OrderByDirection(state.SortDirection, o => o.BarcodeText).ToList();
-                break;
-            case "name_field":
-                _products = _products.OrderByDirection(state.SortDirection, o => o.Name).ToList();
-                break;
-            case "weight_field":
-                _products = _products.OrderByDirection(state.SortDirection, o => o.Weight).ToList();
-                break;
-            case "wage_field":
-                _products = _products.OrderByDirection(state.SortDirection, o => o.Wage).ToList();
-                break;
-            case "productType_field":
-                _products = _products.OrderByDirection(state.SortDirection, o => o.ProductType).ToList();
-                break;
-            case "caret_field":
-                _products = _products.OrderByDirection(state.SortDirection, o => o.Caret).ToList();
-                break;
-        }
+            "barcodetext_field" => _products.OrderByDirection(state.SortDirection, o => o.BarcodeText).ToList(),
+            "name_field" => _products.OrderByDirection(state.SortDirection, o => o.Name).ToList(),
+            "weight_field" => _products.OrderByDirection(state.SortDirection, o => o.Weight).ToList(),
+            "wage_field" => _products.OrderByDirection(state.SortDirection, o => o.Wage).ToList(),
+            "productType_field" => _products.OrderByDirection(state.SortDirection, o => o.ProductType).ToList(),
+            "caret_field" => _products.OrderByDirection(state.SortDirection, o => o.Caret).ToList(),
+            _ => _products
+        };
 
-        pagedData = _products.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
-        return new TableData<ProductTableItemDto>() { TotalItems = totalItems, Items = pagedData };
+        _pagedData = _products.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        return new TableData<ProductTableItemDto>() { TotalItems = totalItems, Items = _pagedData };
     }
 
     private void OnSearch(string text)
     {
         searchString = text;
-        table.ReloadServerData();
+        _table.ReloadServerData();
     }
 
     [Parameter]
@@ -96,14 +85,14 @@ public partial class ProductList
             }
             else
             {
-                await table.ReloadServerData();
+                await _table.ReloadServerData();
             }
         }
     }
 
     private async Task LoadData()
     {
-        _products = await GetAsync<List<ProductTableItemDto>>("/api/Products");
+        _products = await GetAsync<List<ProductTableItemDto>>("/api/Products") ?? new List<ProductTableItemDto>();
         StateHasChanged();
     }
 
@@ -150,7 +139,7 @@ public partial class ProductList
             }
         }
 
-        await table.ReloadServerData();
+        await _table.ReloadServerData();
     }
 }
 

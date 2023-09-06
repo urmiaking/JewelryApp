@@ -9,6 +9,7 @@ using MudBlazor.Services;
 using System.Net.Http.Headers;
 using JewelryApp.Client.Extensions;
 using MudBlazor;
+using Syncfusion.Blazor;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -19,6 +20,8 @@ builder.Services.AddMudServices(opt =>
     opt.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
 });
 builder.Services.AddBlazoredLocalStorage();
+
+builder.Services.AddSyncfusionBlazor(options => { options.EnableRtl = true; });
 
 builder.Services.AddScoped<AppAuthorizationMessageHandler>();
 builder.Services.AddAuthorizationCore();

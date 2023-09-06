@@ -84,9 +84,9 @@ public abstract class UserComponentBase : ComponentBase
 
             if (response.IsSuccessStatusCode)
             {
-                var stream = await response.Content.ReadAsStreamAsync();
+                var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
 
-                return await JsonSerializer.DeserializeAsync<TResult>(stream, _jsonSerializerOptions);
+                return await JsonSerializer.DeserializeAsync<TResult>(stream, _jsonSerializerOptions, cancellationToken);
             }
             else
             {
@@ -96,7 +96,8 @@ public abstract class UserComponentBase : ComponentBase
         }
         catch (Exception)
         {
-            throw;
+            // ignore
+            return default;
         }
         finally
         {
@@ -130,7 +131,7 @@ public abstract class UserComponentBase : ComponentBase
         }
         catch (Exception)
         {
-            throw;
+            // ignore
         }
         finally
         {
@@ -164,7 +165,7 @@ public abstract class UserComponentBase : ComponentBase
         }
         catch (Exception)
         {
-            throw;
+            // ignore
         }
         finally
         {
@@ -198,7 +199,7 @@ public abstract class UserComponentBase : ComponentBase
         }
         catch (Exception)
         {
-            throw;
+            // ignore
         }
         finally
         {

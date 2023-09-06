@@ -1,7 +1,7 @@
 ﻿@inherits UserComponentBase
 
 <MudTable Class="@Class" ServerData="@(new Func<TableState, Task<TableData<ProductTableItemDto>>>(ServerReload))"
-          Hover="true" @ref="table" RowEditCommit="async e => await CommitItemAsync(e)" Dense="true">
+          Hover="true" @ref="_table" RowEditCommit="async e => await CommitItemAsync(e)" Dense="true">
     <ToolBarContent>
         <MudText Typo="Typo.h6">لیست اجناس</MudText>
         <MudSpacer />
