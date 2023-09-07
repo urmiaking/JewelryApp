@@ -16,6 +16,9 @@
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.9" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
 		<PackageReference Include="Syncfusion.Blazor.Buttons" Version="21.1.35" />
+		<PackageReference Include="Syncfusion.Blazor.Core" Version="21.1.35" />
+		<PackageReference Include="Syncfusion.Blazor.Notifications" Version="21.1.35" />
+		<PackageReference Include="Syncfusion.Blazor.Themes" Version="21.1.35" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.32.0" />
 		<PackageReference Include="MudBlazor" Version="6.7.0" />
 	</ItemGroup>
