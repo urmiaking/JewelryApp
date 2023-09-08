@@ -24,8 +24,6 @@ public class PriceController : ControllerBase
         if (result is null)
             return BadRequest();
 
-        //await _priceRepository.AddPriceAsync(result);
-
         return Ok(result);
     }
 

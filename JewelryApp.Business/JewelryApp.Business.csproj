@@ -10,6 +10,7 @@
 		<PackageReference Include="AutoMapper" Version="12.0.1" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.11.50" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.9" />
 		<PackageReference Include="NCrontab" Version="3.3.3" />
 	</ItemGroup>
@@ -20,6 +21,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Jobs\" />
+	  <Folder Include="Hubs\" />
 	</ItemGroup>
 
 </Project>

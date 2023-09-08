@@ -1,44 +1,35 @@
-﻿using System.Net.Http.Json;
+﻿using JewelryApp.Client.Services;
 using JewelryApp.Models.Dtos;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using Newtonsoft.Json;
 
 namespace JewelryApp.Client.Pages.Components.Dashboard;
 
 public partial class DashboardHeader
 {
+    [Inject] 
+    public SignalRService SignalRService { get; set; } = default!;
+
     private PriceDto? _priceDto;
 
-    private Timer? _timer;
-
-    [Parameter] public int RefreshInterval { get; set; } = 5;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender)
-        {
-            await RefreshHeaderData();
-            _timer = new Timer(async (_) => await RefreshHeaderData(), null, TimeSpan.Zero, TimeSpan.FromSeconds(RefreshInterval));
-        }
-
-        await base.OnAfterRenderAsync(firstRender);
+        _priceDto = await GetAsync<PriceDto>("api/Price");
+        await SignalRService.Connect();
+        SignalRService.RegisterUpdateHandler(UpdatePriceValue);
     }
 
-    private async Task RefreshHeaderData()
+    private void UpdatePriceValue(string? json)
     {
-        try
+        if (string.IsNullOrWhiteSpace(json))
         {
-            _priceDto = await GetAsync<PriceDto>("api/Price");
-            StateHasChanged();
+            SnackBar.Add("دریافت اطلاعات با خطا مواجه شد", Severity.Error);
+            return;
         }
-        catch
-        {
-            Dispose();
-        }
-    }
 
-    public void Dispose()
-    {
-        _timer?.Dispose();
+        _priceDto = JsonConvert.DeserializeObject<PriceDto>(json) ?? throw new InvalidDataException("Invalid Format of Received Data");
+        
+        StateHasChanged();
     }
 }

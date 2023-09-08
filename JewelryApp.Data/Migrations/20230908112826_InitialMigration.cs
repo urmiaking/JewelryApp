@@ -21,11 +21,30 @@ namespace JewelryApp.Data.Migrations
                     BuyerLastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BuyerNationalCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BuyerPhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BuyDateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    BuyDateTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Invoices", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Prices",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Gold18K = table.Column<double>(type: "float", nullable: false),
+                    Gold24K = table.Column<double>(type: "float", nullable: false),
+                    OldCoin = table.Column<double>(type: "float", nullable: false),
+                    NewCoin = table.Column<double>(type: "float", nullable: false),
+                    HalfCoin = table.Column<double>(type: "float", nullable: false),
+                    QuarterCoin = table.Column<double>(type: "float", nullable: false),
+                    DateTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Prices", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -301,6 +320,9 @@ namespace JewelryApp.Data.Migrations
         {
             migrationBuilder.DropTable(
                 name: "InvoiceProducts");
+
+            migrationBuilder.DropTable(
+                name: "Prices");
 
             migrationBuilder.DropTable(
                 name: "RefreshTokens");

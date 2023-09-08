@@ -300,12 +300,6 @@ namespace JewelryApp.Data.Migrations
                     b.Property<double>("Gold24K")
                         .HasColumnType("float");
 
-                    b.Property<double>("GoldOunce")
-                        .HasColumnType("float");
-
-                    b.Property<double>("GramCoin")
-                        .HasColumnType("float");
-
                     b.Property<double>("HalfCoin")
                         .HasColumnType("float");
 

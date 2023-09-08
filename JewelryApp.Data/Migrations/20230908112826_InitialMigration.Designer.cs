@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JewelryApp.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230731084914_InitialMigration")]
+    [Migration("20230908112826_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -233,7 +233,7 @@ namespace JewelryApp.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("BuyDateTime")
+                    b.Property<DateTime?>("BuyDateTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("BuyerFirstName")
@@ -284,6 +284,40 @@ namespace JewelryApp.Data.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("InvoiceProducts");
+                });
+
+            modelBuilder.Entity("JewelryApp.Data.Models.Price", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("DateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("Gold18K")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Gold24K")
+                        .HasColumnType("float");
+
+                    b.Property<double>("HalfCoin")
+                        .HasColumnType("float");
+
+                    b.Property<double>("NewCoin")
+                        .HasColumnType("float");
+
+                    b.Property<double>("OldCoin")
+                        .HasColumnType("float");
+
+                    b.Property<double>("QuarterCoin")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Prices");
                 });
 
             modelBuilder.Entity("JewelryApp.Data.Models.Product", b =>

@@ -1,6 +1,7 @@
 using System.Reflection;
 using AutoMapper;
 using JewelryApp.Api.Extensions;
+using JewelryApp.Business.Hubs;
 using JewelryApp.Business.Jobs;
 using JewelryApp.Models.AppModels;
 
@@ -26,6 +27,8 @@ builder.Services.AddCustomIdentity();
 builder.Services.AddCustomAuthentication(configuration);
 
 builder.Services.AddPriceUpdateJob(configuration);
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -57,6 +60,9 @@ app.UseInitializer();
 
 app.MapRazorPages();
 app.MapControllers().RequireAuthorization();
+
+app.MapHub<PriceHub>("/signalr-hub");
+
 app.MapFallbackToFile("index.html");
 
 app.Run();

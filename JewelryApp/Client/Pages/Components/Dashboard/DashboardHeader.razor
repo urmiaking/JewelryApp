@@ -3,52 +3,41 @@
 @if (_priceDto is null)
 {
     <MudGrid>
-        <MudItem xs="12" sm="6" md="4" lg="3">
-            <MudPaper Elevation="2" Class="pa-4" Style="height: 110px; background-color: #00a65a">
-                <MudSkeleton Width="30%" Height="42px;" Animation="Animation.Wave" />
-                <MudSkeleton Width="50%" Height="52px;" Animation="Animation.Wave" />
+        <MudItem xs="6" sm="6" md="4" lg="2">
+            <MudPaper Elevation="2" Class="pa-4 text-center" Style="background-color: #00a65a">
+                <MudSkeleton Width="100%" Height="42px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="100%" Height="52px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
-        <MudItem xs="12" sm="6" md="4" lg="3">
-            <MudPaper Elevation="2" Class="pa-4" Style="height: 110px; background-color: #0073b7">
-                <MudSkeleton Width="30%" Height="42px;" Animation="Animation.Wave" />
-                <MudSkeleton Width="50%" Height="52px;" Animation="Animation.Wave" />
+        <MudItem xs="6" sm="6" md="4" lg="2" Class="align-items-center">
+            <MudPaper Elevation="2" Class="pa-4" Style="background-color: #0073b7">
+                <MudSkeleton Width="100%" Height="42px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="100%" Height="52px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
-        <MudItem xs="12" sm="6" md="4" lg="3">
-            <MudPaper Elevation="2" Class="pa-4" Style="height: 110px; background-color: purple">
-                <MudSkeleton Width="30%" Height="42px;" Animation="Animation.Wave" />
-                <MudSkeleton Width="50%" Height="52px;" Animation="Animation.Wave" />
+        
+        <MudItem xs="6" sm="6" md="4" lg="2">
+            <MudPaper Elevation="2" Class="pa-4" Style="background-color: chocolate">
+                <MudSkeleton Width="100%" Height="42px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="100%" Height="52px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
-        <MudItem xs="12" sm="6" md="4" lg="3">
-            <MudPaper Elevation="2" Class="pa-4" Style="height: 110px; background-color: green">
-                <MudSkeleton Width="30%" Height="42px;" Animation="Animation.Wave" />
-                <MudSkeleton Width="50%" Height="52px;" Animation="Animation.Wave" />
+        <MudItem xs="6" sm="6" md="4" lg="2">
+            <MudPaper Elevation="2" Class="pa-4" Style="background-color: darkorange">
+                <MudSkeleton Width="100%" Height="42px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="100%" Height="52px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
-        <MudItem xs="12" sm="6" md="4" lg="3">
-            <MudPaper Elevation="2" Class="pa-4" Style="height: 110px; background-color: chocolate">
-                <MudSkeleton Width="30%" Height="42px;" Animation="Animation.Wave" />
-                <MudSkeleton Width="50%" Height="52px;" Animation="Animation.Wave" />
+        <MudItem xs="6" sm="6" md="4" lg="2">
+            <MudPaper Elevation="2" Class="pa-4" Style="background-color: darkturquoise">
+                <MudSkeleton Width="100%" Height="42px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="100%" Height="52px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
-        <MudItem xs="12" sm="6" md="4" lg="3">
-            <MudPaper Elevation="2" Class="pa-4" Style="height: 110px; background-color: darkorange">
-                <MudSkeleton Width="30%" Height="42px;" Animation="Animation.Wave" />
-                <MudSkeleton Width="50%" Height="52px;" Animation="Animation.Wave" />
-            </MudPaper>
-        </MudItem>
-        <MudItem xs="12" sm="6" md="4" lg="3">
-            <MudPaper Elevation="2" Class="pa-4" Style="height: 110px; background-color: darkturquoise">
-                <MudSkeleton Width="30%" Height="42px;" Animation="Animation.Wave" />
-                <MudSkeleton Width="50%" Height="52px;" Animation="Animation.Wave" />
-            </MudPaper>
-        </MudItem>
-        <MudItem xs="12" sm="6" md="4" lg="3">
-            <MudPaper Elevation="2" Class="pa-4" Style="height: 110px; background-color: darkgoldenrod">
-                <MudSkeleton Width="30%" Height="42px;" Animation="Animation.Wave" />
-                <MudSkeleton Width="50%" Height="52px;" Animation="Animation.Wave" />
+        <MudItem xs="6" sm="6" md="4" lg="2">
+            <MudPaper Elevation="2" Class="pa-4" Style="background-color: darkgoldenrod">
+                <MudSkeleton Width="100%" Height="42px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="100%" Height="52px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
     </MudGrid>
@@ -56,54 +45,38 @@
 else
 {
     <MudGrid>
-        <MudItem xs="12" sm="6" md="4" lg="2">
-            <MudPaper Elevation="2" Class="pa-4" Style="height: 110px; background-color: #00a65a">
+        <MudItem xs="6" sm="6" md="4" lg="2">
+            <MudPaper Elevation="2" Class="pa-4" Style="background-color: #00a65a">
                 <MudText Typo="Typo.h6" Class="text-white text-center">گرم 18 عیار</MudText>
-                <MudText Typo="Typo.h5" Class="mt-5 text-white  text-center">
-                    @(_priceDto!.Gold18K.ToString("N0"))
-                </MudText>
+                <MudText Typo="Typo.h5" Class="mt-5 text-white  text-center">@(_priceDto!.Gold18K.ToString("N0"))</MudText>
             </MudPaper>
         </MudItem>
-        <MudItem xs="12" sm="6" md="4" lg="2">
-            <MudPaper Elevation="2" Class="pa-4" Style="height: 110px; background-color: #0073b7">
+        <MudItem xs="6" sm="6" md="4" lg="2">
+            <MudPaper Elevation="2" Class="pa-4" Style="background-color: #0073b7">
                 <MudText Typo="Typo.h6" Class="text-white text-center">گرم 24 عیار</MudText>
-                <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">
-                    @(_priceDto!.Gold24K.ToString("N0"))
-                </MudText>
+                <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_priceDto!.Gold24K.ToString("N0"))</MudText>
             </MudPaper>
         </MudItem>
-        <MudItem xs="12" sm="6" md="4" lg="2">
-            <MudPaper Elevation="2" Class="pa-4" Style="height: 110px; background-color: purple">
-                <MudText Typo="Typo.h6" Class="text-white text-center">انس طلا</MudText>
-                <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_priceDto!.GoldOunce)</MudText>
+        <MudItem xs="6" sm="6" md="4" lg="2">
+            <MudPaper Elevation="2" Class="pa-4" Style="background-color: chocolate">
+                <MudText Typo="Typo.h6" Class="text-white text-center">سکه جدید</MudText>
+                <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_priceDto!.NewCoin.ToString("N0"))</MudText>
                 </MudPaper>
             </MudItem>
-            <MudItem xs="12" sm="6" md="4" lg="2">
-                <MudPaper Elevation="2" Class="pa-4" Style="height: 110px; background-color: green">
-                    <MudText Typo="Typo.h6" Class="text-white text-center">سکه گرمی</MudText>
-                    <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_priceDto!.GramCoin.ToString("N0"))</MudText>
-                </MudPaper>
-            </MudItem>
-            <MudItem xs="12" sm="6" md="4" lg="2">
-                <MudPaper Elevation="2" Class="pa-4" Style="height: 110px; background-color: chocolate">
-                    <MudText Typo="Typo.h6" Class="text-white text-center">سکه جدید</MudText>
-                    <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_priceDto!.NewCoin.ToString("N0"))</MudText>
-                </MudPaper>
-            </MudItem>
-            <MudItem xs="12" sm="6" md="4" lg="2">
-                <MudPaper Elevation="2" Class="pa-4" Style="height: 110px; background-color: darkorange">
+            <MudItem xs="6" sm="6" md="4" lg="2">
+                <MudPaper Elevation="2" Class="pa-4" Style="background-color: darkorange">
                     <MudText Typo="Typo.h6" Class="text-white text-center">سکه قدیم</MudText>
                     <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_priceDto!.OldCoin.ToString("N0"))</MudText>
                 </MudPaper>
             </MudItem>
-            <MudItem xs="12" sm="6" md="4" lg="2">
-                <MudPaper Elevation="2" Class="pa-4" Style="height: 110px; background-color: darkturquoise">
+            <MudItem xs="6" sm="6" md="4" lg="2">
+                <MudPaper Elevation="2" Class="pa-4" Style="background-color: darkturquoise">
                     <MudText Typo="Typo.h6" Class="text-white text-center">نیم سکه</MudText>
                     <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_priceDto!.HalfCoin.ToString("N0"))</MudText>
                 </MudPaper>
             </MudItem>
-            <MudItem xs="12" sm="6" md="4" lg="2">
-                <MudPaper Elevation="2" Class="pa-4" Style="height: 110px; background-color: darkgoldenrod">
+            <MudItem xs="6" sm="6" md="4" lg="2">
+                <MudPaper Elevation="2" Class="pa-4" Style="background-color: darkgoldenrod">
                     <MudText Typo="Typo.h6" Class="text-white text-center">ربع سکه</MudText>
                     <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_priceDto!.QuarterCoin.ToString("N0"))</MudText>
                 </MudPaper>

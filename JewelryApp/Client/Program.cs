@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 using System.Net.Http.Headers;
 using JewelryApp.Client.Extensions;
+using JewelryApp.Client.Services;
 using MudBlazor;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -41,6 +42,7 @@ builder.Services.AddHttpClient("UnauthorizedClient", client =>
 });
 
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("AuthorizedClient"));
+builder.Services.AddScoped<SignalRService>();
 
 builder.ConfigureCulture();
 

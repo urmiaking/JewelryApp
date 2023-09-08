@@ -39,12 +39,10 @@ public class PriceRepository : IPriceRepository
 
             var gold18KTag = htmlDocument.GetElementbyId("gold_18k");
             var gold24KTag = htmlDocument.GetElementbyId("gold_24k");
-            var goldOunceTag = htmlDocument.GetElementbyId("gold_ounce");
             var oldCoinTag = htmlDocument.GetElementbyId("sekke-gad");
             var newCoinTag = htmlDocument.GetElementbyId("sekke-jad");
             var halfCoinTag = htmlDocument.GetElementbyId("sekke-nim");
             var quarterCoinTag = htmlDocument.GetElementbyId("sekke-rob");
-            var gramCoinTag = htmlDocument.GetElementbyId("sekke-grm");
 
             _httpClient.Dispose();
 
@@ -52,12 +50,10 @@ public class PriceRepository : IPriceRepository
             {
                 Gold18K = double.Parse(gold18KTag.InnerHtml.Replace(",", "")),
                 Gold24K = double.Parse(gold24KTag.InnerHtml.Replace(",", "")),
-                GoldOunce = double.Parse(goldOunceTag.InnerHtml.Replace(",", "")),
                 OldCoin = double.Parse(oldCoinTag.InnerHtml.Replace(",", "")),
                 NewCoin = double.Parse(newCoinTag.InnerHtml.Replace(",", "")),
                 HalfCoin = double.Parse(halfCoinTag.InnerHtml.Replace(",", "")),
                 QuarterCoin = double.Parse(quarterCoinTag.InnerHtml.Replace(",", "")),
-                GramCoin = double.Parse(gramCoinTag.InnerHtml.Replace(",", "")),
             };
 
             return priceModel;
@@ -69,21 +65,7 @@ public class PriceRepository : IPriceRepository
         }
     }
 
-    public async Task AddPriceAsync(PriceDto priceDto, CancellationToken token = default)
-    {
-        var prevPrice = await _context.Prices.OrderByDescending(a => a.DateTime).FirstOrDefaultAsync(cancellationToken: token);
-
-        var price = _mapper.Map<PriceDto, Price>(priceDto);
-
-        if (prevPrice is not null && ArePricesIdentical(prevPrice, price))
-            return;
-
-        price.DateTime = DateTime.Now;
-
-        _context.Prices.Add(price);
-        await _context.SaveChangesAsync(token);
-    }
-
+    
     public async Task<LineChartDto> GetCaretChartDataAsync(CaretChartType caretChartType)
     {
         var result = new LineChartDto();
@@ -157,25 +139,40 @@ public class PriceRepository : IPriceRepository
         return result;
     }
 
-    public async Task UpdatePriceAsync(CancellationToken token)
+    public async Task<PriceDto> UpdatePriceAsync(CancellationToken token)
     {
         var price = await GetPriceAsync(token);
 
         if (price == null) 
-            return;
+            return null;
 
         await AddPriceAsync(price, token);
+
+        return price;
     }
 
     private static bool ArePricesIdentical(Price price1, Price price2)
     {
         return price1.Gold18K == price2.Gold18K &&
                price1.Gold24K == price2.Gold24K &&
-               price1.GoldOunce == price2.GoldOunce &&
                price1.OldCoin == price2.OldCoin &&
                price1.NewCoin == price2.NewCoin &&
                price1.HalfCoin == price2.HalfCoin &&
-               price1.QuarterCoin == price2.QuarterCoin &&
-               price1.GramCoin == price2.GramCoin;
+               price1.QuarterCoin == price2.QuarterCoin;
     }
+    private async Task AddPriceAsync(PriceDto priceDto, CancellationToken token = default)
+    {
+        var prevPrice = await _context.Prices.OrderByDescending(a => a.DateTime).FirstOrDefaultAsync(cancellationToken: token);
+
+        var price = _mapper.Map<PriceDto, Price>(priceDto);
+
+        if (prevPrice is not null && ArePricesIdentical(prevPrice, price))
+            return;
+
+        price.DateTime = DateTime.Now;
+
+        _context.Prices.Add(price);
+        await _context.SaveChangesAsync(token);
+    }
+
 }
