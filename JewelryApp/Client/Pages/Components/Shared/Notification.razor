@@ -1,0 +1,34 @@
+﻿<MudBadge Content="3" Color="Color.Error" Overlap="true" Dot="true">
+    <MudIconButton OnClick="@ToggleOpen" Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit"></MudIconButton>
+</MudBadge>
+
+<MudPopover Open="@_isOpen" Fixed="false" TransformOrigin="Origin.TopLeft" AnchorOrigin="Origin.BottomLeft" Class="px-4 pt-4">
+    <div class="d-flex flex-column">
+        <MudText>اعلان ها</MudText>
+        <br />
+
+        <MudDivider />
+        <br />
+        @for (int i = 0; i < 5; i++)
+        {
+            <MudPaper Class="p-2 m-2">
+                <MudStack Row>
+                    <MudIconButton Icon="@Icons.Material.Filled.DeleteForever" Size="Size.Small" Color="Color.Error"></MudIconButton>
+                    <MudText>موعد فاکتور شماره 1658 در مورخ 1376/12/27 می باشد</MudText>
+                </MudStack>
+            </MudPaper>
+        }
+            
+        <MudButton OnClick="@ToggleOpen" Class="ml-auto mr-n3 mb-1" Color="Color.Error">بستن</MudButton>
+    </div>
+</MudPopover>
+
+@code
+{
+    private bool _isOpen;
+
+    public void ToggleOpen()
+    {
+        _isOpen = !_isOpen;
+    }
+}

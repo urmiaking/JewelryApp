@@ -18,27 +18,27 @@
                     </div>
                     
                     <MudGrid>
-                        <MudItem lg="2" md="3" sm="6" xs="12">
+                        <MudItem lg="6" md="6" sm="12" xs="12">
                             <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="نام" HelperText="نام خریدار" 
                                           HelperTextOnFocus="true" Clearable
                                           @bind-Value="InvoiceModel.BuyerFirstName" For="@(() => InvoiceModel.BuyerFirstName)"/>
                         </MudItem>
-                        <MudItem lg="2" md="3" sm="6" xs="12">
+                        <MudItem lg="6" md="6" sm="12" xs="12">
                             <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="نام خانوادگی" HelperText="نام خانوادگی خریدار"
                                           HelperTextOnFocus="true" Clearable
                                           @bind-Value="InvoiceModel.BuyerLastName" For="@(() => InvoiceModel.BuyerLastName)"/>
                         </MudItem>
-                        <MudItem lg="2" md="3" sm="6" xs="12">
+                        <MudItem lg="4" md="4" sm="12" xs="12">
                             <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Mask="@NationalCodeMask" Label="کد ملی"
                                           HelperText="کد ملی خریدار" HelperTextOnFocus="true" Clearable
                                           @bind-Value="InvoiceModel.BuyerNationalCode" For="@(() => InvoiceModel.BuyerNationalCode)"/>
                         </MudItem>
-                        <MudItem lg="2" md="3" sm="6" xs="12">
+                        <MudItem lg="4" md="4" sm="12" xs="12">
                             <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="شماره همراه" Mask="@PhoneNumberMask"
                                           HelperText="شماره همراه خریدار" HelperTextOnFocus="true" Clearable
                                           @bind-Value="InvoiceModel.BuyerPhoneNumber" For="@(() => InvoiceModel.BuyerPhoneNumber)"/>
                         </MudItem>
-                        <MudItem lg="2" md="3" sm="6" xs="12">
+                        <MudItem lg="4" md="4" sm="12" xs="12">
                             <MudDatePicker Margin="Margin.Dense" Color="Color.Secondary" Rounded="true" HelperText="تاریخ ثبت فاکتور"
                                            Label="تاریخ فاکتور" HelperTextOnFocus="true" @bind-Date="InvoiceModel.BuyDateTime" For="@(() => InvoiceModel.BuyDateTime)" Variant="Variant.Outlined" />
                         </MudItem>
@@ -55,42 +55,47 @@
                         </MudPaper>
                     </div>
                     <MudDivider/>
-                        <table class="table table-bordered table-responsive">
+                    
+                    <!--TODO: Add MudTable with new DTO-->
+
+                    <table class="table table-bordered table-responsive">
                         <thead>
-                            <tr>
-                                <td>کد</td>
-                                <td>نوع</td>
-                                <td>شرح</td>
-                                <td>وزن</td>
-                                <td>اجرت</td>
-                                <td>سود</td>
-                                <td>عیار</td>
-                                <td>مالیات</td>
-                                <td>حذف</td>
-                            </tr>
+                        <tr>
+                            <td>کد</td>
+                            <td>نوع</td>
+                            <td>شرح</td>
+                            <td>وزن</td>
+                            <td>اجرت</td>
+                            <td>سود</td>
+                            <td>عیار</td>
+                            <td>مالیات</td>
+                            <td>حذف</td>
+                        </tr>
                         </thead>
                         <tbody>
-                            @foreach (var productItem in InvoiceModel.InvoiceProducts)
-                            {
-                                <tr>
-                                    <td>
-                                        <MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"
+                        @foreach (var productItem in InvoiceModel.InvoiceProducts)
+                        {
+                            <tr>
+                                <td>
+                                    <MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"
                                                   HelperText="کد جنس" HelperTextOnFocus="true" MaxLength="11">
-                                        </MudTextField>
-                                    </td>
-                                    <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
-                                    <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
-                                    <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
-                                    <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
-                                    <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
-                                    <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
-                                    <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
-                                    <td><MudIconButton Icon="@Icons.Material.Filled.RemoveCircleOutline" Size="Size.Small" Color="Color.Error" OnClick="@(() => RemoveRow(productItem))"></MudIconButton></td>
-                                </tr>
-                            }
+                                    </MudTextField>
+                                </td>
+                                <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
+                                <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
+                                <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
+                                <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
+                                <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
+                                <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
+                                <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
+                                <td><MudIconButton Icon="@Icons.Material.Filled.RemoveCircleOutline" Size="Size.Small" Color="Color.Error" OnClick="@(() => RemoveRow(productItem))"></MudIconButton></td>
+                            </tr>
+                        }
                         </tbody>
                     </table>
+                <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit">ذخیره</MudButton>
                 </MudPaper>
+                
         </MudCardContent>
     </MudCard>
 </EditForm>

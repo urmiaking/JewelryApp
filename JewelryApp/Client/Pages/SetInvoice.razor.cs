@@ -40,20 +40,5 @@ public partial class SetInvoice
     {
         InvoiceModel.InvoiceProducts.Remove(productItem);
     }
-
-    DialogOptions _dialogOptions = new() { CloseButton = true, FullWidth = true, FullScreen = false };
-
-    private async Task OpenAddProductDialog(DialogOptions options, string dialogTitle)
-    {
-        var dialog = await Dialog.ShowAsync<SetInvoiceProduct>(dialogTitle, options);
-        var result = await dialog.Result;
-
-        if (!result.Canceled)
-        {
-            var data = (InvoiceProduct)result.Data;
-
-            InvoiceModel.InvoiceProducts.Add(data);
-        }
-    }
 }
 

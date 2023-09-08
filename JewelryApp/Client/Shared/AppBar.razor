@@ -4,28 +4,16 @@
     <MudText Typo="Typo.h5" Class="ml-3">جواهری فانی</MudText>
     <MudSpacer />
 
-    <MudButton Href="/logout" EndIcon="@Icons.Material.Filled.Logout" Variant="Variant.Text" Size="Size.Large" Color="Color.Inherit">خروج</MudButton>
-    
-    <MudBadge Content="3" Color="Color.Error" Overlap="true" Dot="true">
-        <MudIconButton OnClick="@ToggleOpen" Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit"></MudIconButton>
-    </MudBadge>
-    
-    <MudPopover Open="@_isOpen" Fixed="false" TransformOrigin="Origin.TopLeft" AnchorOrigin="Origin.BottomLeft" Class="px-4 pt-4">
-        <div class="d-flex flex-column">
-            <MudText>اعلان ها</MudText>
-            <MudDivider />
-            <MudText>موعد فاکتور شماره 1658 در مورخ 1376/12/27 می باشد</MudText>
+    <MudIconButton Href="/logout" Icon="@Icons.Material.Filled.Logout" Variant="Variant.Text" Size="Size.Medium" Color="Color.Inherit"></MudIconButton>
 
-            <MudButton OnClick="@ToggleOpen" Class="ml-auto mr-n3 mb-1" Color="Color.Error">Close</MudButton>
-        </div>
-    </MudPopover>
+    <Notification />
 
     <MudIconButton Href="/settings" Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit"></MudIconButton>
 
     <MudToggleIconButton ToggledChanged="DarkModeStateChanged"
                          Icon="@Icons.Material.Filled.DarkMode" Color="@Color.Tertiary" Title="حالت شب"
                          ToggledIcon="@Icons.Material.Filled.WbSunny" ToggledColor="@Color.Info" ToggledTitle="حالت روز" />
-                         
+
 </MudAppBar>
 
 @code {
@@ -49,15 +37,5 @@
     private async Task DarkModeToggle()
     {
         await DarkModeStateChanged.InvokeAsync(!DarkModeState);
-    }
-
-    public bool _isOpen;
-
-    public void ToggleOpen()
-    {
-        if (_isOpen)
-            _isOpen = false;
-        else
-            _isOpen = true;
     }
 }
