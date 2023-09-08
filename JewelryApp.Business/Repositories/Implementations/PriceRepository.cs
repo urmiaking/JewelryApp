@@ -23,16 +23,16 @@ public class PriceRepository : IPriceRepository
         _mapper = mapper;
     }
 
-    public async Task<PriceDto> GetPriceAsync()
+    public async Task<PriceDto> GetPriceAsync(CancellationToken token = default)
     {
         try
         {
-            var response = await _httpClient.GetAsync("https://www.tala.ir/webservice/price_live.php");
+            var response = await _httpClient.GetAsync("https://www.tala.ir/webservice/price_live.php", token);
 
             if (!response.IsSuccessStatusCode)
                 return null;
 
-            var htmlResponse = await response.Content.ReadAsStringAsync();
+            var htmlResponse = await response.Content.ReadAsStringAsync(token);
 
             var htmlDocument = new HtmlDocument();
             htmlDocument.LoadHtml(htmlResponse);
@@ -69,9 +69,9 @@ public class PriceRepository : IPriceRepository
         }
     }
 
-    public async Task AddPriceAsync(PriceDto priceDto)
+    public async Task AddPriceAsync(PriceDto priceDto, CancellationToken token = default)
     {
-        var prevPrice = await _context.Prices.OrderByDescending(a => a.DateTime).FirstOrDefaultAsync();
+        var prevPrice = await _context.Prices.OrderByDescending(a => a.DateTime).FirstOrDefaultAsync(cancellationToken: token);
 
         var price = _mapper.Map<PriceDto, Price>(priceDto);
 
@@ -81,7 +81,7 @@ public class PriceRepository : IPriceRepository
         price.DateTime = DateTime.Now;
 
         _context.Prices.Add(price);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(token);
     }
 
     public async Task<LineChartDto> GetCaretChartDataAsync(CaretChartType caretChartType)
@@ -155,6 +155,16 @@ public class PriceRepository : IPriceRepository
         }
 
         return result;
+    }
+
+    public async Task UpdatePriceAsync(CancellationToken token)
+    {
+        var price = await GetPriceAsync(token);
+
+        if (price == null) 
+            return;
+
+        await AddPriceAsync(price, token);
     }
 
     private static bool ArePricesIdentical(Price price1, Price price2)

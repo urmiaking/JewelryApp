@@ -1,10 +1,19 @@
-﻿using JewelryApp.Data;
+﻿using System.Reflection;
+using JewelryApp.Business.AppServices;
+using JewelryApp.Business.Repositories.Implementations;
+using JewelryApp.Business.Repositories.Interfaces;
+using JewelryApp.Data;
 using JewelryApp.Data.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using AutoMapper;
+using JewelryApp.Business.Jobs;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using NCrontab;
 
 namespace JewelryApp.Api.Extensions;
 
@@ -52,6 +61,63 @@ public static class ServiceCollectionExtensions
         services.AddAuthorization();
     }
 
+    public static void RegisterServices(this IServiceCollection services)
+    {
+        services.AddScoped<IDbInitializer, DbInitializer>();
+        services.AddScoped<IBarcodeRepository, BarcodeRepository>();
+        services.AddScoped<IAccountService, AccountService>();
+        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+        services.AddHttpClient<IPriceRepository, PriceRepository>();
+        services.AddScoped<IRepository<RefreshToken>, RefreshTokenRepository>();
+        services.AddScoped<IRepository<Invoice>, InvoiceRepository>();
+        services.AddScoped<IRepository<InvoiceProduct>, InvoiceProductRepository>();
+        services.AddScoped<IRepository<Product>, ProductRepository>();
+        services.AddScoped<IProductService, ProductService>();
+    }
+
+    public static void RegisterAutoMapper(this IServiceCollection services)
+    {
+        var assemblies = Assembly.GetExecutingAssembly().GetReferencedAssemblies()
+            .Select(Assembly.Load)
+            .SelectMany(a => a.DefinedTypes)
+            .Where(t => typeof(Profile).IsAssignableFrom(t.AsType()))
+            .Select(t => t.AsType()).ToArray();
+
+        services.AddAutoMapper(assemblies);
+    }
+
+    public static void AddPriceUpdateJob(this IServiceCollection services, IConfiguration configuration)
+    {
+        var cronExpression = configuration.GetSection("CronExpression").Value 
+                             ?? throw new ArgumentException("There is no cron expression");
+
+        services.AddCronJob<UpdatePriceJob>(cronExpression);
+    }
+
+    public static IServiceCollection AddCronJob<T>(this IServiceCollection services, string cronExpression)
+        where T : class, ICronJob
+    {
+        var cron = CrontabSchedule.TryParse(cronExpression)
+                   ?? throw new ArgumentException("Invalid cron expression", nameof(cronExpression));
+
+        var entry = new CronRegistryEntry(typeof(T), cron);
+
+        services.AddHostedService<CronScheduler>();
+        services.TryAddSingleton<T>();
+        services.AddSingleton(entry);
+
+        return services;
+    }
+
+    public static void AddDatabase(this IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("Default") 
+                               ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+        services.AddDbContext<AppDbContext>(options => options
+            .UseSqlServer(connectionString));
+    }
+
     private static TokenValidationParameters GetTokenValidationParameters(IConfiguration configuration)
     {
         return new TokenValidationParameters()
@@ -67,4 +133,5 @@ public static class ServiceCollectionExtensions
 
         };
     }
+
 }

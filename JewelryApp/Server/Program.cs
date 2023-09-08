@@ -1,43 +1,31 @@
+using System.Reflection;
+using AutoMapper;
 using JewelryApp.Api.Extensions;
-using JewelryApp.Business.AppServices;
-using JewelryApp.Business.Repositories.Implementations;
-using JewelryApp.Business.Repositories.Interfaces;
-using JewelryApp.Data;
-using JewelryApp.Data.Models;
+using JewelryApp.Business.Jobs;
 using JewelryApp.Models.AppModels;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var configuration = builder.Configuration;
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
 builder.Services.AddRazorPages();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var connectionString = builder.Configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-
-builder.Services.AddDbContext<AppDbContext>(options => options
-    .UseSqlServer(connectionString));
+builder.Services.AddDatabase(configuration);
 
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.RegisterAutoMapper();
 
-builder.Services.AddScoped<IDbInitializer, DbInitializer>();
-builder.Services.AddScoped<IBarcodeRepository, BarcodeRepository>();
-builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
-builder.Services.AddHttpClient<IPriceRepository, PriceRepository>();
-builder.Services.AddScoped<IRepository<RefreshToken>, RefreshTokenRepository>();
-builder.Services.AddScoped<IRepository<Invoice>, InvoiceRepository>();
-builder.Services.AddScoped<IRepository<InvoiceProduct>, InvoiceProductRepository>();
-builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
-builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.RegisterServices();
 
 builder.Services.AddCustomIdentity();
-builder.Services.AddCustomAuthentication(builder.Configuration);
+
+builder.Services.AddCustomAuthentication(configuration);
+
+builder.Services.AddPriceUpdateJob(configuration);
 
 var app = builder.Build();
 
