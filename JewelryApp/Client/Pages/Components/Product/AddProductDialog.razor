@@ -6,16 +6,16 @@
             <DataAnnotationsValidator />
             <MudTextField @bind-Value="Model.Id" InputType="InputType.Hidden" For="@(() => Model.Id)" Variant="Variant.Outlined" />
             <MudGrid>
-                <MudItem md="12" lg="12" Class="mt-5">
+                <MudItem xs="12" md="12" lg="12" Class="mt-5">
                     <MudTextField Label="نام جنس" @bind-Value="Model.Name" For="@(() => Model.Name)" Variant="Variant.Outlined" Margin="Margin.Dense" />
                 </MudItem>
-                <MudItem md="12" lg="6">
-                    <MudNumericField Label="وزن" @bind-Value="Model.Weight" For="@(() => Model.Weight)" Variant="Variant.Outlined" Margin="Margin.Dense" Step="0.001" />
+                <MudItem xs="12" md="6" lg="6">
+                    <MudNumericField Label="وزن" @bind-Value="Model.Weight" For="@(() => Model.Weight)" Variant="Variant.Outlined" Margin="Margin.Dense" />
                 </MudItem>
-                <MudItem md="12" lg="6">
+                <MudItem xs="12" md="6" lg="6">
                     <MudNumericField Label="اجرت" @bind-Value="Model.Wage" For="@(() => Model.Wage)" Variant="Variant.Outlined" Margin="Margin.Dense" Step="1" />
                 </MudItem>
-                <MudItem md="12" lg="6">
+                <MudItem xs="12" md="6" lg="6">
                     <MudSelect T="ProductType" Label="نوع جنس" @bind-Value="Model.ProductType" For="() => Model.ProductType" Margin="Margin.Dense" Variant="Variant.Outlined">
                         @foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
                         {
@@ -23,11 +23,11 @@
                         }
                     </MudSelect>
                 </MudItem>
-                <MudItem md="12" lg="6">
-                    <MudSelect T="Caret" Label="عیار" @bind-Value="Model.Caret" For="() => Model.Caret" Variant="Variant.Outlined" Margin="Margin.Dense" >
+                <MudItem xs="12" md="6" lg="6">
+                    <MudSelect T="Caret" Label="عیار" @bind-Value="Model.Caret" ToStringFunc="_caretConverter" For="() => Model.Caret" Variant="Variant.Outlined" Margin="Margin.Dense" >
                         @foreach (Caret caret in Enum.GetValues(typeof(Caret)))
                         {
-                            <MudSelectItem T="Caret" Value="caret">@caret.ToDisplay()</MudSelectItem>
+                            <MudSelectItem T="Caret" Value="caret" />
                         }
                     </MudSelect>
                 </MudItem>

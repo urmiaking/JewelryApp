@@ -19,23 +19,28 @@
                     
                     <MudGrid>
                         <MudItem lg="2" md="3" sm="6" xs="12">
-                            <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="نام" HelperText="نام خریدار" Clearable
+                            <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="نام" HelperText="نام خریدار" 
+                                          HelperTextOnFocus="true" Clearable
                                           @bind-Value="InvoiceModel.BuyerFirstName" For="@(() => InvoiceModel.BuyerFirstName)"/>
                         </MudItem>
                         <MudItem lg="2" md="3" sm="6" xs="12">
-                            <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="نام خانوادگی" HelperText="نام خانوادگی خریدار" Clearable
+                            <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="نام خانوادگی" HelperText="نام خانوادگی خریدار"
+                                          HelperTextOnFocus="true" Clearable
                                           @bind-Value="InvoiceModel.BuyerLastName" For="@(() => InvoiceModel.BuyerLastName)"/>
                         </MudItem>
                         <MudItem lg="2" md="3" sm="6" xs="12">
-                            <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Mask="@NationalCodeMask" Label="کد ملی" HelperText="کد ملی خریدار" Clearable
+                            <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Mask="@NationalCodeMask" Label="کد ملی"
+                                          HelperText="کد ملی خریدار" HelperTextOnFocus="true" Clearable
                                           @bind-Value="InvoiceModel.BuyerNationalCode" For="@(() => InvoiceModel.BuyerNationalCode)"/>
                         </MudItem>
                         <MudItem lg="2" md="3" sm="6" xs="12">
-                            <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="شماره همراه" Mask="@PhoneNumberMask" HelperText="شماره همراه خریدار" Clearable
+                            <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="شماره همراه" Mask="@PhoneNumberMask"
+                                          HelperText="شماره همراه خریدار" HelperTextOnFocus="true" Clearable
                                           @bind-Value="InvoiceModel.BuyerPhoneNumber" For="@(() => InvoiceModel.BuyerPhoneNumber)"/>
                         </MudItem>
                         <MudItem lg="2" md="3" sm="6" xs="12">
-                            <MudDatePicker Margin="Margin.Dense" Color="Color.Secondary" Rounded="true" HelperText="تاریخ ثبت فاکتور" Label="تاریخ فاکتور" @bind-Date="InvoiceModel.BuyDateTime" For="@(() => InvoiceModel.BuyDateTime)" Variant="Variant.Outlined" />
+                            <MudDatePicker Margin="Margin.Dense" Color="Color.Secondary" Rounded="true" HelperText="تاریخ ثبت فاکتور"
+                                           Label="تاریخ فاکتور" HelperTextOnFocus="true" @bind-Date="InvoiceModel.BuyDateTime" For="@(() => InvoiceModel.BuyDateTime)" Variant="Variant.Outlined" />
                         </MudItem>
                     </MudGrid>
                 </MudPaper>

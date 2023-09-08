@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using JewelryApp.Common.Enums;
 using JewelryApp.Models.Dtos;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -15,7 +16,7 @@ public partial class AddProductDialog
 
     private bool _processing;
 
-    void Cancel() => MudDialog.Cancel();
+    private void Cancel() => MudDialog.Cancel();
 
     private async Task OnValidSubmit()
     {
@@ -32,4 +33,6 @@ public partial class AddProductDialog
             MudDialog.Close(DialogResult.Ok(1));
         }
     }
+
+    private Func<Caret, string> _caretConverter = p => p.ToDisplay();
 }

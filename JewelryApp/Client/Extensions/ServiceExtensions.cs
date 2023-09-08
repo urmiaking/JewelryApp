@@ -30,7 +30,7 @@ public static class ServiceExtensions
         if (info != null)
             info.SetValue(formatInfo, cal);
 
-        culture.NumberFormat.NumberDecimalSeparator = "/";
+        culture.NumberFormat.NumberDecimalSeparator = ".";
         culture.NumberFormat.DigitSubstitution = DigitShapes.NativeNational;
         culture.NumberFormat.NumberNegativePattern = 0;
 

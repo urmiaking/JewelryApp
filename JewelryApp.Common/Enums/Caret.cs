@@ -7,7 +7,13 @@ namespace JewelryApp.Common.Enums
         [Display(Name = "18 عیار")]
         Eighteen = 1,
 
+        [Display(Name = "21 عیار")]
+        TwentyOne = 2,
+
+        [Display(Name = "22 عیار")]
+        TwentyTwo = 3,
+
         [Display(Name = "24 عیار")]
-        TwentyFour = 2
+        TwentyFour = 4
     }
 }

@@ -1,13 +1,14 @@
 ﻿@inherits UserComponentBase
 
 <MudTable Class="@Class" ServerData="@(new Func<TableState, Task<TableData<ProductTableItemDto>>>(ServerReload))"
-          Hover="true" @ref="_table" RowEditCommit="async e => await CommitItemAsync(e)" Dense="true">
+          Hover="true" @ref="_table" CanCancelEdit="true" RowEditCommit="async e => await CommitItemAsync(e)" Dense="true">
     <ToolBarContent>
         <MudText Typo="Typo.h6">لیست اجناس</MudText>
         <MudSpacer />
         <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="جستجو" Adornment="Adornment.Start"
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Style="max-width: 200px;" Class="mt-0"></MudTextField>
         <MudSpacer />
+        
 
         <MudButton Color="Color.Primary" OnClick="@((e) => OpenAddProductDialog(_dialogOptions, "افزودن جنس"))"
                    EndIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled">افزودن</MudButton>
@@ -30,10 +31,14 @@
         <MudTd DataLabel="نوع جنس">@context.ProductType.ToDisplay()</MudTd>
         <MudTd DataLabel="عیار">@context.Caret.ToDisplay()</MudTd>
         <MudTd DataLabel="عملیات">
-            <MudButton Size="@Size.Small" Variant="@Variant.Filled" EndIcon="@Icons.Material.Filled.Print"
-                       Color="@Color.Primary">چاپ بارکد</MudButton>
-            <MudButton OnClick="@((e) => OpenDeleteProductDialog(_dialogOptions, context.Id))" Size="@Size.Small" Variant="@Variant.Filled" EndIcon="@Icons.Material.Filled.Delete"
-                       Color="@Color.Error">حذف</MudButton>
+            <MudTooltip Text="چاپ بارکد">
+                <MudIconButton Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Print"
+                               Color="@Color.Primary"></MudIconButton>
+            </MudTooltip>
+            <MudTooltip Text="حذف جنس">
+                <MudIconButton OnClick="@((e) => OpenDeleteProductDialog(_dialogOptions, context.Id))" Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Delete"
+                               Color="@Color.Error"></MudIconButton>
+            </MudTooltip>
         </MudTd>
     </RowTemplate>
     <RowEditingTemplate>
