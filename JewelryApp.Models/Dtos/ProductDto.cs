@@ -6,17 +6,21 @@ namespace JewelryApp.Models.Dtos;
 public class ProductDto
 {
     public int Id { get; set; }
+
+    [Display(Name = "ردیف")]
+    public int Index { get; set; } = 0;
+
     [Display(Name = "نام جنس")]
     public string Name { get; set; } = string.Empty;
 
     [Display(Name = "عیار")]
-    public Caret Caret { get; set; }
+    public Caret Caret { get; set; } = Caret.Eighteen;
 
     [Display(Name = "وزن")]
     public double Weight { get; set; }
 
     [Display(Name = "نوع")]
-    public ProductType ProductType { get; set; }
+    public ProductType ProductType { get; set; } = ProductType.Gold;
 
     [Display(Name = "ضریب مالیات")]
     public double TaxOffset { get; set; } = 0.09;
@@ -28,10 +32,10 @@ public class ProductDto
     public double GramPrice { get; set; }
 
     [Display(Name = "تعداد")]
-    public int Count { get; set; }
+    public int Count { get; set; } = 1;
 
     [Display(Name = "سود")]
-    public double Profit { get; set; } // سود (درصدی) هستش مثلا 0.09
+    public double Profit { get; set; } = 0.07;
 
     public double Tax
     {

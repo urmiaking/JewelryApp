@@ -1,8 +1,7 @@
-﻿using JewelryApp.Client.Pages.Components.Invoice;
-using JewelryApp.Data.Models;
+﻿using JewelryApp.Data.Models;
+using JewelryApp.Models.Dtos;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using static MudBlazor.CategoryTypes;
 
 namespace JewelryApp.Client.Pages;
 
@@ -13,7 +12,7 @@ public partial class SetInvoice
     
     [Inject] public IDialogService Dialog { get; set; } = default!;
 
-    public Invoice InvoiceModel { get; set; } = new() { BuyDateTime = DateTime.Now };
+    public InvoiceDto InvoiceModel { get; set; } = new() { BuyDateTime = DateTime.Now };
 
     public PatternMask NationalCodeMask = new("XXX-XXXXXX-X")
     {
@@ -31,14 +30,18 @@ public partial class SetInvoice
 
     public string BarcodeText { get; set; } = default!;
 
+    private int lastIndex = 0;
+
     private void AddRow()
     {
-        InvoiceModel.InvoiceProducts.Add(new InvoiceProduct());
+        lastIndex += 1;
+        InvoiceModel.Products.Add(new ProductDto() { Index = lastIndex});
     }
 
-    private void RemoveRow(InvoiceProduct productItem)
+    private void RemoveRow(ProductDto productItem)
     {
-        InvoiceModel.InvoiceProducts.Remove(productItem);
+        lastIndex -= 1;
+        InvoiceModel.Products.Remove(productItem);
     }
 }
 

@@ -3,100 +3,119 @@
 
 @inherits UserComponentBase
 
-<EditForm Model="@InvoiceModel">
-    <DataAnnotationsValidator />
-
-    <MudCard>
-        <MudCardHeader Class="d-flex flex-column">
-            <MudText Typo="Typo.h5">@(Id is null ? "ثبت فاکتور جدید" : "ویرایش فاکتور")</MudText>
+<MudCard>
+    <MudCardHeader Class="d-flex flex-column">
+        <MudText Typo="Typo.h5">@(Id is null ? "ثبت فاکتور جدید" : "ویرایش فاکتور")</MudText>
         </MudCardHeader>
-            <MudDivider />
-            <MudCardContent>
-                <MudPaper Class="m-1 p-4" Elevation="5">
-                    <div class="d-flex flex-column align-items-center">
-                        <MudText Typo="Typo.h6" Class="mb-3">مشخصات فردی مشتری</MudText>
-                    </div>
-                    
-                    <MudGrid>
-                        <MudItem lg="6" md="6" sm="12" xs="12">
-                            <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="نام" HelperText="نام خریدار" 
-                                          HelperTextOnFocus="true" Clearable
-                                          @bind-Value="InvoiceModel.BuyerFirstName" For="@(() => InvoiceModel.BuyerFirstName)"/>
-                        </MudItem>
-                        <MudItem lg="6" md="6" sm="12" xs="12">
-                            <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="نام خانوادگی" HelperText="نام خانوادگی خریدار"
-                                          HelperTextOnFocus="true" Clearable
-                                          @bind-Value="InvoiceModel.BuyerLastName" For="@(() => InvoiceModel.BuyerLastName)"/>
-                        </MudItem>
-                        <MudItem lg="4" md="4" sm="12" xs="12">
-                            <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Mask="@NationalCodeMask" Label="کد ملی"
-                                          HelperText="کد ملی خریدار" HelperTextOnFocus="true" Clearable
-                                          @bind-Value="InvoiceModel.BuyerNationalCode" For="@(() => InvoiceModel.BuyerNationalCode)"/>
-                        </MudItem>
-                        <MudItem lg="4" md="4" sm="12" xs="12">
-                            <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="شماره همراه" Mask="@PhoneNumberMask"
-                                          HelperText="شماره همراه خریدار" HelperTextOnFocus="true" Clearable
-                                          @bind-Value="InvoiceModel.BuyerPhoneNumber" For="@(() => InvoiceModel.BuyerPhoneNumber)"/>
-                        </MudItem>
-                        <MudItem lg="4" md="4" sm="12" xs="12">
-                            <MudDatePicker Margin="Margin.Dense" Color="Color.Secondary" Rounded="true" HelperText="تاریخ ثبت فاکتور"
-                                           Label="تاریخ فاکتور" HelperTextOnFocus="true" @bind-Date="InvoiceModel.BuyDateTime" For="@(() => InvoiceModel.BuyDateTime)" Variant="Variant.Outlined" />
-                        </MudItem>
-                    </MudGrid>
-                </MudPaper>
-                <MudPaper Class="m-1 p-3" Elevation="5">
-                    
-                    <div class="d-flex flex-grow-1 gap-4">
-                        <div class="flex-grow-1" style="width: 64px">
-                            <MudText Typo="Typo.h6" Class="mb-3">لیست اجناس</MudText>
-                        </div>
-                        <MudPaper Width="40px" Elevation="0">
-                            <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Info" OnClick="@((e) => AddRow())"></MudIconButton>
-                        </MudPaper>
-                    </div>
-                    <MudDivider/>
-                    
-                    <!--TODO: Add MudTable with new DTO-->
+        <MudDivider />
+        <MudCardContent>
+            <MudPaper Class="m-1 p-4" Elevation="5">
+                <div class="d-flex flex-column align-items-center">
+                    <MudText Typo="Typo.h6" Class="mb-3">مشخصات فردی مشتری</MudText>
+                </div>
 
-                    <table class="table table-bordered table-responsive">
-                        <thead>
-                        <tr>
-                            <td>کد</td>
-                            <td>نوع</td>
-                            <td>شرح</td>
-                            <td>وزن</td>
-                            <td>اجرت</td>
-                            <td>سود</td>
-                            <td>عیار</td>
-                            <td>مالیات</td>
-                            <td>حذف</td>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach (var productItem in InvoiceModel.InvoiceProducts)
-                        {
-                            <tr>
-                                <td>
-                                    <MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"
-                                                  HelperText="کد جنس" HelperTextOnFocus="true" MaxLength="11">
-                                    </MudTextField>
-                                </td>
-                                <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
-                                <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
-                                <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
-                                <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
-                                <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
-                                <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
-                                <td><MudTextField Style="margin-top: 1px !important" Margin="Margin.Dense" For="@(() => productItem.Product.BarcodeText)"></MudTextField></td>
-                                <td><MudIconButton Icon="@Icons.Material.Filled.RemoveCircleOutline" Size="Size.Small" Color="Color.Error" OnClick="@(() => RemoveRow(productItem))"></MudIconButton></td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit">ذخیره</MudButton>
-                </MudPaper>
-                
-        </MudCardContent>
-    </MudCard>
-</EditForm>
+                <MudGrid>
+                    <MudItem lg="6" md="6" sm="12" xs="12">
+                        <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="نام" HelperText="نام خریدار"
+                                      HelperTextOnFocus="true" Clearable
+                     @bind-Value="InvoiceModel.BuyerFirstName" For="@(() => InvoiceModel.BuyerFirstName)" />
+                     </MudItem>
+                     <MudItem lg="6" md="6" sm="12" xs="12">
+                     <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="نام خانوادگی" HelperText="نام خانوادگی خریدار"
+                                   HelperTextOnFocus="true" Clearable
+                     @bind-Value="InvoiceModel.BuyerLastName" For="@(() => InvoiceModel.BuyerLastName)" />
+                     </MudItem>
+                     <MudItem lg="4" md="4" sm="12" xs="12">
+                     <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Mask="@NationalCodeMask" Label="کد ملی"
+                                   HelperText="کد ملی خریدار" HelperTextOnFocus="true" Clearable
+                     @bind-Value="InvoiceModel.BuyerNationalCode" For="@(() => InvoiceModel.BuyerNationalCode)" />
+                     </MudItem>
+                     <MudItem lg="4" md="4" sm="12" xs="12">
+                     <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="شماره همراه" Mask="@PhoneNumberMask"
+                                   HelperText="شماره همراه خریدار" HelperTextOnFocus="true" Clearable
+                     @bind-Value="InvoiceModel.BuyerPhoneNumber" For="@(() => InvoiceModel.BuyerPhoneNumber)" />
+                     </MudItem>
+                     <MudItem lg="4" md="4" sm="12" xs="12">
+                     <MudDatePicker Margin="Margin.Dense" Color="Color.Secondary" Rounded="true" HelperText="تاریخ ثبت فاکتور"
+                                    Label="تاریخ فاکتور" HelperTextOnFocus="true" @bind-Date="InvoiceModel.BuyDateTime" For="@(() => InvoiceModel.BuyDateTime)" Variant="Variant.Outlined" />
+                     </MudItem>
+                     </MudGrid>
+                     </MudPaper>
+                     <MudPaper Class="m-1 p-3" Elevation="5">
+
+                     <div class="d-flex flex-grow-1 gap-4">
+                         <div class="flex-grow-1" style="width: 64px">
+                             <MudText Typo="Typo.h6" Class="mb-3">لیست اجناس</MudText>
+                         </div>
+                         <MudPaper Width="40px" Elevation="0">
+                         <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Info" OnClick="@((e) => AddRow())"></MudIconButton>
+                         </MudPaper>
+                     </div>
+                     <MudDivider />
+
+                     <!--TODO: Add MudTable with new DTO-->
+
+                     <MudTable Items="@InvoiceModel.Products" Hover="true" Breakpoint="Breakpoint.Sm">
+                     <HeaderContent>
+                         <MudTh>ردیف</MudTh>
+                         <MudTh>نوع کالا</MudTh>
+                         <MudTh>نام کالا</MudTh>
+                         <MudTh>تعداد</MudTh>
+                         <MudTh>وزن</MudTh>
+                         <MudTh>اجرت ساخت</MudTh>
+                         <MudTh>سود</MudTh>
+                         <MudTh>عیار</MudTh>
+                         <MudTh>ضریب مالیات</MudTh>
+                         <MudTh>عملیات</MudTh>
+                     </HeaderContent>
+                     <RowTemplate>
+                         <MudTd DataLabel="ردیف">@context.Index</MudTd>
+                         <MudTd DataLabel="نوع کالا">
+                         <MudSelect T="ProductType" Label="نوع جنس" @bind-Value="context.ProductType" Margin="Margin.Dense" Variant="Variant.Outlined">
+                            @foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
+                            {
+                                <MudSelectItem T="ProductType" Value="productType">@productType.ToDisplay()</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudTd>
+                    <MudTd DataLabel="نام کالا">
+                        <MudTextField Margin="Margin.Dense" @bind-Value="context.Name"></MudTextField>
+                    </MudTd>
+                    <MudTd DataLabel="تعداد" HideSmall="true">
+                        <MudTextField T="int" Margin="Margin.Dense" @bind-Value="context.Count"></MudTextField>
+                    </MudTd>
+                    <MudTd DataLabel="وزن">
+                        <MudTextField T="double" Margin="Margin.Dense" @bind-Value="context.Weight"></MudTextField>
+                    </MudTd>
+                    <MudTd DataLabel="اجرت ساخت">
+                        <MudTextField T="double" Margin="Margin.Dense" @bind-Value="context.Wage"></MudTextField>
+                    </MudTd>
+                    <MudTd DataLabel="سود">
+                        <MudTextField T="double" Margin="Margin.Dense" @bind-Value="context.Profit"></MudTextField>
+                    </MudTd>
+                    <MudTd DataLabel="عیار">
+                        <MudSelect T="Caret" @bind-Value="context.Caret" Margin="Margin.Dense" Variant="Variant.Outlined">
+                            @foreach (Caret caret in Enum.GetValues(typeof(Caret)))
+                            {
+                                <MudSelectItem T="Caret" Value="caret">@caret.ToDisplay()</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudTd>
+                    <MudTd DataLabel="ضریب مالیات">
+                        <MudTextField T="double" Margin="Margin.Dense" @bind-Value="context.TaxOffset"></MudTextField>
+                    </MudTd>
+                    <MudTd DataLabel="عملیات">
+                        <MudIconButton Icon="@Icons.Material.Filled.RemoveCircleOutline" Size="Size.Small" Color="Color.Error"
+                                       OnClick="@(() => RemoveRow(context))"></MudIconButton>
+                    </MudTd>
+                </RowTemplate>
+                <NoRecordsContent>
+                    <MudText>هیچ جنسی یافت نشد</MudText>
+                </NoRecordsContent>
+            </MudTable>
+            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit">ذخیره</MudButton>
+        </MudPaper>
+    </MudCardContent>
+</MudCard>
+
 
