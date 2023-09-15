@@ -1,13 +1,7 @@
-﻿using AutoMapper;
-using JewelryApp.Business.AppServices;
-using JewelryApp.Business.Repositories.Interfaces;
+﻿using JewelryApp.Business.AppServices;
 using JewelryApp.Common.Enums;
-using JewelryApp.Data;
-using JewelryApp.Data.Models;
 using JewelryApp.Models.Dtos;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Api.Controllers;
 

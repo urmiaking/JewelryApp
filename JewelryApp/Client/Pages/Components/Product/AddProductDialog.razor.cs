@@ -34,5 +34,5 @@ public partial class AddProductDialog
         }
     }
 
-    private Func<Caret, string> _caretConverter = p => p.ToDisplay();
+    private readonly Func<Caret, string> _caretConverter = p => p.ToDisplay();
 }

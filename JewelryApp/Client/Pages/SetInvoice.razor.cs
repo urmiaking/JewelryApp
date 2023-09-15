@@ -1,4 +1,5 @@
-﻿using JewelryApp.Data.Models;
+﻿using JewelryApp.Common.Enums;
+using JewelryApp.Data.Models;
 using JewelryApp.Models.Dtos;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -42,6 +43,74 @@ public partial class SetInvoice
     {
         lastIndex -= 1;
         InvoiceModel.Products.Remove(productItem);
+    }
+
+    private void ProductTypeChanged(ChangeEventArgs args, ProductDto context)
+    {
+        if (args.Value is not null)
+        {
+            var productTypeAsString = args.Value.ToString();
+            
+            var productType = Enum.Parse<ProductType>(productTypeAsString!);
+
+            ChangeInvoiceModel(productType, InvoiceModel, context);
+        }
+    }
+
+    private static void ChangeInvoiceModel(ProductType productType, InvoiceDto invoice, ProductDto context)
+    {
+        var product = invoice.Products.FirstOrDefault(a => a.Index == context.Index);
+
+        context.ProductType = productType;
+        product!.Profit = productType switch
+        {
+            ProductType.Jewelry => 20,
+            ProductType.Gold => 7,
+            _ => throw new ArgumentOutOfRangeException(nameof(productType), productType, null)
+        };
+    }
+
+    private async Task Submit()
+    {
+        var validated = Validate();
+
+        if (validated)
+        {
+            await PostAsync("api/Invoices", InvoiceModel);
+        }
+    }
+
+    private bool Validate()
+    {
+        var errorList = new List<string>();
+        if (!InvoiceModel.Products.Any())
+        {
+            errorList.Add("لطفا حداقل یک کالا در فاکتور وارد نمایید");
+        }
+        else
+        {
+            if (InvoiceModel.Products.Any(x => x.Weight == 0))
+            {
+                errorList.Add("وزن کالا نمی تواند صفر باشد");
+            }
+
+            if (InvoiceModel.Products.Any(x => string.IsNullOrEmpty(x.Name)))
+            {
+                errorList.Add("لطفا نام کالا را وارد نمایید");
+            }
+        }
+
+        if (errorList.Any())
+        {
+            foreach (var error in errorList)
+            {
+                SnackBar.Add(error, Severity.Error);
+            }
+
+            return false;
+        }
+        
+        return true;
     }
 }
 

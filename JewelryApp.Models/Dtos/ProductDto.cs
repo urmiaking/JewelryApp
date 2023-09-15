@@ -23,7 +23,7 @@ public class ProductDto
     public ProductType ProductType { get; set; } = ProductType.Gold;
 
     [Display(Name = "ضریب مالیات")]
-    public double TaxOffset { get; set; } = 0.09;
+    public double TaxOffset { get; set; } = 9;
 
     [Display(Name = "اجرت")]
     public double Wage { get; set; } // اجرت جواهر به تومان است، اجرت طلا به درصد است
@@ -35,7 +35,7 @@ public class ProductDto
     public int Count { get; set; } = 1;
 
     [Display(Name = "سود")]
-    public double Profit { get; set; } = 0.07;
+    public double Profit { get; set; } = 7;
 
     public double Tax
     {

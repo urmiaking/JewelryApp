@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Api.Controllers;
 
-[Route("api/[controller]/[action]")]
+[Route("api/[controller]")]
 [ApiController]
 public class InvoicesController : ControllerBase
 {
@@ -19,13 +19,13 @@ public class InvoicesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetInvoices(int count = 0)
+    public async Task<IActionResult> Get()
     {
-        var query = _context.Invoices.Include(a => a.InvoiceProducts).OrderByDescending(a => a.BuyDateTime);
-
-        query = count == 0 ? query : query.Take(count).OrderByDescending(a => a.BuyDateTime);
-
-        var result = (await query.ToListAsync()).Select((a, i) => new InvoiceTableItemDto()
+        var query = _context.Invoices
+            .Include(a => a.InvoiceProducts)
+            .OrderByDescending(a => a.BuyDateTime);
+        
+        var result = (await query.ToListAsync()).Select((a, i) => new InvoiceTableItemDto
         {
             InvoiceId = a.Id,
             Index = i + 1,
@@ -37,6 +37,12 @@ public class InvoicesController : ControllerBase
         });
 
         return Ok(result);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Set(InvoiceDto invoiceDto)
+    {
+        return Ok();
     }
 }
 
