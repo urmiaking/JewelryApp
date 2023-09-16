@@ -33,4 +33,7 @@ public class InvoiceDto
 
     [Display(Name = "تاریخ فاکتور")]
     public DateTime? BuyDateTime { get; set; }
+
+    [Display(Name = "نرخ گرم 18 عیار")] 
+    public double GramPrice { get; set; }
 }

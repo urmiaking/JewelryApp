@@ -15,7 +15,21 @@ public partial class SetInvoice
 
     public InvoiceDto InvoiceModel { get; set; } = new() { BuyDateTime = DateTime.Now };
 
+    protected override async Task OnInitializedAsync()
+    {
+        var priceDto = await GetAsync<PriceDto>("api/Price");
+        InvoiceModel.GramPrice = priceDto!.Gold18K;
+        await base.OnInitializedAsync();
+    }
+
     public PatternMask NationalCodeMask = new("XXX-XXXXXX-X")
+    {
+        MaskChars = new[] { new MaskChar('X', @"[0-9]") },
+        Placeholder = '_',
+        CleanDelimiters = true
+    };
+
+    public PatternMask GramPriceMask = new("X,XXX,XXX")
     {
         MaskChars = new[] { new MaskChar('X', @"[0-9]") },
         Placeholder = '_',

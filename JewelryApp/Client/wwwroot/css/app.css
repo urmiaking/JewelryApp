@@ -239,3 +239,8 @@ a, .btn-link {
     pointer-events: none;
     opacity: 0.5;
 }
+
+
+.centered-rows td {
+    text-align: center;
+}

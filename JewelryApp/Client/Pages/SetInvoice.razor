@@ -55,71 +55,77 @@
 
                     <!--TODO: Add MudTable with new DTO-->
 
-                    <MudTable Items="@InvoiceModel.Products" Hover="true" Breakpoint="Breakpoint.Sm">
-                        <HeaderContent>
-                            <MudTh>ردیف</MudTh>
-                            <MudTh>نوع کالا</MudTh>
-                            <MudTh>نام کالا</MudTh>
-                            <MudTh>تعداد</MudTh>
-                            <MudTh>وزن</MudTh>
-                            <MudTh>اجرت ساخت</MudTh>
-                            <MudTh>سود</MudTh>
-                            <MudTh>عیار</MudTh>
-                            <MudTh>ضریب مالیات</MudTh>
-                            <MudTh>عملیات</MudTh>
-                        </HeaderContent>
-                        <RowTemplate>
-                            <MudTd DataLabel="ردیف">@context.Index</MudTd>
-                            <MudTd DataLabel="نوع کالا">
-                                <InputSelect class="select-text" @bind-Value="context.ProductType" 
-                                             @oninput="@(args => ProductTypeChanged(args, context))">
-                                    @foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
-                                    {
-                                        <option class="p-4" value="@productType">@productType.ToDisplay()</option>
-                                    }
-                                </InputSelect>
-                                <span class="select-highlight"></span>
-                                <span class="select-bar"></span>
-                            </MudTd>
-                            <MudTd DataLabel="نام کالا">
-                                <MudTextField Margin="Margin.Dense" @bind-Value="context.Name"></MudTextField>
-                            </MudTd>
-                            <MudTd DataLabel="تعداد" HideSmall="true">
-                                <MudTextField T="int" Margin="Margin.Dense" @bind-Value="context.Count"></MudTextField>
-                            </MudTd>
-                            <MudTd DataLabel="وزن">
-                                <MudTextField T="double" Margin="Margin.Dense" @bind-Value="context.Weight"></MudTextField>
-                            </MudTd>
-                            <MudTd DataLabel="اجرت ساخت">
-                                <MudTextField T="double" Margin="Margin.Dense" @bind-Value="context.Wage"></MudTextField>
-                            </MudTd>
-                            <MudTd DataLabel="سود">
-                                <MudTextField T="double" Margin="Margin.Dense" @bind-Value="context.Profit"></MudTextField>
-                            </MudTd>
-                            <MudTd DataLabel="عیار">
-                                <InputSelect class="select-text" @bind-Value="context.Caret">
-                                    @foreach (Caret caret in Enum.GetValues(typeof(Caret)))
-                                    {
-                                        <option class="p-4" value="@caret">@caret.ToDisplay()</option>
-                                    }
-                                </InputSelect>
-                                <span class="select-highlight"></span>
-                                <span class="select-bar"></span>
-                            </MudTd>
-                            <MudTd DataLabel="ضریب مالیات">
-                                <MudTextField T="double" Margin="Margin.Dense" @bind-Value="context.TaxOffset"></MudTextField>
-                            </MudTd>
-                            <MudTd DataLabel="عملیات">
-                                <MudIconButton Icon="@Icons.Material.Filled.RemoveCircleOutline" Size="Size.Small" Color="Color.Error"
-                                               OnClick="@(() => RemoveRow(context))"></MudIconButton>
-                            </MudTd>
-                        </RowTemplate>
-                        <NoRecordsContent>
-                            <MudText>هیچ جنسی اضافه نشده است</MudText>
-                        </NoRecordsContent>
-                    </MudTable>
-                    <br />
-            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" OnClick="Submit">ذخیره</MudButton>
+                    <MudTable Class="centered-rows" Items="@InvoiceModel.Products" Hover="true" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true">
+                    <HeaderContent>
+                        <MudTh>ردیف</MudTh>
+                        <MudTh>نوع کالا</MudTh>
+                        <MudTh>نام کالا</MudTh>
+                        <MudTh>تعداد</MudTh>
+                        <MudTh>وزن</MudTh>
+                        <MudTh>اجرت ساخت</MudTh>
+                        <MudTh>سود</MudTh>
+                        <MudTh>عیار</MudTh>
+                        <MudTh>ضریب مالیات</MudTh>
+                        <MudTh>عملیات</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="ردیف">@context.Index</MudTd>
+                        <MudTd DataLabel="نوع کالا">
+                        <InputSelect class="select-text" @bind-Value="context.ProductType"
+                        @oninput="@(args => ProductTypeChanged(args, context))">
+                            @foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
+                            {
+                                <option class="p-4" value="@productType">@productType.ToDisplay()</option>
+                            }
+                        </InputSelect>
+                        <span class="select-highlight"></span>
+                        <span class="select-bar"></span>
+                    </MudTd>
+                    <MudTd DataLabel="نام کالا">
+                        <MudTextField Style="width: 200px;" Margin="Margin.Dense" @bind-Value="context.Name"></MudTextField>
+                    </MudTd>
+                    <MudTd DataLabel="تعداد" HideSmall="true">
+                        <MudTextField Style="width: 50px;" T="int" Margin="Margin.Dense" @bind-Value="context.Count"></MudTextField>
+                    </MudTd>
+                    <MudTd DataLabel="وزن">
+                        <MudTextField Style="width: 50px;" T="double" Margin="Margin.Dense" @bind-Value="context.Weight"></MudTextField>
+                    </MudTd>
+                    <MudTd DataLabel="اجرت ساخت">
+                        <MudTextField Style="width: 50px;" T="double" Margin="Margin.Dense" @bind-Value="context.Wage"></MudTextField>
+                    </MudTd>
+                    <MudTd DataLabel="سود">
+                        <MudTextField Style="width: 50px;" T="double" Margin="Margin.Dense" @bind-Value="context.Profit"></MudTextField>
+                    </MudTd>
+                    <MudTd DataLabel="عیار">
+                        <InputSelect class="select-text" @bind-Value="context.Caret">
+                            @foreach (Caret caret in Enum.GetValues(typeof(Caret)))
+                            {
+                                <option class="p-4" value="@caret">@caret.ToDisplay()</option>
+                            }
+                        </InputSelect>
+                        <span class="select-highlight"></span>
+                        <span class="select-bar"></span>
+                    </MudTd>
+                    <MudTd DataLabel="ضریب مالیات">
+                        <MudTextField Style="width: 50px;" T="double" Margin="Margin.Dense" @bind-Value="context.TaxOffset"></MudTextField>
+                    </MudTd>
+                    <MudTd DataLabel="عملیات">
+                        <MudIconButton Icon="@Icons.Material.Filled.RemoveCircleOutline" Size="Size.Small" Color="Color.Error"
+                                       OnClick="@(() => RemoveRow(context))"></MudIconButton>
+                    </MudTd>
+                </RowTemplate>
+                <NoRecordsContent>
+                    <MudText>هیچ جنسی اضافه نشده است</MudText>
+                </NoRecordsContent>
+            </MudTable>
+            <br />
+            <MudStack Row>
+                <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" OnClick="Submit">ذخیره</MudButton>
+                <MudSpacer />
+                <MudPaper Width="100px;">
+                    <MudTextField Mask="GramPriceMask" T="double" @bind-Value="InvoiceModel.GramPrice" Label="نرخ گرم 18 عیار"></MudTextField>
+                </MudPaper>
+            </MudStack>
         </MudPaper>
     </MudCardContent>
 </MudCard>
