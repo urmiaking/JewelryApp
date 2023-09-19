@@ -1,35 +1,74 @@
 ﻿@inherits UserComponentBase
 
-<MudDataGrid Outlined="true" Class="@Class" Items="@_invoices?.Take(4)" Dense="true" Hover="true" Bordered="true" Filterable="Filterable">
+<MudTable Class="@Class" ServerData="@(new Func<TableState, Task<TableData<InvoiceTableItemDto>>>(ServerReload))"
+          Hover="true" @ref="_table" CanCancelEdit="true" RowEditCommit="async e => await CommitItemAsync(e)" Dense="true">
     <ToolBarContent>
         <MudText Typo="Typo.h6">لیست فاکتورها</MudText>
         <MudSpacer />
-        @if (IsInInvoicePage)
-        {
-            <MudButton Color="Color.Primary" EndIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Href="/invoices/add">افزودن</MudButton>
-        }
-        else
-        {
-            <MudButton Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowBack" Variant="Variant.Filled">بیشتر</MudButton>
-            
-        }
+        <MudTextField T="string" ValueChanged="@(s=> OnSearch(s))" Placeholder="جستجو" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Style="max-width: 200px;" Class="mt-0"></MudTextField>
+        <MudSpacer />
+
+
+        <MudButton Color="Color.Primary" OnClick="@((e) => NavigationManager.NavigateTo("/invoices/Add"))"
+                   EndIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled">افزودن</MudButton>
+
     </ToolBarContent>
-    <Columns>
-        <PropertyColumn Property="x => x.Index" Title="ردیف" />
-        <PropertyColumn Property="x => x.InvoiceId" Title="شماره فاکتور" />
-        <PropertyColumn Property="x => x.BuyerName" Title="نام خریدار" />
-        <PropertyColumn Property="x => x.BuyerPhone" Title="شماره همراه" />
-        <PropertyColumn Property="x => x.TotalCost" Title="مبلغ کل" />
-        <PropertyColumn Property="x => x.ProductsCount" Title="تعداد اجناس" />
-        <PropertyColumn Property="x => x.BuyDate" Title="تاریخ خرید" />
-        <TemplateColumn CellClass="justify-center" Title="عملیات">
-            <CellTemplate>
-                <MudStack Row>
-                    <MudButton Size="@Size.Small" EndIcon="@Icons.Material.Filled.Edit" Variant="@Variant.Filled" Color="@Color.Primary">ویرایش</MudButton>
-                    <MudButton Size="@Size.Small" EndIcon="@Icons.Material.Filled.Delete" Variant="@Variant.Filled" Color="@Color.Primary">حذف</MudButton>
-                    <MudButton Size="@Size.Small" EndIcon="@Icons.Material.Filled.Print" Variant="@Variant.Filled" Color="@Color.Primary">چاپ</MudButton>
-                </MudStack>
-            </CellTemplate>
-        </TemplateColumn>
-    </Columns>
-</MudDataGrid>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="index_field" T="InvoiceTableItemDto">ردیف</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="id_field" T="InvoiceTableItemDto">شماره فاکتور</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="name_field" T="InvoiceTableItemDto">نام خریدار</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="phone_field" T="InvoiceTableItemDto">شماره همراه</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="cost_field" T="InvoiceTableItemDto">مبلغ کل</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="count_field" T="InvoiceTableItemDto">تعداد اجناس</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="date_field" T="InvoiceTableItemDto">تاریخ خرید</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="InvoiceTableItemDto">عملیات</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="ردیف">@context.Index</MudTd>
+        <MudTd DataLabel="شماره فاکتور">@context.InvoiceId</MudTd>
+        <MudTd DataLabel="نام خریدار">@context.BuyerName</MudTd>
+        <MudTd DataLabel="شماره همراه">@context.BuyerPhone</MudTd>
+        <MudTd DataLabel="مبلغ کل">@context.TotalCost</MudTd>
+        <MudTd DataLabel="تعداد اجناس">@context.ProductsCount</MudTd>
+        <MudTd DataLabel="تاریخ خرید">@context.BuyDate</MudTd>
+        <MudTd DataLabel="عملیات">
+            <MudTooltip Text="ویرایش فاکتور">
+                <MudIconButton Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Edit"
+                               Color="@Color.Info"></MudIconButton>
+            </MudTooltip>
+            <MudTooltip Text="چاپ فاکتور">
+                <MudIconButton Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Print"
+                               Color="@Color.Primary"></MudIconButton>
+            </MudTooltip>
+            <MudTooltip Text="حذف فاکتور">
+                <MudIconButton OnClick="@((e) => OpenDeleteProductDialog(_dialogOptions, context.InvoiceId))" Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Delete"
+                               Color="@Color.Error"></MudIconButton>
+            </MudTooltip>
+        </MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd DataLabel="ردیف">@context.Index</MudTd>
+        <MudTd DataLabel="شماره فاکتور">@context.InvoiceId</MudTd>
+        <MudTd DataLabel="نام خریدار">
+            <MudTextField @bind-Value="@context.BuyerName" Required />
+        </MudTd>
+        <MudTd DataLabel="شماره همراه">
+            <MudTextField @bind-Value="@context.BuyerPhone" Required />
+        </MudTd>
+        <MudTd DataLabel="مبلغ کل">@context.TotalCost</MudTd>
+        <MudTd DataLabel="تعداد اجناس">@context.ProductsCount</MudTd>
+    </RowEditingTemplate>
+    <NoRecordsContent>
+        <MudText>هیچ فاکتوری یافت نشد</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>در حال بارگذاری</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudTablePager HorizontalAlignment="HorizontalAlignment.Center" />
+    </PagerContent>
+    <EditButtonContent Context="button">
+        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
+    </EditButtonContent>
+</MudTable>

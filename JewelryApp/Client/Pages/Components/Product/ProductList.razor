@@ -50,7 +50,7 @@
             <MudNumericField @bind-Value="@context.Weight" Required Min="0.01" />
         </MudTd>
         <MudTd DataLabel="اجرت">
-            <MudNumericField @bind-Value="@context.Wage" Required Min="1" />
+            <MudNumericField @bind-Value="@context.Wage" Required Min="0" />
         </MudTd>
         <MudTd DataLabel="نوع جنس">
             <MudSelect T="ProductType" Label="نوع جنس" @bind-Value="context.ProductType" Variant="Variant.Text">
