@@ -12,7 +12,9 @@ public class MappingProfile : Profile
         CreateMap<Product, ProductTableItemDto>().ReverseMap();
         CreateMap<Price, PriceDto>().ReverseMap();
         CreateMap<Invoice, InvoiceDto>().ReverseMap();
-        CreateMap<ProductDto, InvoiceProduct>().ReverseMap();
+        CreateMap<ProductDto, InvoiceProduct>().ForMember(x => x.ProductId,
+            a => 
+                a.MapFrom(b => b.Id)).ReverseMap();
         CreateMap<ProductDto, Product>().ReverseMap();
         CreateProjection<RefreshToken, RefreshTokenDto>();
     }

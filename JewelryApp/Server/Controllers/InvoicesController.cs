@@ -31,7 +31,7 @@ public class InvoicesController : ControllerBase
         var query = _context.Invoices
             .Include(a => a.InvoiceProducts)
             .OrderByDescending(a => a.BuyDateTime);
-        
+
         var result = (await query.ToListAsync()).Select((a, i) => new InvoiceTableItemDto
         {
             InvoiceId = a.Id,
@@ -51,30 +51,41 @@ public class InvoicesController : ControllerBase
     {
         var invoice = _mapper.Map<InvoiceDto, Invoice>(invoiceDto);
 
-        foreach (var productDto in invoiceDto.Products)
-        {
-            productDto.GramPrice = invoiceDto.GramPrice;
-            //var invoiceProduct = _mapper.Map<ProductDto, InvoiceProduct>(productDto);
-
-            if (productDto.Id == 0)
-            {
-                var newProduct = _mapper.Map<ProductDto, Product>(productDto);
-                newProduct.BarcodeText = await _barcodeRepository.GetBarcodeAsync(newProduct);
-                newProduct.AddedDateTime = DateTime.Now;
-
-                await _context.Products.AddAsync(newProduct);
-                await _context.SaveChangesAsync();
-                productDto.Id = newProduct.Id;
-            }
-            //invoice.InvoiceProducts.Add();
-            //invoiceProduct.ProductId = productDto.Id;
-            //invoice.InvoiceProducts.Add(invoiceProduct);
-        }
-
-        
-
         await _context.Invoices.AddAsync(invoice);
         await _context.SaveChangesAsync();
+        
+
+        foreach (var productDto in invoiceDto.Products)
+        {
+            var product = _mapper.Map<ProductDto, Product>(productDto);
+            productDto.GramPrice = invoiceDto.GramPrice;
+            // New Product
+            if (product.Id == 0)
+            {
+                product.BarcodeText = await _barcodeRepository.GetBarcodeAsync(product);
+                product.AddedDateTime = DateTime.Now;
+                await _context.Products.AddAsync(product);
+                await _context.SaveChangesAsync();
+            }
+
+            var invoiceProduct = new InvoiceProduct
+            {
+                InvoiceId = invoice.Id,
+                ProductId = product.Id,
+                Invoice = invoice,
+                Product = product,
+                Count = productDto.Count,
+                Profit = productDto.Profit / 100.0,
+                GramPrice = invoiceDto.GramPrice,
+                TaxOffset = productDto.TaxOffset / 100.0,
+                FinalPrice = productDto.FinalPrice,
+                Tax = productDto.Tax
+            };
+
+            _context.Entry(product).State = EntityState.Unchanged;
+            await _context.InvoiceProducts.AddAsync(invoiceProduct);
+            await _context.SaveChangesAsync();
+        }
 
         return Ok();
     }
