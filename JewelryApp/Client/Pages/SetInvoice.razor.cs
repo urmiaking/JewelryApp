@@ -10,10 +10,24 @@ public partial class SetInvoice
 {
     [Parameter]
     public int? Id { get; set; }
-    
+
     [Inject] public IDialogService Dialog { get; set; } = default!;
 
-    public InvoiceDto InvoiceModel { get; set; } = new() { BuyDateTime = DateTime.Now };
+    public InvoiceDto InvoiceModel { get; set; } = new()
+    {
+        BuyDateTime = DateTime.Now,
+        Products = new List<ProductDto>()
+        {
+            new ProductDto
+            {
+                Count = 1,
+                Caret = Caret.Eighteen,
+                Index = 1,
+                ProductType = ProductType.Gold,
+                TaxOffset = 9
+            }
+        }
+    };
 
     protected override async Task OnInitializedAsync()
     {
@@ -45,12 +59,12 @@ public partial class SetInvoice
 
     public string BarcodeText { get; set; } = default!;
 
-    private int lastIndex = 0;
+    private int lastIndex = 1;
 
     private void AddRow()
     {
         lastIndex += 1;
-        InvoiceModel.Products.Add(new ProductDto() { Index = lastIndex});
+        InvoiceModel.Products.Add(new ProductDto() { Index = lastIndex });
     }
 
     private void RemoveRow(ProductDto productItem)
@@ -64,7 +78,7 @@ public partial class SetInvoice
         if (args.Value is not null)
         {
             var productTypeAsString = args.Value.ToString();
-            
+
             var productType = Enum.Parse<ProductType>(productTypeAsString!);
 
             ChangeInvoiceModel(productType, InvoiceModel, context);
@@ -123,7 +137,7 @@ public partial class SetInvoice
 
             return false;
         }
-        
+
         return true;
     }
 }

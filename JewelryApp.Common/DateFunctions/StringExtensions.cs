@@ -15,16 +15,11 @@ public static class StringExtensions
     {
         var random = new Random();
         var number = random.Next(0, 100000);
-        switch (productType)
+        return productType switch
         {
-            case ProductType.Jewelry:
-                return $"JF-{number:D5}";
-            case ProductType.Gold:
-                return $"GF-{number:D5}";
-            default:
-                throw new ArgumentOutOfRangeException(nameof(productType), productType, null);
-        }
-        
-        
+            ProductType.Jewelry => $"JF-{number:D5}-0",
+            ProductType.Gold => $"GF-{number:D5}-0",
+            _ => throw new ArgumentOutOfRangeException(nameof(productType), productType, null)
+        };
     }
 }

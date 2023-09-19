@@ -53,7 +53,8 @@ public class InvoicesController : ControllerBase
 
         foreach (var productDto in invoiceDto.Products)
         {
-            var invoiceProduct = _mapper.Map<ProductDto, InvoiceProduct>(productDto);
+            productDto.GramPrice = invoiceDto.GramPrice;
+            //var invoiceProduct = _mapper.Map<ProductDto, InvoiceProduct>(productDto);
 
             if (productDto.Id == 0)
             {
@@ -65,10 +66,12 @@ public class InvoicesController : ControllerBase
                 await _context.SaveChangesAsync();
                 productDto.Id = newProduct.Id;
             }
-
-            invoiceProduct.ProductId = productDto.Id;
-            invoice.InvoiceProducts.Add(invoiceProduct);
+            //invoice.InvoiceProducts.Add();
+            //invoiceProduct.ProductId = productDto.Id;
+            //invoice.InvoiceProducts.Add(invoiceProduct);
         }
+
+        
 
         await _context.Invoices.AddAsync(invoice);
         await _context.SaveChangesAsync();
