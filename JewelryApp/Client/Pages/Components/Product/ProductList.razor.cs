@@ -4,6 +4,7 @@ using MudBlazor;
 using System.Net.Http.Json;
 using JewelryApp.Client.Shared;
 using JewelryApp.Common.Enums;
+using static MudBlazor.CategoryTypes;
 
 namespace JewelryApp.Client.Pages.Components.Product;
 
@@ -57,11 +58,9 @@ public partial class ProductList
     [Parameter]
     public string? Class { get; set; }
 
-    [Parameter]
-    public bool Filterable { get; set; }
-
-
     private List<ProductTableItemDto>? _products;
+
+    private HashSet<ProductTableItemDto> _selectedItems = new();
 
     DialogOptions _dialogOptions = new() { CloseButton = true, FullWidth = true, FullScreen = false };
 

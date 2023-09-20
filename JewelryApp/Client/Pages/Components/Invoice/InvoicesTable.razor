@@ -1,6 +1,6 @@
 ﻿@inherits UserComponentBase
 
-<MudTable Class="@Class" ServerData="@(new Func<TableState, Task<TableData<InvoiceTableItemDto>>>(ServerReload))"
+<MudTable Elevation="15" Class="@Class" ServerData="@(new Func<TableState, Task<TableData<InvoiceTableItemDto>>>(ServerReload))"
           Hover="true" @ref="_table" CanCancelEdit="true" RowEditCommit="async e => await CommitItemAsync(e)" Dense="true">
     <ToolBarContent>
         <MudText Typo="Typo.h6">لیست فاکتورها</MudText>
@@ -29,7 +29,7 @@
         <MudTd DataLabel="شماره فاکتور">@context.InvoiceId</MudTd>
         <MudTd DataLabel="نام خریدار">@context.BuyerName</MudTd>
         <MudTd DataLabel="شماره همراه">@context.BuyerPhone</MudTd>
-        <MudTd DataLabel="مبلغ کل">@context.TotalCost</MudTd>
+        <MudTd DataLabel="مبلغ کل">@context.TotalCost.ToString("C0").Replace("ریال", "") تومان</MudTd>
         <MudTd DataLabel="تعداد اجناس">@context.ProductsCount</MudTd>
         <MudTd DataLabel="تاریخ خرید">@context.BuyDate</MudTd>
         <MudTd DataLabel="عملیات">
@@ -56,7 +56,7 @@
         <MudTd DataLabel="شماره همراه">
             <MudTextField @bind-Value="@context.BuyerPhone" Required />
         </MudTd>
-        <MudTd DataLabel="مبلغ کل">@context.TotalCost</MudTd>
+        <MudTd DataLabel="مبلغ کل">@context.TotalCost.ToString("C0").Replace("ریال", "") تومان</MudTd>
         <MudTd DataLabel="تاریخ">@context.BuyDate</MudTd>
         <MudTd DataLabel="تعداد اجناس">@context.ProductsCount</MudTd>
     </RowEditingTemplate>
