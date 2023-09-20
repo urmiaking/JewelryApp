@@ -46,6 +46,21 @@ public class InvoicesController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet(nameof(GetInvoice))]
+    public async Task<IActionResult> GetInvoice(int id = 0)
+    {
+        if (id is 0)
+            return BadRequest();
+
+        var invoice = await _context.Invoices.FirstOrDefaultAsync(x => x.Id == id);
+
+        if (invoice is null)
+            return BadRequest();
+
+        var invoiceDto = _mapper.Map<Invoice, InvoiceDto>(invoice);
+        return Ok(invoiceDto);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Set(InvoiceDto invoiceDto)
     {

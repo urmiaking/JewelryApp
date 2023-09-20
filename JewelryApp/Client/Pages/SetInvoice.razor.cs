@@ -18,7 +18,7 @@ public partial class SetInvoice
         BuyDateTime = DateTime.Now,
         Products = new List<ProductDto>()
         {
-            new ProductDto
+            new ()
             {
                 Count = 1,
                 Caret = Caret.Eighteen,
@@ -31,8 +31,16 @@ public partial class SetInvoice
 
     protected override async Task OnInitializedAsync()
     {
-        var priceDto = await GetAsync<PriceDto>("api/Price");
-        InvoiceModel.GramPrice = priceDto!.Gold18K;
+        if (Id is not null)
+        {
+            InvoiceModel = await GetAsync<InvoiceDto>($"/api/Invoices/GetInvoice?id={Id}") ?? throw new InvalidOperationException();
+        }
+        else
+        {
+            var priceDto = await GetAsync<PriceDto>("api/Price");
+            InvoiceModel.GramPrice = priceDto!.Gold18K;
+        }
+        
         await base.OnInitializedAsync();
     }
 

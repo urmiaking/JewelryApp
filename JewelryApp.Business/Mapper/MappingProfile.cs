@@ -11,7 +11,11 @@ public class MappingProfile : Profile
         CreateMap<Product, SetProductDto>().ReverseMap();
         CreateMap<Product, ProductTableItemDto>().ReverseMap();
         CreateMap<Price, PriceDto>().ReverseMap();
-        CreateMap<Invoice, InvoiceDto>().ReverseMap();
+        CreateMap<Invoice, InvoiceDto>()
+            .ForMember(x => 
+                x.Products, x => 
+                x.MapFrom(a => a.InvoiceProducts))
+            .ReverseMap();
         CreateMap<ProductDto, InvoiceProduct>().ForMember(x => x.ProductId,
             a => 
                 a.MapFrom(b => b.Id)).ReverseMap();

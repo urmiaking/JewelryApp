@@ -35,7 +35,7 @@
         <MudTd DataLabel="عملیات">
             <MudTooltip Text="ویرایش فاکتور">
                 <MudIconButton Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Edit"
-                               Color="@Color.Info"></MudIconButton>
+                               Color="@Color.Info" OnClick="@(() => EditInvoice(context.InvoiceId))"></MudIconButton>
             </MudTooltip>
             <MudTooltip Text="چاپ فاکتور">
                 <MudIconButton Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Print"
@@ -57,8 +57,8 @@
             <MudTextField @bind-Value="@context.BuyerPhone" Required />
         </MudTd>
         <MudTd DataLabel="مبلغ کل">@context.TotalCost.ToString("C0").Replace("ریال", "") تومان</MudTd>
-        <MudTd DataLabel="تاریخ">@context.BuyDate</MudTd>
         <MudTd DataLabel="تعداد اجناس">@context.ProductsCount</MudTd>
+        <MudTd DataLabel="تاریخ">@context.BuyDate</MudTd>
     </RowEditingTemplate>
     <NoRecordsContent>
         <MudText>هیچ فاکتوری یافت نشد</MudText>

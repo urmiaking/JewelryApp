@@ -116,5 +116,10 @@ public partial class InvoicesTable
 
         await _table.ReloadServerData();
     }
+
+    private void EditInvoice(int contextInvoiceId)
+    {
+        NavigationManager.NavigateTo($"/invoices/edit/{contextInvoiceId}");
+    }
 }
 
