@@ -55,7 +55,7 @@
 
                     <!--TODO: Add MudTable with new DTO-->
 
-                    <MudTable Class="centered-rows" Items="@InvoiceModel.Products" Hover="true" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true">
+                    <MudTable Items="@InvoiceModel.Products" Hover="true" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true">
                     <HeaderContent>
                         <MudTh>ردیف</MudTh>
                         <MudTh>نوع کالا</MudTh>
@@ -78,8 +78,6 @@
                                 <option class="p-4" value="@productType">@productType.ToDisplay()</option>
                             }
                         </InputSelect>
-                        <span class="select-highlight"></span>
-                        <span class="select-bar"></span>
                     </MudTd>
                     <MudTd DataLabel="نام کالا">
                         <MudTextField Style="width: 200px;" Margin="Margin.Dense" @bind-Value="context.Name"></MudTextField>
@@ -103,8 +101,6 @@
                                 <option class="p-4" value="@caret">@caret.ToDisplay()</option>
                             }
                         </InputSelect>
-                        <span class="select-highlight"></span>
-                        <span class="select-bar"></span>
                     </MudTd>
                     <MudTd DataLabel="ضریب مالیات">
                         <MudTextField Style="width: 50px;" T="double" Margin="Margin.Dense" @bind-Value="context.TaxOffset"></MudTextField>

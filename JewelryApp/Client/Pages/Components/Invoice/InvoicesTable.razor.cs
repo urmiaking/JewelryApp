@@ -89,7 +89,7 @@ public partial class InvoicesTable
         //await PostAsync("/api/Invoices", productDto);
     }
 
-    private async Task OpenDeleteProductDialog(DialogOptions options, int invoiceId)
+    private async Task DeleteInvoice(DialogOptions options, int invoiceId)
     {
         var parameters = new DialogParameters<PromptDialog>
         {

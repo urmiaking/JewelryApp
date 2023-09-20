@@ -42,7 +42,7 @@
                                Color="@Color.Primary"></MudIconButton>
             </MudTooltip>
             <MudTooltip Text="حذف فاکتور">
-                <MudIconButton OnClick="@((e) => OpenDeleteProductDialog(_dialogOptions, context.InvoiceId))" Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Delete"
+                <MudIconButton OnClick="@((e) => DeleteInvoice(_dialogOptions, context.InvoiceId))" Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Delete"
                                Color="@Color.Error"></MudIconButton>
             </MudTooltip>
         </MudTd>
@@ -57,6 +57,7 @@
             <MudTextField @bind-Value="@context.BuyerPhone" Required />
         </MudTd>
         <MudTd DataLabel="مبلغ کل">@context.TotalCost</MudTd>
+        <MudTd DataLabel="تاریخ">@context.BuyDate</MudTd>
         <MudTd DataLabel="تعداد اجناس">@context.ProductsCount</MudTd>
     </RowEditingTemplate>
     <NoRecordsContent>
