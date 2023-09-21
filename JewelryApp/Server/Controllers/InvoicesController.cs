@@ -46,18 +46,28 @@ public class InvoicesController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet(nameof(GetInvoice))]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetInvoice(int id = 0)
     {
         if (id is 0)
             return BadRequest();
 
-        var invoice = await _context.Invoices.FirstOrDefaultAsync(x => x.Id == id);
+        var invoice = await _context.Invoices
+            .Include(x => x.InvoiceProducts)
+            .ThenInclude(x => x.Product)
+            .FirstOrDefaultAsync(x => x.Id == id);
 
         if (invoice is null)
             return BadRequest();
 
         var invoiceDto = _mapper.Map<Invoice, InvoiceDto>(invoice);
+
+        foreach (var product in invoiceDto.Products)
+        {
+            product.Profit = Math.Round(product.Profit * 100, 0);
+            product.TaxOffset = Math.Round(product.TaxOffset * 100, 0);
+        }
+
         return Ok(invoiceDto);
     }
 
@@ -69,11 +79,11 @@ public class InvoicesController : ControllerBase
         await _context.Invoices.AddAsync(invoice);
         await _context.SaveChangesAsync();
         
-
         foreach (var productDto in invoiceDto.Products)
         {
             var product = _mapper.Map<ProductDto, Product>(productDto);
             productDto.GramPrice = invoiceDto.GramPrice;
+
             // New Product
             if (product.Id == 0)
             {

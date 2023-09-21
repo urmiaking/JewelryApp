@@ -38,8 +38,17 @@
         <RowTemplate>
             <MudTd DataLabel="بارکد جنس">@context.BarcodeText</MudTd>
             <MudTd DataLabel="نام جنس">@context.Name</MudTd>
-            <MudTd DataLabel="وزن">@context.Weight</MudTd>
-            <MudTd DataLabel="اجرت">@context.Wage</MudTd>
+            <MudTd DataLabel="وزن">@(context.Weight + " گرم")</MudTd>
+            <MudTd DataLabel="اجرت">
+                @if (context.ProductType == ProductType.Gold)
+                {
+                    @(context.Wage + " درصد")
+                }
+                else
+                {
+                    @(context.Wage.ToString("C0").Replace("ریال", "") + " تومان")
+                }
+            </MudTd>
             <MudTd DataLabel="نوع جنس">@context.ProductType.ToDisplay()</MudTd>
             <MudTd DataLabel="عیار">@context.Caret.ToDisplay()</MudTd>
             <MudTd DataLabel="عملیات">

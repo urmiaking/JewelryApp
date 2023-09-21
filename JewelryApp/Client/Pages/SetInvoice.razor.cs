@@ -33,7 +33,15 @@ public partial class SetInvoice
     {
         if (Id is not null)
         {
-            InvoiceModel = await GetAsync<InvoiceDto>($"/api/Invoices/GetInvoice?id={Id}") ?? throw new InvalidOperationException();
+            InvoiceModel = await GetAsync<InvoiceDto>($"/api/Invoices/{Id}") ?? throw new InvalidOperationException();
+
+            var index = 1;
+            foreach ( var item in InvoiceModel.Products)
+            {
+                item.Index = index;
+                index++;
+            }
+
         }
         else
         {
