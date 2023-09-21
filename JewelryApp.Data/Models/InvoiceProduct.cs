@@ -3,9 +3,9 @@
 public class InvoiceProduct
 {
     public int InvoiceId { get; set; }
-    public Invoice Invoice { get; set; } = new();
+    public Invoice Invoice { get; set; }
     public int ProductId { get; set; }
-    public Product Product { get; set; } = new();
+    public Product Product { get; set; }
     public int Count { get; set; }
     public double Profit { get; set; }
 

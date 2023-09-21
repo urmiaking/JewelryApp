@@ -76,7 +76,8 @@ public class InvoicesController : ControllerBase
     {
         var invoice = _mapper.Map<InvoiceDto, Invoice>(invoiceDto);
 
-        await _context.Invoices.AddAsync(invoice);
+        //Fix the mapping
+        _context.Invoices.Update(invoice);
         await _context.SaveChangesAsync();
         
         foreach (var productDto in invoiceDto.Products)
@@ -108,7 +109,7 @@ public class InvoicesController : ControllerBase
             };
 
             _context.Entry(product).State = EntityState.Unchanged;
-            await _context.InvoiceProducts.AddAsync(invoiceProduct);
+            _context.InvoiceProducts.Update(invoiceProduct);
             await _context.SaveChangesAsync();
         }
 
