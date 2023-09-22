@@ -10,4 +10,5 @@ public interface IProductService
     Task<IEnumerable<ProductTableItemDto>> GetProductsAsync(int page, int pageSize, string sortDirection, string sortLabel, string searchString, CancellationToken cancellationToken);
     Task<DeleteResult> DeleteProductAsync(int id, CancellationToken cancellationToken);
     Task<int> GetTotalProductsCount(CancellationToken cancellationToken);
+    Task<ProductDto> GetProductByBarcodeAsync(string barcodeText);
 }

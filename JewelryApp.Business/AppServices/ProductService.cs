@@ -92,4 +92,16 @@ public class ProductService : IProductService
     public async Task<int> GetTotalProductsCount(CancellationToken cancellationToken)
         => await _productRepository.TableNoTracking.CountAsync(cancellationToken);
 
+    public async Task<ProductDto> GetProductByBarcodeAsync(string barcodeText)
+    {
+        var product =
+            await _productRepository.TableNoTracking.FirstOrDefaultAsync(x => x.BarcodeText.Equals(barcodeText));
+
+        if (product is null)
+            return null;
+
+        var productDto = _mapper.Map<Product, ProductDto>(product);
+
+        return productDto;
+    }
 }

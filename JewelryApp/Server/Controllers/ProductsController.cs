@@ -30,5 +30,9 @@ public class ProductsController : ControllerBase
     [HttpGet(nameof(GetTotalProductsCount))]
     public async Task<IActionResult> GetTotalProductsCount(CancellationToken cancellationToken)
         => Ok(await _productService.GetTotalProductsCount(cancellationToken));
+
+    [HttpGet("{barcodeText}")]
+    public async Task<IActionResult> GetByBarcode(string barcodeText)
+        => Ok(await _productService.GetProductByBarcodeAsync(barcodeText));
 }
 

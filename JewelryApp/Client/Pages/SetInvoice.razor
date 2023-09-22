@@ -4,13 +4,14 @@
 @inherits UserComponentBase
 
 <MudCard>
-    <MudCardHeader Class="d-flex flex-column">
+    <MudCardHeader Class="d-flex flex-row" Style="padding: 0 !important;">
+        <MudIconButton Icon="@Icons.Material.Outlined.ArrowCircleRight" OnClick="@(GoBack)"></MudIconButton>
         <MudText Typo="Typo.h5">@(Id is null ? "ثبت فاکتور جدید" : "ویرایش فاکتور")</MudText>
-        </MudCardHeader>
+    </MudCardHeader>
         <MudDivider />
         <MudCardContent>
             <MudPaper Class="m-1 p-4" Elevation="5">
-                <div class="d-flex flex-column align-items-center">
+                <div class="d-flex flex-column align-items-start">
                     <MudText Typo="Typo.h6" Class="mb-3">مشخصات فردی مشتری</MudText>
                 </div>
 
@@ -47,13 +48,20 @@
                         <div class="flex-grow-1" style="width: 64px">
                             <MudText Typo="Typo.h6" Class="mb-3">لیست اجناس</MudText>
                         </div>
+                        <MudHidden Breakpoint="Breakpoint.Xs">
+                            <MudPaper Width="120px" Elevation="0" Style="margin-bottom: 3px;">
+                        <MudTextField AdornmentIcon="@Icons.Material.Filled.QrCode"
+                                      Adornment="Adornment.End" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                      Value="BarcodeText" ValueChanged="BarcodeChanged" T="string"
+                                      Label="بارکد"></MudTextField>
+                            </MudPaper>
+                        </MudHidden>
+                        
                         <MudPaper Width="40px" Elevation="0">
-                        <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Info" OnClick="@((e) => AddRow())"></MudIconButton>
+                            <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Info" OnClick="@((e) => AddRow())"></MudIconButton>
                         </MudPaper>
                     </div>
                     <MudDivider />
-
-                    <!--TODO: Add MudTable with new DTO-->
 
                     <MudTable Items="@InvoiceModel.Products" Hover="true" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true">
                     <HeaderContent>
@@ -127,7 +135,7 @@
                 </NoRecordsContent>
             </MudTable>
             <br />
-            <MudStack Row>
+            <MudStack Row AlignItems="AlignItems.End">
                 <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Info" OnClick="Submit">ذخیره</MudButton>
                 <MudSpacer />
                 <MudPaper Width="100px;">

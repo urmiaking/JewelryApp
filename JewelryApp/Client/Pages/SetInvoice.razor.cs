@@ -73,19 +73,30 @@ public partial class SetInvoice
         CleanDelimiters = true
     };
 
-    public string BarcodeText { get; set; } = default!;
+    public string? BarcodeText { get; set; }
 
-    private int lastIndex = 1;
+    private int _lastIndex = 1;
 
     private void AddRow()
     {
-        lastIndex += 1;
-        InvoiceModel.Products.Add(new ProductDto() { Index = lastIndex });
+        _lastIndex += 1;
+        InvoiceModel.Products.Add(new ProductDto { Index = _lastIndex });
+    }
+
+    private void AddRow(ProductDto product)
+    {
+        _lastIndex += 1;
+        product.Index = _lastIndex;
+        InvoiceModel.Products.Add(product);
     }
 
     private void RemoveRow(ProductDto productItem)
     {
-        lastIndex -= 1;
+        if (_lastIndex >= 1)
+        {
+            _lastIndex -= 1;
+        }
+        
         InvoiceModel.Products.Remove(productItem);
     }
 
@@ -155,6 +166,30 @@ public partial class SetInvoice
         }
 
         return true;
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    private async Task BarcodeChanged(string barcode)
+    {
+        if (!string.IsNullOrEmpty(barcode) && barcode.Length > 5)
+        {
+            var product = await GetAsync<ProductDto>($"api/Products/{barcode}");
+
+            if (product is not null)
+            {
+                var emptyRow = InvoiceModel.Products.FirstOrDefault(x => string.IsNullOrEmpty(x.Name));
+                if (emptyRow is not null)
+                {
+                    RemoveRow(emptyRow);
+                }
+
+                AddRow(product);
+            }
+        }
     }
 }
 
