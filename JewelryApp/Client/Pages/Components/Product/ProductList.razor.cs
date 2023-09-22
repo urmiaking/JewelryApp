@@ -1,68 +1,42 @@
 ﻿using JewelryApp.Models.Dtos;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using System.Net.Http.Json;
 using JewelryApp.Client.Shared;
-using JewelryApp.Common.Enums;
-using static MudBlazor.CategoryTypes;
 
 namespace JewelryApp.Client.Pages.Components.Product;
 
 public partial class ProductList
 {
-    [Inject] public IDialogService Dialog { get; set; } = default!;
+    [Inject] 
+    public IDialogService Dialog { get; set; } = default!;
 
-    private IEnumerable<ProductTableItemDto> _pagedData = new List<ProductTableItemDto>();
-    private MudTable<ProductTableItemDto> _table = new ();
-
-    private int totalItems;
-    private string searchString = null;
-
-    private async Task<TableData<ProductTableItemDto>> ServerReload(TableState state)
-    {
-        await LoadData();
-        _products = _products.Where(product =>
-        {
-            if (string.IsNullOrWhiteSpace(searchString))
-                return true;
-            if (product.BarcodeText.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                return true;
-            if (product.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                return true;
-            if ($"{product.Weight} {product.Wage} {product.ProductType.ToDisplay()} {product.Caret.ToDisplay()}".Contains(searchString))
-                return true;
-            return false;
-        }).ToList();
-        totalItems = _products.Count;
-        _products = state.SortLabel switch
-        {
-            "barcodetext_field" => _products.OrderByDirection(state.SortDirection, o => o.BarcodeText).ToList(),
-            "name_field" => _products.OrderByDirection(state.SortDirection, o => o.Name).ToList(),
-            "weight_field" => _products.OrderByDirection(state.SortDirection, o => o.Weight).ToList(),
-            "wage_field" => _products.OrderByDirection(state.SortDirection, o => o.Wage).ToList(),
-            "productType_field" => _products.OrderByDirection(state.SortDirection, o => o.ProductType).ToList(),
-            "caret_field" => _products.OrderByDirection(state.SortDirection, o => o.Caret).ToList(),
-            _ => _products
-        };
-
-        _pagedData = _products.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
-        return new TableData<ProductTableItemDto>() { TotalItems = totalItems, Items = _pagedData };
-    }
-
-    private void OnSearch(string text)
-    {
-        searchString = text;
-        _table.ReloadServerData();
-    }
-
-    [Parameter]
+    [Parameter] 
     public string? Class { get; set; }
 
-    private List<ProductTableItemDto>? _products;
+    private List<ProductTableItemDto> _products = new ();
 
     private HashSet<ProductTableItemDto> _selectedItems = new();
 
-    DialogOptions _dialogOptions = new() { CloseButton = true, FullWidth = true, FullScreen = false };
+    private DialogOptions _dialogOptions = new() { CloseButton = true, FullWidth = true, FullScreen = false };
+
+    private MudTable<ProductTableItemDto> _table = new();
+
+    private int _totalItems;
+
+    private string? _searchString;
+
+    private async Task<TableData<ProductTableItemDto>> ServerReload(TableState state)
+    {
+        await LoadData(state);
+
+        return new TableData<ProductTableItemDto> { TotalItems = _totalItems, Items = _products };
+    }
+
+    private void OnSearch(string? text)
+    {
+        _searchString = text;
+        _table.ReloadServerData();
+    }
 
     private async Task OpenAddProductDialog(DialogOptions options, string dialogTitle)
     {
@@ -74,11 +48,11 @@ public partial class ProductList
         {
             if (result.Data is ValidationProblemDetails validationProblems)
             {
-                if (validationProblems is not null && validationProblems.Errors.Count > 0)
+                if (validationProblems.Errors.Count > 0)
                 {
                     foreach (var error in validationProblems.Errors)
                     {
-                        SnackBar.Add(error.Value.FirstOrDefault()!.ToString(), Severity.Error);
+                        SnackBar.Add(error.Value.FirstOrDefault(), Severity.Error);
                     }
                 }
             }
@@ -89,19 +63,24 @@ public partial class ProductList
         }
     }
 
-    private async Task LoadData()
+    private async Task LoadData(TableState state)
     {
-        _products = await GetAsync<List<ProductTableItemDto>>("/api/Products") ?? new List<ProductTableItemDto>();
+        _products = await GetAsync<List<ProductTableItemDto>>(
+                        $"/api/Products?page={state.Page}&pageSize={state.PageSize}&sortDirection={state.SortDirection}&sortLabel={state.SortLabel}&searchString={_searchString}")
+                    ?? new List<ProductTableItemDto>();
+
+        _totalItems = await GetAsync<int>("/api/Products/GetTotalProductsCount");
+
         StateHasChanged();
     }
 
-    private async Task CommitItemAsync(object elemnt)
+    private async Task CommitItemAsync(object item)
     {
-        var product = elemnt as ProductTableItemDto;
+        var product = item as ProductTableItemDto;
 
         var productDto = new SetProductDto
         {
-            Id = product.Id,
+            Id = product!.Id,
             Name = product.Name,
             Caret = product.Caret,
             ProductType = product.ProductType,
@@ -132,13 +111,15 @@ public partial class ProductList
         {
             var isDeleted = (bool)result.Data;
 
-            if (!isDeleted)
+            if (isDeleted)
             {
-                SnackBar.Add("حذف با خطا مواجه شد");
+                await _table.ReloadServerData();
             }
         }
+    }
 
-        await _table.ReloadServerData();
+    private void PageChanged(int i)
+    {
+        _table.NavigateTo(i - 1);
     }
 }
-

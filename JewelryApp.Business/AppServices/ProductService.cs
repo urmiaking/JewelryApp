@@ -2,7 +2,6 @@
 using AutoMapper.QueryableExtensions;
 using JewelryApp.Business.Repositories.Interfaces;
 using JewelryApp.Common.Enums;
-using JewelryApp.Data;
 using JewelryApp.Data.Models;
 using JewelryApp.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
@@ -39,25 +38,58 @@ public class ProductService : IProductService
         return productModel;
     }
 
-    public async Task<IEnumerable<ProductTableItemDto>> GetProductsAsync() => await _productRepository.TableNoTracking
-            .OrderByDescending(a => a.AddedDateTime)
+    public async Task<IEnumerable<ProductTableItemDto>> GetProductsAsync(int page, int pageSize, string sortDirection, 
+        string sortLabel, string searchString, CancellationToken cancellationToken)
+    {
+        var products =  await _productRepository.TableNoTracking
             .ProjectTo<ProductTableItemDto>(_mapper.ConfigurationProvider)
-            .ToListAsync();
+            .ToListAsync(cancellationToken: cancellationToken);
+
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            products = products.Where(a => a.BarcodeText.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                                           a.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+        products = sortDirection switch
+        {
+            "Ascending" => products.OrderBy(p => GetPropertyValue(p, sortLabel)).ToList(),
+            "Descending" => products.OrderByDescending(p => GetPropertyValue(p, sortLabel)).ToList(),
+            _ => products
+        };
+
+        var startIndex = page * pageSize;
+        products = products.Skip(startIndex).Take(pageSize).ToList();
+
+        return products;
+    }
+    
+    private static object GetPropertyValue(object obj, string propertyName)
+    {
+        return obj.GetType().GetProperty(propertyName)?.GetValue(obj, null);
+    }
 
     public async Task<DeleteResult> DeleteProductAsync(int id, CancellationToken cancellationToken)
     {
+        if (id is 0)
+            return DeleteResult.IsNotAvailable;
+
         var product = await _productRepository.GetByIdAsync(cancellationToken, id);
 
         if (product is null)
             return DeleteResult.IsNotAvailable;
 
         var canNotDelete = await _invoiceProductRepository.TableNoTracking
-            .AnyAsync(a => a.ProductId == id);
+            .AnyAsync(a => a.ProductId == id, cancellationToken);
 
         if (canNotDelete)
             return DeleteResult.CanNotDelete;
-        
+
         await _productRepository.DeleteAsync(product, cancellationToken);
         return DeleteResult.Deleted;
     }
+
+    public async Task<int> GetTotalProductsCount(CancellationToken cancellationToken)
+        => await _productRepository.TableNoTracking.CountAsync(cancellationToken);
+
 }

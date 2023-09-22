@@ -21,17 +21,13 @@ public class BarcodeRepository : IBarcodeRepository
             .OrderByDescending(a => a.AddedDateTime)
             .FirstOrDefaultAsync(a => a.Name == product.Name);
 
-        if (repeatedProduct is null) 
-            return StringExtensions.GenerateBarcode(product.ProductType);
+        if (repeatedProduct is null)
+            return StringExtensions.GenerateBarcode();
 
-        var barcodeArray = repeatedProduct.BarcodeText.Split("-");
+        var newBarcode = int.Parse(repeatedProduct.BarcodeText);
+        newBarcode += 1;
 
-        var index = int.Parse(barcodeArray[2]);
-        index++;
-        barcodeArray[2] = index.ToString();
-        var newBarcode = string.Join("-", barcodeArray);
-
-        return newBarcode;
+        return newBarcode.ToString();
 
     }
 }

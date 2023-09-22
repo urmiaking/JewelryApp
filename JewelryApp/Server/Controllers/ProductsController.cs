@@ -1,5 +1,4 @@
 ﻿using JewelryApp.Business.AppServices;
-using JewelryApp.Common.Enums;
 using JewelryApp.Models.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,28 +16,19 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
-        => Ok(await _productService.GetProductsAsync());
+    public async Task<IActionResult> Get(int page, int pageSize, string sortDirection, string? sortLabel, string? searchString, CancellationToken cancellationToken)
+        => Ok(await _productService.GetProductsAsync(page, pageSize, sortDirection, sortLabel, searchString, cancellationToken));
 
     [HttpPost]
     public async Task<IActionResult> AddOrEditProduct(SetProductDto productDto)
         => Ok(await _productService.SetProductAsync(productDto));
     
-
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(CancellationToken cancellationToken, int id = 0)
-    {
-        if (id == 0)
-            return BadRequest();
+        => Ok(await _productService.DeleteProductAsync(id, cancellationToken));
 
-        var deleteResult = await _productService.DeleteProductAsync(id, cancellationToken);
-
-        return deleteResult switch
-        {
-            DeleteResult.CanNotDelete => ValidationProblem(),
-            DeleteResult.IsNotAvailable => BadRequest(),
-            _ => Ok(deleteResult)
-        };
-    }
+    [HttpGet(nameof(GetTotalProductsCount))]
+    public async Task<IActionResult> GetTotalProductsCount(CancellationToken cancellationToken)
+        => Ok(await _productService.GetTotalProductsCount(cancellationToken));
 }
 

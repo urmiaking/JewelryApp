@@ -5,27 +5,23 @@
     <ToolBarContent>
         <MudText Typo="Typo.h6">لیست فاکتورها</MudText>
         <MudSpacer />
-        <MudTextField T="string" ValueChanged="@(s=> OnSearch(s))" Placeholder="جستجو" Adornment="Adornment.Start"
+        <MudTextField T="string" ValueChanged="@(OnSearch)" Placeholder="جستجو" Adornment="Adornment.Start"
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Style="max-width: 200px;" Class="mt-0"></MudTextField>
         <MudSpacer />
 
-
         <MudButton Color="Color.Primary" OnClick="@((e) => NavigationManager.NavigateTo("/invoices/Add"))"
                    EndIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled">افزودن</MudButton>
-
     </ToolBarContent>
     <HeaderContent>
-        <MudTh><MudTableSortLabel SortLabel="index_field" T="InvoiceTableItemDto">ردیف</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="id_field" T="InvoiceTableItemDto">شماره فاکتور</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="name_field" T="InvoiceTableItemDto">نام خریدار</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="phone_field" T="InvoiceTableItemDto">شماره همراه</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="cost_field" T="InvoiceTableItemDto">مبلغ کل</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="count_field" T="InvoiceTableItemDto">تعداد اجناس</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="date_field" T="InvoiceTableItemDto">تاریخ خرید</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="Id" T="InvoiceTableItemDto">شماره فاکتور</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="BuyerName" T="InvoiceTableItemDto">نام خریدار</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="PhoneNumber" T="InvoiceTableItemDto">شماره همراه</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="TotalCost" T="InvoiceTableItemDto">مبلغ کل</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="TotalCost" T="InvoiceTableItemDto">تعداد اجناس</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="BuyDate" T="InvoiceTableItemDto">تاریخ خرید</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel T="InvoiceTableItemDto">عملیات</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="ردیف">@context.Index</MudTd>
         <MudTd DataLabel="شماره فاکتور">@context.InvoiceId</MudTd>
         <MudTd DataLabel="نام خریدار">@context.BuyerName</MudTd>
         <MudTd DataLabel="شماره همراه">@context.BuyerPhone</MudTd>
@@ -48,7 +44,6 @@
         </MudTd>
     </RowTemplate>
     <RowEditingTemplate>
-        <MudTd DataLabel="ردیف">@context.Index</MudTd>
         <MudTd DataLabel="شماره فاکتور">@context.InvoiceId</MudTd>
         <MudTd DataLabel="نام خریدار">
             <MudTextField @bind-Value="@context.BuyerName" Required />
@@ -67,7 +62,14 @@
         <MudText>در حال بارگذاری</MudText>
     </LoadingContent>
     <PagerContent>
-        <MudTablePager HorizontalAlignment="HorizontalAlignment.Center" />
+        <div class="d-flex flex-column align-center">
+            <MudPagination SelectedChanged="PageChanged" 
+                           Color="Color.Primary"
+                           Count="@((_table.GetFilteredItemsCount() + _table.RowsPerPage - 1) / _table.RowsPerPage)"
+                           Class="pa-4"
+                           ShowFirstButton="true"
+                           ShowLastButton="true" />
+        </div>
     </PagerContent>
     <EditButtonContent Context="button">
         <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />

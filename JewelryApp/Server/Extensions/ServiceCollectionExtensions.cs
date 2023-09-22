@@ -73,6 +73,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRepository<InvoiceProduct>, InvoiceProductRepository>();
         services.AddScoped<IRepository<Product>, ProductRepository>();
         services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<IInvoiceService, InvoiceService>();
     }
 
     public static void RegisterAutoMapper(this IServiceCollection services)

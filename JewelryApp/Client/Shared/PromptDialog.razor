@@ -27,11 +27,10 @@
     async Task Submit()
     {
         _processing = true;
-        var httpResponseMessage = await AuthorizedHttpClient.DeleteAsync($"{EndpointUrl}");
-
+        var succeed = await DeleteAsync($"{EndpointUrl}");
         _processing = false;
 
-        MudDialog.Close(!httpResponseMessage.IsSuccessStatusCode ? DialogResult.Ok(false) : DialogResult.Ok(true));
+        MudDialog.Close(DialogResult.Ok(succeed));
     }
 
     void Cancel() => MudDialog.Cancel();

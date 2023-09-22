@@ -173,7 +173,7 @@ public abstract class UserComponentBase : ComponentBase
         }
     }
 
-    protected async Task DeleteAsync(string url, CancellationToken cancellationToken = default)
+    protected async Task<bool> DeleteAsync(string url, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -185,21 +185,23 @@ public abstract class UserComponentBase : ComponentBase
             switch (response)
             {
                 case DeleteResult.CanNotDelete:
-                    SnackBar.Add("امکان حذف این جنس وجود ندارد", Severity.Warning);
-                    break;
+                    SnackBar.Add("امکان حذف این آیتم وجود ندارد", Severity.Warning);
+                    return false;
                 case DeleteResult.IsNotAvailable:
-                    SnackBar.Add("خطا در حذف جنس", Severity.Error);
-                    break;
+                    SnackBar.Add("خطا در حذف آیتم", Severity.Error);
+                    return false;
                 case DeleteResult.Deleted:
-                    SnackBar.Add("حذف جنس با موفقیت انجام شد", Severity.Error);
-                    break;
+                    SnackBar.Add("حذف با موفقیت انجام شد", Severity.Success);
+                    return true;
                 default:
-                    break;
+                    SnackBar.Add("خطا در حذف آیتم", Severity.Error);
+                    return false;
             }
         }
         catch (Exception)
         {
             // ignore
+            return false;
         }
         finally
         {

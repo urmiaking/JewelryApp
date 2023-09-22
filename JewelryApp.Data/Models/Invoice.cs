@@ -4,11 +4,6 @@ namespace JewelryApp.Data.Models;
 
 public class Invoice
 {
-    public Invoice()
-    {
-        InvoiceProducts = new List<InvoiceProduct>();
-    }
-
     public int Id { get; set; }
 
     [Display(Name = "نام خریدار")]

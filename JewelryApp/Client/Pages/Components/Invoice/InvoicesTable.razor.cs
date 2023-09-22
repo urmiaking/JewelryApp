@@ -1,92 +1,65 @@
-﻿using JewelryApp.Client.Pages.Components.Product;
-using JewelryApp.Client.Shared;
-using JewelryApp.Common.Enums;
+﻿using JewelryApp.Client.Shared;
+using JewelryApp.Data.Models;
 using JewelryApp.Models.Dtos;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using System.Net.Http;
-using System.Net.Http.Json;
-using static MudBlazor.CategoryTypes;
 
 namespace JewelryApp.Client.Pages.Components.Invoice;
 
 public partial class InvoicesTable
 {
-    [Inject] public IDialogService Dialog { get; set; } = default!;
-    
-    private IEnumerable<InvoiceTableItemDto> _pagedData = new List<InvoiceTableItemDto>();
-    private MudTable<InvoiceTableItemDto> _table = new();
-
-    private int totalItems;
-    private string searchString = null;
-
-    private async Task<TableData<InvoiceTableItemDto>> ServerReload(TableState state)
-    {
-        await LoadData();
-        _invoices = _invoices.Where(invoice =>
-        {
-            if (string.IsNullOrWhiteSpace(searchString))
-                return true;
-            if (invoice.BuyerName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                return true;
-            if (invoice.BuyerPhone.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                return true;
-            if (invoice.BuyDate.Contains(searchString))
-                return true;
-            return false;
-        }).ToList();
-        totalItems = _invoices.Count;
-        _invoices = state.SortLabel switch
-        {
-            "index_field" => _invoices.OrderByDirection(state.SortDirection, o => o.Index).ToList(),
-            "id_field" => _invoices.OrderByDirection(state.SortDirection, o => o.InvoiceId).ToList(),
-            "name_field" => _invoices.OrderByDirection(state.SortDirection, o => o.BuyerName).ToList(),
-            "phone_field" => _invoices.OrderByDirection(state.SortDirection, o => o.BuyerPhone).ToList(),
-            "cost_field" => _invoices.OrderByDirection(state.SortDirection, o => o.TotalCost).ToList(),
-            "count_field" => _invoices.OrderByDirection(state.SortDirection, o => o.ProductsCount).ToList(),
-            "date_field" => _invoices.OrderByDirection(state.SortDirection, o => o.BuyDate).ToList(),
-            _ => _invoices
-        };
-
-        _pagedData = _invoices.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
-        return new TableData<InvoiceTableItemDto>() { TotalItems = totalItems, Items = _pagedData };
-    }
-
-    private void OnSearch(string text)
-    {
-        searchString = text;
-        _table.ReloadServerData();
-    }
+    [Inject] 
+    public IDialogService Dialog { get; set; } = default!;
 
     [Parameter]
     public string? Class { get; set; }
 
-    private List<InvoiceTableItemDto>? _invoices;
+    private List<InvoiceTableItemDto> _invoices = new();
 
-    DialogOptions _dialogOptions = new() { CloseButton = true, FullWidth = true, FullScreen = false };
-    
-    private async Task LoadData()
+    private DialogOptions _dialogOptions = new() { CloseButton = true, FullWidth = true, FullScreen = false };
+
+    private MudTable<InvoiceTableItemDto> _table = new();
+
+    private int _totalItems;
+    private string? _searchString;
+
+    private async Task<TableData<InvoiceTableItemDto>> ServerReload(TableState state)
     {
-        _invoices = await GetAsync<List<InvoiceTableItemDto>>("/api/Invoices") ?? new List<InvoiceTableItemDto>();
+        await LoadData(state);
+
+        return new TableData<InvoiceTableItemDto> { TotalItems = _totalItems, Items = _invoices };
+    }
+
+    private void OnSearch(string text)
+    {
+        _searchString = text;
+        _table.ReloadServerData();
+    }
+
+    private async Task LoadData(TableState state)
+    {
+        _invoices = await GetAsync<List<InvoiceTableItemDto>>(
+            $"/api/Invoices?page={state.Page}&pageSize={state.PageSize}&sortDirection={state.SortDirection}&sortLabel={state.SortLabel}&searchString={_searchString}") 
+                    ?? new List<InvoiceTableItemDto>();
+
+        _totalItems = await GetAsync<int>("/api/Invoices/GetTotalInvoicesCount");
+
         StateHasChanged();
     }
 
-    private async Task CommitItemAsync(object elemnt)
+    private async Task CommitItemAsync(object element)
     {
-        var invoiceItemDto = elemnt as InvoiceTableItemDto;
+        if (element is InvoiceTableItemDto invoiceItemDto)
+        {
+            var invoiceHeader = new InvoiceHeader
+            {
+                InvoiceId = invoiceItemDto.InvoiceId,
+                BuyerName = invoiceItemDto.BuyerName,
+                BuyerPhone = invoiceItemDto.BuyerPhone
+            };
 
-        //var productDto = new SetProductDto
-        //{
-        //    Id = invoiceItemDto.Id,
-        //    Name = invoiceItemDto.Name,
-        //    Caret = invoiceItemDto.Caret,
-        //    ProductType = invoiceItemDto.ProductType,
-        //    Wage = invoiceItemDto.Wage,
-        //    Weight = invoiceItemDto.Weight,
-        //    BarcodeText = invoiceItemDto.BarcodeText
-        //};
-
-        //await PostAsync("/api/Invoices", productDto);
+            await PostAsync("/api/Invoices/UpdateInvoiceHeader", invoiceHeader);
+        }
     }
 
     private async Task DeleteInvoice(DialogOptions options, int invoiceId)
@@ -108,18 +81,20 @@ public partial class InvoicesTable
         {
             var isDeleted = (bool)result.Data;
 
-            if (!isDeleted)
+            if (isDeleted)
             {
-                SnackBar.Add("حذف با خطا مواجه شد");
+                await _table.ReloadServerData();
             }
         }
-
-        await _table.ReloadServerData();
     }
 
     private void EditInvoice(int contextInvoiceId)
     {
         NavigationManager.NavigateTo($"/invoices/edit/{contextInvoiceId}");
     }
-}
 
+    private void PageChanged(int i)
+    {
+        _table.NavigateTo(i - 1);
+    }
+}

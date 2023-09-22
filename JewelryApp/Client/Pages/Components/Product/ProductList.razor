@@ -27,20 +27,20 @@
 
         </ToolBarContent>
         <HeaderContent>
-            <MudTh><MudTableSortLabel SortLabel="barcodetext_field" T="ProductTableItemDto">کد جنس</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="name_field" T="ProductTableItemDto">نام جنس</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="weight_field" T="ProductTableItemDto">وزن</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="wage_field" T="ProductTableItemDto">اجرت ساخت</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="productType_field" T="ProductTableItemDto">نوع جنس</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="caret_field" T="ProductTableItemDto">عیار</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="BarcodeText" T="ProductTableItemDto">کد جنس</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="Name" T="ProductTableItemDto">نام جنس</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="Weight" T="ProductTableItemDto">وزن</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="Wage" T="ProductTableItemDto">اجرت ساخت</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="ProductType" T="ProductTableItemDto">نوع جنس</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="Caret" T="ProductTableItemDto">عیار</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel T="ProductTableItemDto">عملیات</MudTableSortLabel></MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="بارکد جنس">@context.BarcodeText</MudTd>
             <MudTd DataLabel="نام جنس">@context.Name</MudTd>
             <MudTd DataLabel="وزن">@(context.Weight + " گرم")</MudTd>
-            <MudTd DataLabel="اجرت">
-                @if (context.ProductType == ProductType.Gold)
+                <MudTd DataLabel="اجرت">
+                    @if (context.ProductType == ProductType.Gold)
                 {
                     @(context.Wage + " درصد")
                 }
@@ -98,7 +98,14 @@
             <MudText>در حال بارگذاری</MudText>
         </LoadingContent>
         <PagerContent>
-            <MudTablePager HorizontalAlignment="HorizontalAlignment.Center" />
+            <div class="d-flex flex-column align-center">
+                <MudPagination SelectedChanged="PageChanged" 
+                               Color="Color.Primary"
+                               Count="@((_table.GetFilteredItemsCount() + _table.RowsPerPage - 1) / _table.RowsPerPage)"
+                               Class="pa-4"
+                               ShowFirstButton="true"
+                               ShowLastButton="true" />
+            </div>
         </PagerContent>
         <EditButtonContent Context="button">
             <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />

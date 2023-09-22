@@ -27,12 +27,12 @@
                     </MudItem>
                     <MudItem lg="4" md="4" sm="12" xs="12">
                     <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Mask="@NationalCodeMask" Label="کد ملی"
-                                  HelperText="کد ملی خریدار" HelperTextOnFocus="true" Clearable
+                                  HelperText="کد ملی خریدار" HelperTextOnFocus="true"
                     @bind-Value="InvoiceModel.BuyerNationalCode" For="@(() => InvoiceModel.BuyerNationalCode)" />
                     </MudItem>
                     <MudItem lg="4" md="4" sm="12" xs="12">
                     <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="شماره همراه" Mask="@PhoneNumberMask"
-                                  HelperText="شماره همراه خریدار" HelperTextOnFocus="true" Clearable
+                                  HelperText="شماره همراه خریدار" HelperTextOnFocus="true"
                     @bind-Value="InvoiceModel.BuyerPhoneNumber" For="@(() => InvoiceModel.BuyerPhoneNumber)" />
                     </MudItem>
                     <MudItem lg="4" md="4" sm="12" xs="12">
@@ -80,19 +80,29 @@
                         </InputSelect>
                     </MudTd>
                     <MudTd DataLabel="نام کالا">
-                        <MudTextField Style="width: 200px;" Margin="Margin.Dense" @bind-Value="context.Name"></MudTextField>
+                        <div class="d-flex">
+                            <MudTextField Style="width: 200px;" Margin="Margin.Dense" @bind-Value="context.Name"></MudTextField>
+                        </div>
                     </MudTd>
                     <MudTd DataLabel="تعداد" HideSmall="true">
-                        <MudTextField Style="width: 50px;" T="int" Margin="Margin.Dense" @bind-Value="context.Count"></MudTextField>
+                        <div class="d-flex">
+                            <MudTextField Style="width: 50px;" T="int" Margin="Margin.Dense" @bind-Value="context.Count"></MudTextField>
+                        </div>
                     </MudTd>
                     <MudTd DataLabel="وزن">
-                        <MudTextField Style="width: 50px;" T="double" Margin="Margin.Dense" @bind-Value="context.Weight"></MudTextField>
+                        <div class="d-flex">
+                            <MudTextField Style="width: 100px;" T="double" Margin="Margin.Dense" @bind-Value="context.Weight"></MudTextField>
+                        </div>
                     </MudTd>
                     <MudTd DataLabel="اجرت ساخت">
-                        <MudTextField Style="width: 50px;" T="double" Margin="Margin.Dense" @bind-Value="context.Wage"></MudTextField>
+                        <div class="d-flex">
+                            <MudTextField Style="width: 100px;" T="double" Margin="Margin.Dense" @bind-Value="context.Wage"></MudTextField>
+                        </div>
                     </MudTd>
                     <MudTd DataLabel="سود">
-                        <MudTextField Style="width: 50px;" T="double" Margin="Margin.Dense" @bind-Value="context.Profit"></MudTextField>
+                        <div class="d-flex">
+                            <MudTextField Style="width: 50px;" T="double" Margin="Margin.Dense" @bind-Value="context.Profit"></MudTextField>
+                        </div>
                     </MudTd>
                     <MudTd DataLabel="عیار">
                         <InputSelect class="select-text" @bind-Value="context.Caret">
@@ -103,7 +113,9 @@
                         </InputSelect>
                     </MudTd>
                     <MudTd DataLabel="ضریب مالیات">
-                        <MudTextField Style="width: 50px;" T="double" Margin="Margin.Dense" @bind-Value="context.TaxOffset"></MudTextField>
+                        <div class="d-flex">
+                            <MudTextField Style="width: 50px;" T="double" Margin="Margin.Dense" @bind-Value="context.TaxOffset"></MudTextField>
+                        </div>
                     </MudTd>
                     <MudTd DataLabel="عملیات">
                         <MudIconButton Icon="@Icons.Material.Filled.RemoveCircleOutline" Size="Size.Small" Color="Color.Error"

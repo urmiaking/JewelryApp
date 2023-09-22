@@ -1,12 +1,6 @@
-﻿using AutoMapper;
-using JewelryApp.Business.Repositories.Interfaces;
-using JewelryApp.Common.DateFunctions;
-using JewelryApp.Data;
-using JewelryApp.Data.Models;
+﻿using JewelryApp.Business.AppServices;
 using JewelryApp.Models.Dtos;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Api.Controllers;
 
@@ -14,106 +8,38 @@ namespace JewelryApp.Api.Controllers;
 [ApiController]
 public class InvoicesController : ControllerBase
 {
-    private readonly AppDbContext _context;
-    private readonly IMapper _mapper;
-    private readonly IBarcodeRepository _barcodeRepository;
+    private readonly IInvoiceService _invoiceService;
 
-    public InvoicesController(AppDbContext context, IMapper mapper, IBarcodeRepository barcodeRepository)
+    public InvoicesController(IInvoiceService invoiceService)
     {
-        _context = context;
-        _mapper = mapper;
-        _barcodeRepository = barcodeRepository;
+        _invoiceService = invoiceService;
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
-    {
-        var query = _context.Invoices
-            .Include(a => a.InvoiceProducts)
-            .OrderByDescending(a => a.BuyDateTime);
-
-        var result = (await query.ToListAsync()).Select((a, i) => new InvoiceTableItemDto
-        {
-            InvoiceId = a.Id,
-            Index = i + 1,
-            BuyDate = a.BuyDateTime.HasValue ? a.BuyDateTime.Value.ToShamsiDateString() : "",
-            BuyerName = a.BuyerFirstName + " " + a.BuyerLastName,
-            BuyerPhone = a.BuyerPhoneNumber,
-            ProductsCount = a.InvoiceProducts.Count,
-            TotalCost = a.InvoiceProducts.Sum(b => b.FinalPrice)
-        });
-
-        return Ok(result);
-    }
+    public async Task<IActionResult> Get(int page, int pageSize, string sortDirection, string? sortLabel, string? searchString, CancellationToken cancellationToken)
+        => Ok(await _invoiceService.GetInvoicesAsync(page, pageSize, sortDirection, sortLabel, searchString, cancellationToken));
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetInvoice(int id = 0)
-    {
-        if (id is 0)
-            return BadRequest();
-
-        var invoice = await _context.Invoices
-            .Include(x => x.InvoiceProducts)
-            .ThenInclude(x => x.Product)
-            .FirstOrDefaultAsync(x => x.Id == id);
-
-        if (invoice is null)
-            return BadRequest();
-
-        var invoiceDto = _mapper.Map<Invoice, InvoiceDto>(invoice);
-
-        foreach (var product in invoiceDto.Products)
-        {
-            product.Profit = Math.Round(product.Profit * 100, 0);
-            product.TaxOffset = Math.Round(product.TaxOffset * 100, 0);
-        }
-
-        return Ok(invoiceDto);
-    }
+    public async Task<IActionResult> GetInvoice(int id, CancellationToken cancellationToken) =>
+        Ok(await _invoiceService.GetInvoiceAsync(id, cancellationToken));
 
     [HttpPost]
-    public async Task<IActionResult> Set(InvoiceDto invoiceDto)
+    public async Task<IActionResult> Set(InvoiceDto invoiceDto, CancellationToken cancellationToken)
     {
-        var invoice = _mapper.Map<InvoiceDto, Invoice>(invoiceDto);
-
-        //Fix the mapping
-        _context.Invoices.Update(invoice);
-        await _context.SaveChangesAsync();
-        
-        foreach (var productDto in invoiceDto.Products)
-        {
-            var product = _mapper.Map<ProductDto, Product>(productDto);
-            productDto.GramPrice = invoiceDto.GramPrice;
-
-            // New Product
-            if (product.Id == 0)
-            {
-                product.BarcodeText = await _barcodeRepository.GetBarcodeAsync(product);
-                product.AddedDateTime = DateTime.Now;
-                await _context.Products.AddAsync(product);
-                await _context.SaveChangesAsync();
-            }
-
-            var invoiceProduct = new InvoiceProduct
-            {
-                InvoiceId = invoice.Id,
-                ProductId = product.Id,
-                Invoice = invoice,
-                Product = product,
-                Count = productDto.Count,
-                Profit = productDto.Profit / 100.0,
-                GramPrice = invoiceDto.GramPrice,
-                TaxOffset = productDto.TaxOffset / 100.0,
-                FinalPrice = productDto.FinalPrice,
-                Tax = productDto.Tax
-            };
-
-            _context.Entry(product).State = EntityState.Unchanged;
-            _context.InvoiceProducts.Update(invoiceProduct);
-            await _context.SaveChangesAsync();
-        }
-
-        return Ok();
+        var succeed = await _invoiceService.SetInvoiceAsync(invoiceDto, cancellationToken);
+        return succeed ? Ok() : BadRequest();
     }
+
+    [HttpPost(nameof(UpdateInvoiceHeader))]
+    public async Task<IActionResult> UpdateInvoiceHeader(InvoiceHeader invoiceHeader, CancellationToken cancellationToken)
+        => Ok(await _invoiceService.UpdateInvoiceHeaderAsync(invoiceHeader, cancellationToken));
+    
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken) => 
+        Ok(await _invoiceService.DeleteAsync(id, cancellationToken));
+
+    [HttpGet(nameof(GetTotalInvoicesCount))]
+    public async Task<IActionResult> GetTotalInvoicesCount(CancellationToken cancellationToken)
+        => Ok(await _invoiceService.GetTotalInvoicesCount(cancellationToken));
 }
 
