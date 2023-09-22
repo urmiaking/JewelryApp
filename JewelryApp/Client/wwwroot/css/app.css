@@ -3,10 +3,7 @@
 @font-face {
     font-family: "IRANSans";
     src: url('../fonts/IRANSANS/eot/IRANSansWeb(FaNum)_Medium.eot');
-    src: url('../fonts/IRANSANS/eot/IRANSansWeb(FaNum)_Medium.eot') format('embedded-opentype'),
-         url('../fonts/IRANSANS/woff2/IRANSansWeb(FaNum)_Medium.woff2') format('woff2'),
-         url('../fonts/IRANSANS/woff/IRANSansWeb(FaNum)_Medium.woff') format('woff'),
-         url('../fonts/IRANSANS/ttf/IRANSansWeb(FaNum)_Medium.ttf') format('truetype');
+    src: url('../fonts/IRANSANS/eot/IRANSansWeb(FaNum)_Medium.eot') format('embedded-opentype'), url('../fonts/IRANSANS/woff2/IRANSansWeb(FaNum)_Medium.woff2') format('woff2'), url('../fonts/IRANSANS/woff/IRANSansWeb(FaNum)_Medium.woff') format('woff'), url('../fonts/IRANSANS/ttf/IRANSansWeb(FaNum)_Medium.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -120,11 +117,11 @@ a, .btn-link {
 }
 
 .center-grid {
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     height: 100vh;
- }
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
 .round-card {
     border-radius: 15px !important;
@@ -138,6 +135,19 @@ a, .btn-link {
     width: 100px;
 }
 
+.select-text-calc {
+    position: relative;
+    font-family: inherit;
+    background-color: transparent;
+    width: 100%;
+    margin-top: 3px;
+    border-radius: 5px;
+    padding: 5px 10px 5px 0;
+    font-size: 16px;
+    border: 1px solid #777777;
+    color: rgba(66, 66, 66, 1);
+}
+
 .select-text {
     position: relative;
     font-family: inherit;
@@ -148,7 +158,7 @@ a, .btn-link {
     border-radius: 0;
     border: none;
     border-bottom: 1px solid rgba(0,0,0, 0.12);
-    color: rgba(66,66,66,1)
+    color: rgba(66, 66, 66, 1);
 }
 
     /* Remove focus */

@@ -1,0 +1,86 @@
+﻿<MudIconButton OnClick="@ToggleOpen" Icon="@Icons.Material.Outlined.Calculate" Color="Color.Inherit"></MudIconButton>
+
+<MudPopover Open="@_isOpen" Fixed="false" TransformOrigin="Origin.TopLeft" AnchorOrigin="Origin.BottomLeft" Class="px-4 pt-4">
+    <div class="d-flex flex-column">
+        <MudText Class="mb-2">محاسبه قیمت تمام شده ی طلا و جواهر</MudText>
+
+
+        <MudDivider />
+
+        <MudPaper Class="p-2 m-2">
+
+            <MudGrid>
+                <MudItem xs="12" sm="6" lg="3">
+                    <MudTextField @bind-Value="_productDto.GramPrice" AdornmentIcon="@Icons.Material.Filled.AttachMoney"
+                                  Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined"
+                                  HelperText="نرخ روز گرم">
+                    </MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="6" lg="3">
+                    <MudTextField @bind-Value="_productDto.Weight" AdornmentIcon="@Icons.Material.Filled.ProductionQuantityLimits"
+                                  Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined"
+                                  HelperText="وزن">
+                    </MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="6" lg="3">
+                    <MudTextField @bind-Value="_productDto.Wage" AdornmentIcon="@Icons.Material.Filled.CurrencyExchange"
+                                  Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined"
+                                  HelperText="اجرت">
+                    </MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="6" lg="3">
+                    <MudTextField @bind-Value="_productDto.TaxOffset" AdornmentIcon="@Icons.Material.Outlined.FactCheck"
+                                  Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined"
+                                  HelperText="ضریب مالیات">
+                    </MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="6" lg="3">
+                    <MudTextField @bind-Value="_productDto.Profit" AdornmentIcon="@Icons.Material.Outlined.Money"
+                                  Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined"
+                                  HelperText="سود">
+                    </MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="6" lg="3">
+                    <InputSelect class="select-text-calc" @bind-Value="_productDto.ProductType">
+                        @foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
+                        {
+                            <option class="p-4" value="@productType">@productType.ToDisplay()</option>
+                        }
+                    </InputSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6" lg="3">
+                    <InputSelect class="select-text-calc" @bind-Value="_productDto.Caret">
+                        @foreach (Caret caret in Enum.GetValues(typeof(Caret)))
+                        {
+                            <option class="p-4" value="@caret">@caret.ToDisplay()</option>
+                        }
+                    </InputSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6" lg="3">
+                    <MudButton Style="margin-top: 3px;" FullWidth="true" Color="Color.Info" EndIcon="@Icons.Material.Filled.Calculate"
+                               Variant="Variant.Filled">
+                        محاسبه قیمت
+                    </MudButton>
+                </MudItem>
+            </MudGrid>
+
+            <MudDivider />
+            <MudGrid>
+
+            </MudGrid>
+        </MudPaper>
+
+        <MudButton OnClick="@ToggleOpen" Class="ml-auto mr-n3 mb-1" Color="Color.Error">بستن</MudButton>
+    </div>
+</MudPopover>
+
+@code
+{
+    private bool _isOpen;
+    private ProductDto _productDto = new();
+
+    public void ToggleOpen()
+    {
+        _isOpen = !_isOpen;
+    }
+}
