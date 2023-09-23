@@ -2,27 +2,31 @@
 @inherits UserComponentBase
 
 <MudGrid>
+    <MudItem lg="12">
+        <div class="d-flex flex-column">
+            <MudStack Row Class="p-2 ml-2">
+                 <MudText>تغيير رمز عبور</MudText>
+             </MudStack>
+             <MudDivider />
+             <MudItem lg="12" Class="mb-3">
+                 <EditForm Model="@PasswordModel" OnValidSubmit="OnPasswordChangeSubmit">
+                     <DataAnnotationsValidator />
+                     <MudCard>
+                         <MudCardContent>
+                             <MudTextField Label="رمز عبور فعلی" HelperText="رمز عبور فعلی خود را وارد کنید" InputType="InputType.Password"
+                             @bind-Value="PasswordModel.OldPassword" For="@(() => PasswordModel.OldPassword)" />
+                             <MudTextField Label="رمز عبور جدید" HelperText="رمز عبور جدید خود را وارد کنید" InputType="InputType.Password"
+                             @bind-Value="PasswordModel.NewPassword" For="@(() => PasswordModel.NewPassword)" />
+                             <MudTextField Label="تکرار رمز عبور جدید" HelperText="تکرار رمز عبور جدید خود را وارد کنید" InputType="InputType.Password"
+                             @bind-Value="PasswordModel.ConfirmPassword" For="@(() => PasswordModel.ConfirmPassword)" />
+                         </MudCardContent>
+                         <MudCardActions>
+                             <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">ذخیره</MudButton>
+                         </MudCardActions>
+                     </MudCard>
+                 </EditForm>
+             </MudItem>
+         </div>
 
-    <MudItem xs="12" sm="6">
-        <MudGrid>
-            <MudItem xs="12">
-                <EditForm Model="@PasswordModel" OnValidSubmit="OnPasswordChangeSubmit">
-                    <DataAnnotationsValidator />
-                    <MudCard>
-                        <MudCardContent>
-                            <MudTextField Label="رمز عبور فعلی" HelperText="رمز عبور فعلی خود را وارد کنید" InputType="InputType.Password"
-                                          @bind-Value="PasswordModel.OldPassword" For="@(() => PasswordModel.OldPassword)" />
-                            <MudTextField Label="رمز عبور جدید" HelperText="رمز عبور جدید خود را وارد کنید" InputType="InputType.Password"
-                                          @bind-Value="PasswordModel.NewPassword" For="@(() => PasswordModel.NewPassword)" />
-                            <MudTextField Label="تکرار رمز عبور جدید" HelperText="تکرار رمز عبور جدید خود را وارد کنید" InputType="InputType.Password"
-                                          @bind-Value="PasswordModel.ConfirmPassword" For="@(() => PasswordModel.ConfirmPassword)" />
-                        </MudCardContent>
-                        <MudCardActions>
-                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">ذخیره</MudButton>
-                        </MudCardActions>
-                    </MudCard>
-                </EditForm>
-            </MudItem>
-        </MudGrid>
-    </MudItem>
-</MudGrid>
+     </MudItem>
+ </MudGrid>

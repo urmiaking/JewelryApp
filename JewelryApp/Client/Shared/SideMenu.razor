@@ -19,16 +19,9 @@
         <MudDivider />
         <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">داشبورد</MudNavLink>
         <MudDivider />
-        <MudNavLink Href="/calculator" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Calculate">محاسبه گر</MudNavLink>
-        <MudDivider />
-        <MudNavGroup Title="فاکتورها" Expanded="false" Icon="@Icons.Material.Filled.AttachMoney">
-            <MudNavLink Href="/invoices" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.ManageAccounts">مدیریت فاکتورها</MudNavLink>
-            <MudDivider />
-            <MudNavLink Href="/addoreditinvoice" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.ManageAccounts">افزودن فاکتور</MudNavLink>
-        </MudNavGroup>
+        <MudNavLink Href="/settings" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Settings">تغيير رمز عبور</MudNavLink>
     </MudNavMenu>
 </MudDrawer>
-
 
 @code {
 

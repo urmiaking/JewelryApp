@@ -12,13 +12,11 @@
 
     <Notification />
 
-    <MudHidden Breakpoint="Breakpoint.Xs">
-        <MudIconButton Href="/settings" Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit"></MudIconButton>
-    </MudHidden>
+    <ChangePassword />
 
     <MudToggleIconButton ToggledChanged="DarkModeStateChanged"
-                         Icon="@Icons.Material.Filled.DarkMode" Color="@Color.Tertiary" Title="حالت شب"
-                         ToggledIcon="@Icons.Material.Filled.WbSunny" ToggledColor="@Color.Info" ToggledTitle="حالت روز" />
+                         Icon="@Icons.Material.Filled.DarkMode" Color="@Color.Inherit" Title="حالت شب"
+                         ToggledIcon="@Icons.Material.Filled.WbSunny" ToggledColor="@Color.Inherit" ToggledTitle="حالت روز" />
 
 </MudAppBar>
 
