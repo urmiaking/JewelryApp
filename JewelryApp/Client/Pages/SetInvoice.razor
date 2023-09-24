@@ -143,9 +143,30 @@
                 </MudPaper>
             </MudStack>
         </MudPaper>
-        <MudPaper>
+            <MudPaper>
 
-        </MudPaper>
+            </MudPaper>
+            <MudPaper Class="m-1 p-3" Elevation="5">
+                <MudText Typo="Typo.h6" Class="mb-3">مشخصات پرداخت</MudText>
+                <MudGrid>
+                    <MudItem xs="6" lg="3">
+                        <MudStack>
+                            <MudText Typo="Typo.body2">قیمت کل:</MudText>
+                            <MudText Typo="Typo.body2">مالیات:</MudText>
+                            <MudText Typo="Typo.body2">بدهی:</MudText>
+                            <MudText Typo="Typo.body2">مبلغ قابل پرداخت:</MudText>
+                        </MudStack>
+                    </MudItem>
+                <MudItem xs="6" lg="3">
+                    <MudStack>
+                        <MudText Typo="Typo.body2">@(InvoiceModel.TotalPrice.ToString("C0").Replace("ریال", "")) تومان</MudText>
+                        <MudText Typo="Typo.body2">@(InvoiceModel.TotalTax.ToString("C0").Replace("ریال", "")) تومان</MudText>
+                        <MudText Typo="Typo.body2">@(1.ToString("C0").Replace("ریال", "")) تومان</MudText>
+                        <MudText Typo="Typo.body2">@(InvoiceModel.TotalFinalPrice.ToString("C0").Replace("ریال", "")) تومان</MudText>
+                    </MudStack>
+                </MudItem>
+                </MudGrid>
+            </MudPaper>
     </MudCardContent>
 </MudCard>
 

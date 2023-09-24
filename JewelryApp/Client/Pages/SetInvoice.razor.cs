@@ -1,5 +1,4 @@
 ﻿using JewelryApp.Common.Enums;
-using JewelryApp.Data.Models;
 using JewelryApp.Models.Dtos;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -16,7 +15,7 @@ public partial class SetInvoice
     public InvoiceDto InvoiceModel { get; set; } = new()
     {
         BuyDateTime = DateTime.Now,
-        Products = new List<ProductDto>()
+        Products = new List<ProductDto>
         {
             new ()
             {

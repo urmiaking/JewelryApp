@@ -1,10 +1,5 @@
-﻿using JewelryApp.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace JewelryApp.Models.Dtos;
 
@@ -34,6 +29,42 @@ public class InvoiceDto
     [Display(Name = "تاریخ فاکتور")]
     public DateTime? BuyDateTime { get; set; }
 
-    [Display(Name = "نرخ گرم 18 عیار")] 
+    [Display(Name = "نرخ گرم 18 عیار")]
     public double GramPrice { get; set; }
+
+    [JsonIgnore]
+    public double TotalPrice
+    {
+        get
+        {
+            if (Products != null)
+                return Products.Sum(x => x.FinalPrice) + Products.Sum(x => x.Tax);
+
+            return 0;
+        }
+    }
+
+    [JsonIgnore]
+    public double TotalTax
+    {
+        get
+        {
+            if (Products != null)
+                return Products.Sum(x => x.Tax);
+
+            return 0;
+        }
+    }
+
+    [JsonIgnore]
+    public double TotalFinalPrice
+    {
+        get
+        {
+            if (Products != null)
+                return Products.Sum(x => x.FinalPrice);
+
+            return 0;
+        }
+    }
 }
