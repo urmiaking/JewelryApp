@@ -62,9 +62,18 @@ public class InvoiceDto
         get
         {
             if (Products != null)
-                return Products.Sum(x => x.FinalPrice);
+                return Products.Sum(x => x.FinalPrice) - Discount;
 
             return 0;
         }
     }
+
+    [Display(Name = "تخفیف")]
+    public double Discount { get; set; } = 0;
+
+    [Display(Name = "بدهی")]
+    public double Debt { get; set; } = 0;
+
+    [Display(Name = "موعد بدهی")]
+    public DateTime? DebtDate { get; set; }
 }
