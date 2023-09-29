@@ -1,11 +1,12 @@
-﻿using JewelryApp.Models.Dtos;
+﻿using JewelryApp.Models.Dtos.Common;
+using JewelryApp.Models.Dtos.Product;
 
 namespace JewelryApp.Client.Pages.Components.Shared;
 
 public partial class Calculator : IDisposable
 {
     private bool _isOpen;
-    private ProductDto? _productDto = new();
+    private ProductCalculationDto _productDto = new();
     public string? BarcodeText { get; set; }
     private double _gramPrice;
 
@@ -31,12 +32,12 @@ public partial class Calculator : IDisposable
 
         _gramPrice = priceDto!.Gold18K;
 
-        _productDto!.GramPrice = _gramPrice;
+        _productDto.GramPrice = _gramPrice;
     }
 
     public void Dispose()
     {
-        _productDto = new ProductDto
+        _productDto = new ProductCalculationDto
         {
             GramPrice = _gramPrice
         };
@@ -46,8 +47,8 @@ public partial class Calculator : IDisposable
     {
         if (!string.IsNullOrEmpty(barcode) && barcode.Length > 5)
         {
-            _productDto = await GetAsync<ProductDto>($"api/Products/{barcode}");
-            _productDto!.GramPrice = _gramPrice;
+            _productDto = await GetAsync<ProductCalculationDto>($"api/Products/{barcode}") ?? new ProductCalculationDto();
+            _productDto.GramPrice = _gramPrice;
 
         }
     }

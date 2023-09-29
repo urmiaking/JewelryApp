@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using JewelryApp.Models.Dtos;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -10,6 +9,7 @@ using System.Text;
 using JewelryApp.Data.Models;
 using JewelryApp.Models.AppModels;
 using Microsoft.EntityFrameworkCore;
+using JewelryApp.Models.Dtos.Authentication;
 
 namespace JewelryApp.Business.AppServices;
 

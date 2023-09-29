@@ -22,13 +22,9 @@
 
     [Parameter] public string EndIcon { get; set; } = string.Empty;
 
-    private bool _processing;
-
     async Task Submit()
     {
-        _processing = true;
         var succeed = await DeleteAsync($"{EndpointUrl}");
-        _processing = false;
 
         MudDialog.Close(DialogResult.Ok(succeed));
     }

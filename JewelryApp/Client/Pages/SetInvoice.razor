@@ -17,28 +17,19 @@
 
                 <MudGrid>
                     <MudItem lg="6" md="6" sm="12" xs="12">
-                        <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="نام" HelperText="نام خریدار"
+                        <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="نام" HelperText="نام و نام خانوادگی خریدار"
                                       HelperTextOnFocus="true" Clearable
-                     @bind-Value="InvoiceModel.BuyerFirstName" For="@(() => InvoiceModel.BuyerFirstName)" />
+                     @bind-Value="InvoiceModel.Customer.Name" For="@(() => InvoiceModel.Customer.Name)" />
                      </MudItem>
-                     <MudItem lg="6" md="6" sm="12" xs="12">
-                     <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="نام خانوادگی" HelperText="نام خانوادگی خریدار"
-                                   HelperTextOnFocus="true" Clearable
-                     @bind-Value="InvoiceModel.BuyerLastName" For="@(() => InvoiceModel.BuyerLastName)" />
-                     </MudItem>
-                     <MudItem lg="4" md="4" sm="12" xs="12">
-                     <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Mask="@NationalCodeMask" Label="کد ملی"
-                                   HelperText="کد ملی خریدار" HelperTextOnFocus="true"
-                     @bind-Value="InvoiceModel.BuyerNationalCode" For="@(() => InvoiceModel.BuyerNationalCode)" />
-                     </MudItem>
-                     <MudItem lg="4" md="4" sm="12" xs="12">
+                    <MudItem lg="4" md="4" sm="12" xs="12">
                      <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="شماره همراه" Mask="@PhoneNumberMask"
                                    HelperText="شماره همراه خریدار" HelperTextOnFocus="true"
-                     @bind-Value="InvoiceModel.BuyerPhoneNumber" For="@(() => InvoiceModel.BuyerPhoneNumber)" />
+                     @bind-Value="InvoiceModel.Customer.Phone" For="@(() => InvoiceModel.Customer.Phone)" />
                      </MudItem>
                      <MudItem lg="4" md="4" sm="12" xs="12">
                      <MudDatePicker Margin="Margin.Dense" Color="Color.Secondary" Rounded="true" HelperText="تاریخ ثبت فاکتور"
-                                    Label="تاریخ فاکتور" HelperTextOnFocus="true" @bind-Date="InvoiceModel.BuyDateTime" For="@(() => InvoiceModel.BuyDateTime)" Variant="Variant.Outlined" />
+                                    Label="تاریخ فاکتور" HelperTextOnFocus="true" Date="InvoiceModel.BuyDateTime" 
+                                    For="@(() => InvoiceModel.BuyDateTime)" Variant="Variant.Outlined" />
                      </MudItem>
                      </MudGrid>
                      </MudPaper>
@@ -79,7 +70,7 @@
                      <RowTemplate>
                          <MudTd DataLabel="ردیف">@context.Index</MudTd>
                          <MudTd DataLabel="نوع کالا">
-                         <InputSelect class="select-text" @bind-Value="context.ProductType"
+                         <InputSelect class="select-text" @bind-Value="context.Product.ProductType"
                          @oninput="@(args => ProductTypeChanged(args, context))">
                             @foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
                             {
@@ -89,22 +80,22 @@
                     </MudTd>
                     <MudTd DataLabel="نام کالا">
                         <div class="d-flex">
-                            <MudTextField Style="width: 200px;" Margin="Margin.Dense" @bind-Value="context.Name"></MudTextField>
+                            <MudTextField Style="width: 200px;" Margin="Margin.Dense" @bind-Value="context.Product.Name"></MudTextField>
                         </div>
                     </MudTd>
                     <MudTd DataLabel="تعداد" HideSmall="true">
                         <div class="d-flex">
-                            <MudTextField Style="width: 50px;" T="int" Margin="Margin.Dense" @bind-Value="context.Count"></MudTextField>
+                            <MudTextField Style="width: 50px;" T="int" Margin="Margin.Dense" @bind-Value="context.Quantity"></MudTextField>
                         </div>
                     </MudTd>
                     <MudTd DataLabel="وزن">
                         <div class="d-flex">
-                            <MudTextField Style="width: 100px;" T="double" Margin="Margin.Dense" @bind-Value="context.Weight"></MudTextField>
+                            <MudTextField Style="width: 100px;" T="double" Margin="Margin.Dense" @bind-Value="context.Product.Weight"></MudTextField>
                         </div>
                     </MudTd>
                     <MudTd DataLabel="اجرت ساخت">
                         <div class="d-flex">
-                            <MudTextField Style="width: 100px;" T="double" Margin="Margin.Dense" @bind-Value="context.Wage"></MudTextField>
+                            <MudTextField Style="width: 100px;" T="double" Margin="Margin.Dense" @bind-Value="context.Product.Wage"></MudTextField>
                         </div>
                     </MudTd>
                     <MudTd DataLabel="سود">
@@ -113,8 +104,8 @@
                         </div>
                     </MudTd>
                     <MudTd DataLabel="عیار">
-                        <InputSelect class="select-text" @bind-Value="context.Caret">
-                            @foreach (Caret caret in Enum.GetValues(typeof(Caret)))
+                        <InputSelect class="select-text" @bind-Value="context.Product.Carat">
+                            @foreach (Carat caret in Enum.GetValues(typeof(Carat)))
                             {
                                 <option class="p-4" value="@caret">@caret.ToDisplay()</option>
                             }
@@ -172,10 +163,10 @@
                  </MudItem>
                  <MudItem xs="6" lg="3">
                      <MudStack>
-                         <MudText Typo="Typo.body2">@(InvoiceModel.TotalPrice.ToString("C0").Replace("ریال", "")) تومان</MudText>
-                        <MudText Typo="Typo.body2">@(InvoiceModel.TotalTax.ToString("C0").Replace("ریال", "")) تومان</MudText>
-                        <MudText Typo="Typo.body2">@(InvoiceModel.Debt.ToString("C0").Replace("ریال", "")) تومان</MudText>
-                        <MudText Typo="Typo.body2">@(InvoiceModel.TotalFinalPrice.ToString("C0").Replace("ریال", "")) تومان</MudText>
+                         <MudText Typo="Typo.body2">@(InvoiceModel.TotalFinalPrice.ToString("C0").Replace("ریال", "")) تومان</MudText>
+                         <MudText Typo="Typo.body2">@(InvoiceModel.TotalTax.ToString("C0").Replace("ریال", "")) تومان</MudText>
+                         <MudText Typo="Typo.body2">@(InvoiceModel.Debt.ToString("C0").Replace("ریال", "")) تومان</MudText>
+                         <MudText Typo="Typo.body2">@(InvoiceModel.TotalFinalPrice.ToString("C0").Replace("ریال", "")) تومان</MudText>
                     </MudStack>
                 </MudItem>
             </MudGrid>

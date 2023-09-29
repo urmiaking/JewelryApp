@@ -222,6 +222,25 @@ namespace JewelryApp.Data.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("JewelryApp.Data.Models.Customer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Customer");
+                });
+
             modelBuilder.Entity("JewelryApp.Data.Models.Invoice", b =>
                 {
                     b.Property<int>("Id")
@@ -230,20 +249,11 @@ namespace JewelryApp.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("BuyDateTime")
+                    b.Property<DateTime>("BuyDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("BuyerFirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BuyerLastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BuyerNationalCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BuyerPhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
 
                     b.Property<double>("Debt")
                         .HasColumnType("float");
@@ -254,38 +264,42 @@ namespace JewelryApp.Data.Migrations
                     b.Property<double>("Discount")
                         .HasColumnType("float");
 
+                    b.Property<double>("GramPrice")
+                        .HasColumnType("float");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Invoices");
                 });
 
-            modelBuilder.Entity("JewelryApp.Data.Models.InvoiceProduct", b =>
+            modelBuilder.Entity("JewelryApp.Data.Models.InvoiceItem", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("InvoiceId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Count")
-                        .HasColumnType("int");
-
-                    b.Property<double>("FinalPrice")
-                        .HasColumnType("float");
-
-                    b.Property<double>("GramPrice")
-                        .HasColumnType("float");
-
                     b.Property<double>("Profit")
                         .HasColumnType("float");
 
-                    b.Property<double>("Tax")
-                        .HasColumnType("float");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
                     b.Property<double>("TaxOffset")
                         .HasColumnType("float");
 
-                    b.HasKey("InvoiceId", "ProductId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvoiceId");
 
                     b.HasIndex("ProductId");
 
@@ -334,14 +348,17 @@ namespace JewelryApp.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("AddedDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("BarcodeText")
+                    b.Property<string>("Barcode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Caret")
+                    b.Property<int>("Carat")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -454,16 +471,27 @@ namespace JewelryApp.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JewelryApp.Data.Models.InvoiceProduct", b =>
+            modelBuilder.Entity("JewelryApp.Data.Models.Invoice", b =>
+                {
+                    b.HasOne("JewelryApp.Data.Models.Customer", "Customer")
+                        .WithMany("Invoices")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("JewelryApp.Data.Models.InvoiceItem", b =>
                 {
                     b.HasOne("JewelryApp.Data.Models.Invoice", "Invoice")
-                        .WithMany("InvoiceProducts")
+                        .WithMany("InvoiceItems")
                         .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("JewelryApp.Data.Models.Product", "Product")
-                        .WithMany("InvoiceProducts")
+                        .WithMany("InvoiceItems")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -502,14 +530,19 @@ namespace JewelryApp.Data.Migrations
                     b.Navigation("UserRoles");
                 });
 
+            modelBuilder.Entity("JewelryApp.Data.Models.Customer", b =>
+                {
+                    b.Navigation("Invoices");
+                });
+
             modelBuilder.Entity("JewelryApp.Data.Models.Invoice", b =>
                 {
-                    b.Navigation("InvoiceProducts");
+                    b.Navigation("InvoiceItems");
                 });
 
             modelBuilder.Entity("JewelryApp.Data.Models.Product", b =>
                 {
-                    b.Navigation("InvoiceProducts");
+                    b.Navigation("InvoiceItems");
                 });
 #pragma warning restore 612, 618
         }

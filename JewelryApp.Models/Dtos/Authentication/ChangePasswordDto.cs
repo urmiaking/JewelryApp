@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JewelryApp.Models.Dtos;
+namespace JewelryApp.Models.Dtos.Authentication;
 
 public class ChangePasswordDto
 {

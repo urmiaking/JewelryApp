@@ -1,5 +1,6 @@
 ﻿using JewelryApp.Common.Enums;
-using JewelryApp.Models.Dtos;
+using JewelryApp.Models.Dtos.Common;
+using JewelryApp.Models.Dtos.Invoice;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -15,14 +16,12 @@ public partial class SetInvoice
     public InvoiceDto InvoiceModel { get; set; } = new()
     {
         BuyDateTime = DateTime.Now,
-        Products = new List<ProductDto>
+        Products = new List<InvoiceItemDto>
         {
             new ()
             {
-                Count = 1,
-                Caret = Caret.Eighteen,
+                Quantity = 1,
                 Index = 1,
-                ProductType = ProductType.Gold,
                 TaxOffset = 9
             }
         }
@@ -51,13 +50,6 @@ public partial class SetInvoice
         await base.OnInitializedAsync();
     }
 
-    public PatternMask NationalCodeMask = new("XXX-XXXXXX-X")
-    {
-        MaskChars = new[] { new MaskChar('X', @"[0-9]") },
-        Placeholder = '_',
-        CleanDelimiters = true
-    };
-
     public PatternMask GramPriceMask = new("X,XXX,XXX")
     {
         MaskChars = new[] { new MaskChar('X', @"[0-9]") },
@@ -79,27 +71,27 @@ public partial class SetInvoice
     private void AddRow()
     {
         _lastIndex += 1;
-        InvoiceModel.Products.Add(new ProductDto { Index = _lastIndex });
+        InvoiceModel.Products.Add(new InvoiceItemDto { Index = _lastIndex });
     }
 
-    private void AddRow(ProductDto product)
+    private void AddRow(InvoiceItemDto invoiceItem)
     {
         _lastIndex += 1;
-        product.Index = _lastIndex;
-        InvoiceModel.Products.Add(product);
+        invoiceItem.Index = _lastIndex;
+        InvoiceModel.Products.Add(invoiceItem);
     }
 
-    private void RemoveRow(ProductDto productItem)
+    private void RemoveRow(InvoiceItemDto invoiceItemItem)
     {
         if (_lastIndex >= 1)
         {
             _lastIndex -= 1;
         }
         
-        InvoiceModel.Products.Remove(productItem);
+        InvoiceModel.Products.Remove(invoiceItemItem);
     }
 
-    private void ProductTypeChanged(ChangeEventArgs args, ProductDto context)
+    private void ProductTypeChanged(ChangeEventArgs args, InvoiceItemDto context)
     {
         if (args.Value is not null)
         {
@@ -111,11 +103,11 @@ public partial class SetInvoice
         }
     }
 
-    private static void ChangeInvoiceModel(ProductType productType, InvoiceDto invoice, ProductDto context)
+    private static void ChangeInvoiceModel(ProductType productType, InvoiceDto invoice, InvoiceItemDto context)
     {
         var product = invoice.Products.FirstOrDefault(a => a.Index == context.Index);
 
-        context.ProductType = productType;
+        context.Product.ProductType = productType;
         product!.Profit = productType switch
         {
             ProductType.Jewelry => 20,
@@ -143,12 +135,12 @@ public partial class SetInvoice
         }
         else
         {
-            if (InvoiceModel.Products.Any(x => x.Weight == 0))
+            if (InvoiceModel.Products.Any(x => x.Product.Weight == 0))
             {
                 errorList.Add("وزن کالا نمی تواند صفر باشد");
             }
 
-            if (InvoiceModel.Products.Any(x => string.IsNullOrEmpty(x.Name)))
+            if (InvoiceModel.Products.Any(x => string.IsNullOrEmpty(x.Product.Name)))
             {
                 errorList.Add("لطفا نام کالا را وارد نمایید");
             }
@@ -176,11 +168,11 @@ public partial class SetInvoice
     {
         if (!string.IsNullOrEmpty(barcode) && barcode.Length > 5)
         {
-            var product = await GetAsync<ProductDto>($"api/Products/{barcode}");
+            var product = await GetAsync<InvoiceItemDto>($"api/Products/{barcode}");
 
             if (product is not null)
             {
-                var emptyRow = InvoiceModel.Products.FirstOrDefault(x => string.IsNullOrEmpty(x.Name));
+                var emptyRow = InvoiceModel.Products.FirstOrDefault(x => string.IsNullOrEmpty(x.Product.Name));
                 if (emptyRow is not null)
                 {
                     RemoveRow(emptyRow);

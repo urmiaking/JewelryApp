@@ -18,13 +18,13 @@ public class BarcodeRepository : IBarcodeRepository
     public async Task<string> GetBarcodeAsync(Product product)
     {
         var repeatedProduct = await _db.Products.AsNoTracking()
-            .OrderByDescending(a => a.AddedDateTime)
+            .OrderByDescending(a => a.CreatedAt)
             .FirstOrDefaultAsync(a => a.Name == product.Name);
 
         if (repeatedProduct is null)
             return StringExtensions.GenerateBarcode();
 
-        var newBarcode = int.Parse(repeatedProduct.BarcodeText);
+        var newBarcode = int.Parse(repeatedProduct.Barcode);
         newBarcode += 1;
 
         return newBarcode.ToString();

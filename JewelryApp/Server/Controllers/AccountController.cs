@@ -1,7 +1,6 @@
 ﻿using JewelryApp.Business.AppServices;
-using JewelryApp.Models.Dtos;
+using JewelryApp.Models.Dtos.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -53,10 +52,6 @@ public class AccountController : ControllerBase
         {
             ModelState.AddModelError(nameof(request.RefreshToken), e.Message);
             return Unauthorized(ModelState);
-        }
-        catch (Exception ex)
-        {
-            throw;
         }
     }
 

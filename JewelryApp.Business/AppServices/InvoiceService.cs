@@ -3,7 +3,7 @@ using AutoMapper.QueryableExtensions;
 using JewelryApp.Business.Repositories.Interfaces;
 using JewelryApp.Common.Enums;
 using JewelryApp.Data.Models;
-using JewelryApp.Models.Dtos;
+using JewelryApp.Models.Dtos.Invoice;
 using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Business.AppServices;
@@ -11,45 +11,49 @@ namespace JewelryApp.Business.AppServices;
 public class InvoiceService : IInvoiceService
 {
     private readonly IRepository<Invoice> _invoiceRepository;
-    private readonly IRepository<InvoiceProduct> _invoiceProductRepository;
+    private readonly IRepository<InvoiceItem> _invoiceProductRepository;
     private readonly IRepository<Product> _productRepository;
+    private readonly IRepository<Customer> _customerRepository;
     private readonly IBarcodeRepository _barcodeRepository;
     private readonly IMapper _mapper;
 
-    public InvoiceService(IMapper mapper, IBarcodeRepository barcodeRepository, IRepository<Invoice> invoiceRepository, IRepository<InvoiceProduct> invoiceProductRepository, IRepository<Product> productRepository)
+    public InvoiceService(IMapper mapper, IBarcodeRepository barcodeRepository, IRepository<Invoice> invoiceRepository, IRepository<InvoiceItem> invoiceProductRepository, IRepository<Product> productRepository, IRepository<Customer> customerRepository)
     {
         _mapper = mapper;
         _barcodeRepository = barcodeRepository;
         _invoiceRepository = invoiceRepository;
         _invoiceProductRepository = invoiceProductRepository;
         _productRepository = productRepository;
+        _customerRepository = customerRepository;
     }
 
     public async Task<IEnumerable<InvoiceTableItemDto>> GetInvoicesAsync(int page, int pageSize, string sortDirection, string sortLabel, string searchString, CancellationToken cancellationToken)
     {
         var invoices = await _invoiceRepository.TableNoTracking
-            .Include(a => a.InvoiceProducts)
-            .ProjectTo<InvoiceTableItemDto>(_mapper.ConfigurationProvider)
+            .Include(a => a.InvoiceItems)
+            .ProjectTo<InvoiceDto>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
+
+        var invoiceItems = _mapper.Map<List<InvoiceDto>, List<InvoiceTableItemDto>>(invoices);
 
         if (!string.IsNullOrEmpty(searchString))
         {
-            invoices = invoices.Where(a => a.BuyerName.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
-                                           a.BuyerPhone.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
-                                           a.BuyDate.Contains(searchString, StringComparison.OrdinalIgnoreCase)).ToList();
+            invoiceItems = invoiceItems.Where(a => a.CustomerName.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                                                   a.CustomerPhone.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                                                   a.BuyDate.Contains(searchString, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
-        invoices = sortDirection switch
+        invoiceItems = sortDirection switch
         {
-            "Ascending" => invoices.OrderBy(p => GetPropertyValue(p, sortLabel)).ToList(),
-            "Descending" => invoices.OrderByDescending(p => GetPropertyValue(p, sortLabel)).ToList(),
-            _ => invoices
+            "Ascending" => invoiceItems.OrderBy(p => GetPropertyValue(p, sortLabel)).ToList(),
+            "Descending" => invoiceItems.OrderByDescending(p => GetPropertyValue(p, sortLabel)).ToList(),
+            _ => invoiceItems
         };
 
         var startIndex = page * pageSize;
-        invoices = invoices.Skip(startIndex).Take(pageSize).ToList();
+        invoiceItems = invoiceItems.Skip(startIndex).Take(pageSize).ToList();
 
-        return invoices;
+        return invoiceItems;
     }
 
     private static object GetPropertyValue(object obj, string propertyName)
@@ -63,7 +67,8 @@ public class InvoiceService : IInvoiceService
             return null;
 
         var invoice = await _invoiceRepository.TableNoTracking
-            .Include(x => x.InvoiceProducts)
+            .Include(x => x.Customer)
+            .Include(x => x.InvoiceItems)
             .ThenInclude(x => x.Product)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
@@ -72,25 +77,25 @@ public class InvoiceService : IInvoiceService
 
         var invoiceDto = _mapper.Map<Invoice, InvoiceDto>(invoice);
 
-        foreach (var invoiceProduct in invoice.InvoiceProducts)
-        {
-            var product = invoiceProduct.Product;
+        //foreach (var invoiceItem in invoice.InvoiceItems)
+        //{
+        //    var product = invoiceItem.Product;
 
-            invoiceDto.Products.Add(new ProductDto
-            {
-                Caret = product.Caret,
-                Count = invoiceProduct.Count,
-                FinalPrice = invoiceProduct.FinalPrice,
-                GramPrice = invoiceProduct.GramPrice,
-                Id = product.Id,
-                ProductType = product.ProductType,
-                Name = product.Name,
-                Profit = Math.Round(invoiceProduct.Profit * 100, 0),
-                TaxOffset = Math.Round(invoiceProduct.TaxOffset * 100, 0),
-                Wage = product.Wage,
-                Weight = product.Weight
-            });
-        }
+        //    invoiceDto.Products.Add(new InvoiceItemDto
+        //    {
+        //        Carat = product.Carat,
+        //        Quantity = invoiceItem.Quantity,
+        //        GramPrice = invoiceItem.GramPrice,
+        //        Id = product.Id,
+        //        ProductType = product.ProductType,
+        //        Name = product.Name,
+        //        Profit = Math.Round(invoiceItem.Profit * 100, 0),
+        //        TaxOffset = Math.Round(invoiceItem.TaxOffset * 100, 0),
+        //        Wage = product.Wage,
+        //        Weight = product.Weight,
+        //        Product = 
+        //    });
+        //}
 
         return invoiceDto;
     }
@@ -101,42 +106,54 @@ public class InvoiceService : IInvoiceService
         {
             var invoice = _mapper.Map<InvoiceDto, Invoice>(invoiceDto);
 
+            // Adding Customer
+            var availableCustomer =
+                await _customerRepository.Table.FirstOrDefaultAsync(
+                    x => x.Name == invoice.Customer.Name && x.Phone == invoice.Customer.Phone,
+                    cancellationToken);
+
+            if (availableCustomer is not null)
+            {
+                invoice.CustomerId = availableCustomer.Id;
+            }
+            else
+            {
+                await _customerRepository.AddAsync(invoice.Customer, cancellationToken);
+            }
+
+            // Adding Invoice
             if (invoice.Id is 0)
             {
                 await _invoiceRepository.AddAsync(invoice, cancellationToken);
             }
-            else
+            else // Updating Invoice
             {
                 await _invoiceRepository.UpdateAsync(invoice, cancellationToken, false);
 
-                var invoiceProducts = await _invoiceProductRepository.Table
+                var invoiceItems = await _invoiceProductRepository.Table
                     .Where(a => a.InvoiceId == invoiceDto.Id).ToListAsync(cancellationToken);
 
-                await _invoiceProductRepository.DeleteRangeAsync(invoiceProducts, cancellationToken);
+                await _invoiceProductRepository.DeleteRangeAsync(invoiceItems, cancellationToken);
             }
 
             foreach (var productDto in invoiceDto.Products)
             {
-                var product = _mapper.Map<ProductDto, Product>(productDto);
-                productDto.GramPrice = invoiceDto.GramPrice;
+                var product = _mapper.Map<InvoiceItemDto, Product>(productDto);
 
                 if (product.Id == 0)
                 {
-                    product.BarcodeText = await _barcodeRepository.GetBarcodeAsync(product);
-                    product.AddedDateTime = DateTime.Now;
+                    product.Barcode = await _barcodeRepository.GetBarcodeAsync(product);
+                    product.CreatedAt = DateTime.Now;
                     await _productRepository.AddAsync(product, cancellationToken);
                 }
 
-                var invoiceProduct = new InvoiceProduct
+                var invoiceProduct = new InvoiceItem
                 {
                     InvoiceId = invoice.Id,
                     ProductId = product.Id,
-                    Count = productDto.Count,
+                    Quantity = productDto.Quantity,
                     Profit = productDto.Profit / 100.0,
-                    GramPrice = invoiceDto.GramPrice,
-                    TaxOffset = productDto.TaxOffset / 100.0,
-                    FinalPrice = productDto.FinalPrice,
-                    Tax = productDto.Tax
+                    TaxOffset = productDto.TaxOffset / 100.0
                 };
 
                 await _invoiceProductRepository.AddAsync(invoiceProduct, cancellationToken);
@@ -175,29 +192,21 @@ public class InvoiceService : IInvoiceService
     public async Task<int> GetTotalInvoicesCount(CancellationToken cancellationToken)
         => await _invoiceRepository.TableNoTracking.CountAsync(cancellationToken);
 
-    public async Task<bool> UpdateInvoiceHeaderAsync(InvoiceHeader invoiceHeader, CancellationToken cancellationToken)
+    public async Task<bool> UpdateInvoiceHeaderAsync(InvoiceHeaderDto invoiceHeaderDto, CancellationToken cancellationToken)
     {
-        var invoice = await _invoiceRepository.GetByIdAsync(cancellationToken, invoiceHeader.InvoiceId);
+        var invoice = await _invoiceRepository.TableNoTracking
+            .Include(x => x.Customer)
+            .FirstOrDefaultAsync(x => x.Id == invoiceHeaderDto.InvoiceId, cancellationToken);
 
         if (invoice is null) 
             return false;
 
-        var nameArray = invoiceHeader.BuyerName.Split(" ");
+        var customer = invoice.Customer;
 
-        if (nameArray.Length > 1)
-        {
-            invoice.BuyerFirstName = nameArray[0];
-            invoice.BuyerLastName = string.Join(" ", nameArray.Skip(1));
-        }
-        else
-        {
-            invoice.BuyerFirstName = string.Empty;
-            invoice.BuyerLastName = invoiceHeader.BuyerName;
-        }
+        customer.Name = invoiceHeaderDto.CustomerName;
+        customer.Phone = invoiceHeaderDto.CustomerPhone;
 
-        invoice.BuyerPhoneNumber = invoiceHeader.BuyerPhone;
-
-        await _invoiceRepository.UpdateAsync(invoice, cancellationToken);
+        await _customerRepository.UpdateAsync(customer, cancellationToken);
 
         return true;
     }

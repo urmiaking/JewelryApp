@@ -70,10 +70,11 @@ public static class ServiceCollectionExtensions
         services.AddHttpClient<IPriceRepository, PriceRepository>();
         services.AddScoped<IRepository<RefreshToken>, RefreshTokenRepository>();
         services.AddScoped<IRepository<Invoice>, InvoiceRepository>();
-        services.AddScoped<IRepository<InvoiceProduct>, InvoiceProductRepository>();
+        services.AddScoped<IRepository<InvoiceItem>, InvoiceProductRepository>();
         services.AddScoped<IRepository<Product>, ProductRepository>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IInvoiceService, InvoiceService>();
+        services.AddScoped<IRepository<Customer>, CustomerRepository>();
     }
 
     public static void RegisterAutoMapper(this IServiceCollection services)

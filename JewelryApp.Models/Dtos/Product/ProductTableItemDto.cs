@@ -1,6 +1,6 @@
 ﻿using JewelryApp.Common.Enums;
 
-namespace JewelryApp.Models.Dtos;
+namespace JewelryApp.Models.Dtos.Product;
 
 public class ProductTableItemDto
 {
@@ -10,5 +10,5 @@ public class ProductTableItemDto
     public double Weight { get; set; }
     public double Wage { get; set; }
     public ProductType ProductType { get; set; }
-    public Caret Caret { get; set; }
+    public Carat Carat { get; set; }
 }

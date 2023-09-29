@@ -1,30 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
-using JewelryApp.Common.Enums;
+﻿using JewelryApp.Common.Enums;
 
 namespace JewelryApp.Data.Models;
 
 public class Product
 {
     public int Id { get; set; }
-
-    [Display(Name = "نام جنس")]
-    public string Name { get; set; } = string.Empty;
-
-    [Display(Name = "عیار")]
-    public Caret Caret { get; set; }
-
-    [Display(Name = "وزن")]
+    public string Name { get; set; }
+    public Carat Carat { get; set; }
     public double Weight { get; set; }
-
-    [Display(Name = "اجرت")]
     public double Wage { get; set; }
-
-    public string BarcodeText { get; set; }
-
-    [Display(Name = "نوع")]
+    public string Barcode { get; set; }
     public ProductType ProductType { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public bool IsDeleted { get; set; }
 
-    public DateTime AddedDateTime { get; set; }
-
-    public List<InvoiceProduct> InvoiceProducts { get; set; } = new();
+    public virtual ICollection<InvoiceItem> InvoiceItems { get; set; }
 }

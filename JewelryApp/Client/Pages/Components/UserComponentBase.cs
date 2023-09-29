@@ -4,8 +4,8 @@ using System.Net.Http.Json;
 using System.Net;
 using System.Text.Json.Serialization;
 using System.Text.Json;
-using JewelryApp.Models.Dtos;
 using JewelryApp.Common.Enums;
+using JewelryApp.Models.Dtos.Common;
 
 namespace JewelryApp.Client.Pages.Components;
 

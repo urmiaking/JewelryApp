@@ -5,7 +5,7 @@ using JewelryApp.Common.DateFunctions;
 using JewelryApp.Common.Enums;
 using JewelryApp.Data;
 using JewelryApp.Data.Models;
-using JewelryApp.Models.Dtos;
+using JewelryApp.Models.Dtos.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Business.Repositories.Implementations;

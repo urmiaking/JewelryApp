@@ -3,7 +3,8 @@ using AutoMapper.QueryableExtensions;
 using JewelryApp.Business.Repositories.Interfaces;
 using JewelryApp.Common.Enums;
 using JewelryApp.Data.Models;
-using JewelryApp.Models.Dtos;
+using JewelryApp.Models.Dtos.Invoice;
+using JewelryApp.Models.Dtos.Product;
 using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Business.AppServices;
@@ -11,11 +12,11 @@ namespace JewelryApp.Business.AppServices;
 public class ProductService : IProductService
 {
     private readonly IRepository<Product> _productRepository;
-    private readonly IRepository<InvoiceProduct> _invoiceProductRepository;
+    private readonly IRepository<InvoiceItem> _invoiceProductRepository;
     private readonly IBarcodeRepository _barcodeRepository;
     private readonly IMapper _mapper;
 
-    public ProductService(IBarcodeRepository barcodeRepository, IMapper mapper, IRepository<Product> productRepository, IRepository<InvoiceProduct> invoiceProductRepository)
+    public ProductService(IBarcodeRepository barcodeRepository, IMapper mapper, IRepository<Product> productRepository, IRepository<InvoiceItem> invoiceProductRepository)
     {
         _barcodeRepository = barcodeRepository;
         _mapper = mapper;
@@ -23,14 +24,14 @@ public class ProductService : IProductService
         _invoiceProductRepository = invoiceProductRepository;
     }
 
-    public async Task<Product> SetProductAsync(SetProductDto productDto)
+    public async Task<Product> SetProductAsync(ProductDto productDto)
     {
-        var productModel = _mapper.Map<SetProductDto, Product>(productDto);
+        var productModel = _mapper.Map<ProductDto, Product>(productDto);
 
         if (productModel.Id == 0)
         {
-            productModel.BarcodeText = await _barcodeRepository.GetBarcodeAsync(productModel);
-            productModel.AddedDateTime = DateTime.Now;
+            productModel.Barcode = await _barcodeRepository.GetBarcodeAsync(productModel);
+            productModel.CreatedAt = DateTime.Now;
         }
 
         _productRepository.Update(productModel);
@@ -92,15 +93,15 @@ public class ProductService : IProductService
     public async Task<int> GetTotalProductsCount(CancellationToken cancellationToken)
         => await _productRepository.TableNoTracking.CountAsync(cancellationToken);
 
-    public async Task<ProductDto> GetProductByBarcodeAsync(string barcodeText)
+    public async Task<InvoiceItemDto> GetProductByBarcodeAsync(string barcodeText)
     {
         var product =
-            await _productRepository.TableNoTracking.FirstOrDefaultAsync(x => x.BarcodeText.Equals(barcodeText));
+            await _productRepository.TableNoTracking.FirstOrDefaultAsync(x => x.Barcode.Equals(barcodeText));
 
         if (product is null)
             return null;
 
-        var productDto = _mapper.Map<Product, ProductDto>(product);
+        var productDto = _mapper.Map<Product, InvoiceItemDto>(product);
 
         return productDto;
     }

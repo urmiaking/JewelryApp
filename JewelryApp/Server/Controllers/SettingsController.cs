@@ -1,6 +1,6 @@
 ﻿using JewelryApp.Data;
 using JewelryApp.Data.Models;
-using JewelryApp.Models.Dtos;
+using JewelryApp.Models.Dtos.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

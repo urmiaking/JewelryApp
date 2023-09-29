@@ -1,7 +1,8 @@
-﻿using JewelryApp.Models.Dtos;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using JewelryApp.Client.Shared;
+using JewelryApp.Models.Dtos.Product;
+using JewelryApp.Models.Dtos.Common;
 
 namespace JewelryApp.Client.Pages.Components.Product;
 
@@ -78,11 +79,11 @@ public partial class ProductList
     {
         var product = item as ProductTableItemDto;
 
-        var productDto = new SetProductDto
+        var productDto = new ProductDto
         {
             Id = product!.Id,
             Name = product.Name,
-            Caret = product.Caret,
+            Carat = product.Carat,
             ProductType = product.ProductType,
             Wage = product.Wage,
             Weight = product.Weight,

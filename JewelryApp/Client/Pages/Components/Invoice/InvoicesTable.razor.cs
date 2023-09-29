@@ -1,6 +1,6 @@
 ﻿using JewelryApp.Client.Shared;
 using JewelryApp.Data.Models;
-using JewelryApp.Models.Dtos;
+using JewelryApp.Models.Dtos.Invoice;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -51,11 +51,11 @@ public partial class InvoicesTable
     {
         if (element is InvoiceTableItemDto invoiceItemDto)
         {
-            var invoiceHeader = new InvoiceHeader
+            var invoiceHeader = new InvoiceHeaderDto
             {
                 InvoiceId = invoiceItemDto.InvoiceId,
-                BuyerName = invoiceItemDto.BuyerName,
-                BuyerPhone = invoiceItemDto.BuyerPhone
+                CustomerName = invoiceItemDto.CustomerName,
+                CustomerPhone = invoiceItemDto.CustomerPhone
             };
 
             await PostAsync("/api/Invoices/UpdateInvoiceHeader", invoiceHeader);

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using JewelryApp.Business.Repositories.Interfaces;
 using JewelryApp.Data.Models;
-using JewelryApp.Models.Dtos;
+using JewelryApp.Models.Dtos.Authentication;
 using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Business.AppServices;

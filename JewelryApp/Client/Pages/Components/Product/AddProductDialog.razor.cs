@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Json;
 using JewelryApp.Common.Enums;
-using JewelryApp.Models.Dtos;
+using JewelryApp.Models.Dtos.Product;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -12,7 +12,7 @@ public partial class AddProductDialog
     public MudDialogInstance MudDialog { get; set; } = default!;
 
     [Parameter]
-    public SetProductDto Model { get; set; } = new();
+    public ProductDto Model { get; set; } = new();
 
     private bool _processing;
 
@@ -34,5 +34,5 @@ public partial class AddProductDialog
         }
     }
 
-    private readonly Func<Caret, string> _caretConverter = p => p.ToDisplay();
+    private readonly Func<Carat, string> _caretConverter = p => p.ToDisplay();
 }

@@ -1,5 +1,5 @@
 ﻿using JewelryApp.Common.Enums;
-using JewelryApp.Models.Dtos;
+using JewelryApp.Models.Dtos.Invoice;
 
 namespace JewelryApp.Business.AppServices;
 
@@ -10,5 +10,5 @@ public interface IInvoiceService
     Task<bool> SetInvoiceAsync(InvoiceDto invoiceDto, CancellationToken cancellationToken);
     Task<DeleteResult> DeleteAsync(int id, CancellationToken cancellationToken);
     Task<int> GetTotalInvoicesCount(CancellationToken cancellationToken);
-    Task<bool> UpdateInvoiceHeaderAsync(InvoiceHeader invoiceHeader, CancellationToken cancellationToken);
+    Task<bool> UpdateInvoiceHeaderAsync(InvoiceHeaderDto invoiceHeaderDto, CancellationToken cancellationToken);
 }

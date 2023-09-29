@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
 using JewelryApp.Common.DateFunctions;
 using JewelryApp.Data.Models;
-using JewelryApp.Models.Dtos;
+using JewelryApp.Models.Dtos.Authentication;
+using JewelryApp.Models.Dtos.Common;
+using JewelryApp.Models.Dtos.Invoice;
+using JewelryApp.Models.Dtos.Product;
 
 namespace JewelryApp.Business.Mapper;
 
@@ -9,36 +12,29 @@ public class MappingProfile : Profile
 {
 	public MappingProfile()
 	{
-        CreateMap<Product, SetProductDto>().ReverseMap();
+        CreateMap<Product, ProductDto>().ReverseMap();
+        CreateMap<Customer, CustomerDto>().ReverseMap();
         CreateMap<Product, ProductTableItemDto>().ReverseMap();
         CreateMap<Price, PriceDto>().ReverseMap();
-        CreateMap<Invoice, InvoiceDto>()
-            .ForMember(x => 
-                x.GramPrice, x =>
-                x.MapFrom(a => a.InvoiceProducts.FirstOrDefault().GramPrice))
-            .ReverseMap();
-        CreateMap<ProductDto, InvoiceProduct>().ForMember(x => x.ProductId,
-            a => a.MapFrom(b => b.Id)).ReverseMap();
-        CreateMap<InvoiceProduct, ProductDto>()
-            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Product.Name))
-            .ForMember(dest => dest.Weight, opt => opt.MapFrom(src => src.Product.Weight))
-            .ForMember(dest => dest.Wage, opt => opt.MapFrom(src => src.Product.Wage))
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Product.Id));
-        CreateMap<ProductDto, Product>().ReverseMap();
-        CreateMap<Invoice, InvoiceTableItemDto>()
-            .ForMember(x => x.BuyerName,
+        CreateMap<Invoice, InvoiceDto>().ReverseMap();
+        CreateMap<InvoiceItem, InvoiceItemDto>().ReverseMap();
+        CreateMap<Product, InvoiceItemDto>().ReverseMap();
+        CreateMap<InvoiceDto, InvoiceTableItemDto>()
+            .ForMember(x => x.CustomerName,
                 a =>
-                    a.MapFrom(x => $"{x.BuyerFirstName} {x.BuyerLastName}"))
-            .ForMember(x => x.BuyDate, x =>
-                x.MapFrom(a => a.BuyDateTime.Value.ToShamsiDateString()))
-            .ForMember(x => x.BuyerPhone, a => a.MapFrom(x => x.BuyerPhoneNumber))
-            .ForMember(x => x.ProductsCount, a =>
-                a.MapFrom(x => x.InvoiceProducts.Count))
+                    a.MapFrom(x => x.Customer.Name))
+            .ForMember(x => x.BuyDate, 
+                x => x.MapFrom(a => a.BuyDateTime.ToShamsiDateString()))
+            .ForMember(x => x.CustomerPhone, 
+                a => a.MapFrom(x => x.Customer.Phone))
+            .ForMember(x => x.ProductsCount, 
+                a => a.MapFrom(x => x.Products.Count))
             .ForMember(x => x.TotalCost,
                 a =>
-                    a.MapFrom(x => x.InvoiceProducts.Sum(y => y.FinalPrice)))
+                    a.MapFrom(x => x.Products.Sum(y => y.FinalPrice)))
             .ForMember(x => x.InvoiceId, a =>
                 a.MapFrom(b => b.Id));
+        CreateMap<Customer, CustomerDto>().ReverseMap();
         CreateProjection<RefreshToken, RefreshTokenDto>();
     }
 }

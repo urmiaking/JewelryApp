@@ -1,5 +1,5 @@
 ﻿using JewelryApp.Business.AppServices;
-using JewelryApp.Models.Dtos;
+using JewelryApp.Models.Dtos.Product;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JewelryApp.Api.Controllers;
@@ -20,7 +20,7 @@ public class ProductsController : ControllerBase
         => Ok(await _productService.GetProductsAsync(page, pageSize, sortDirection, sortLabel, searchString, cancellationToken));
 
     [HttpPost]
-    public async Task<IActionResult> AddOrEditProduct(SetProductDto productDto)
+    public async Task<IActionResult> AddOrEditProduct(ProductDto productDto)
         => Ok(await _productService.SetProductAsync(productDto));
     
     [HttpDelete("{id}")]

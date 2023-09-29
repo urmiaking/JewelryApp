@@ -2,7 +2,7 @@
 
 namespace JewelryApp.Common.Enums
 {
-    public enum Caret
+    public enum Carat
     {
         [Display(Name = "18 عیار")]
         Eighteen = 1,

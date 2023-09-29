@@ -27,12 +27,12 @@
 
         </ToolBarContent>
         <HeaderContent>
-            <MudTh><MudTableSortLabel SortLabel="BarcodeText" T="ProductTableItemDto">کد جنس</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="Barcode" T="ProductTableItemDto">کد جنس</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortLabel="Name" T="ProductTableItemDto">نام جنس</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortLabel="Weight" T="ProductTableItemDto">وزن</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortLabel="Wage" T="ProductTableItemDto">اجرت ساخت</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortLabel="ProductType" T="ProductTableItemDto">نوع جنس</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="Caret" T="ProductTableItemDto">عیار</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="Carat" T="ProductTableItemDto">عیار</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel T="ProductTableItemDto">عملیات</MudTableSortLabel></MudTh>
         </HeaderContent>
         <RowTemplate>
@@ -50,7 +50,7 @@
                 }
             </MudTd>
             <MudTd DataLabel="نوع جنس">@context.ProductType.ToDisplay()</MudTd>
-            <MudTd DataLabel="عیار">@context.Caret.ToDisplay()</MudTd>
+            <MudTd DataLabel="عیار">@context.Carat.ToDisplay()</MudTd>
             <MudTd DataLabel="عملیات">
                 <MudTooltip Text="چاپ بارکد">
                     <MudIconButton Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Print"
@@ -82,10 +82,10 @@
                 </MudSelect>
             </MudTd>
             <MudTd DataLabel="عیار">
-                <MudSelect T="Caret" Label="عیار" @bind-Value="context.Caret" Variant="Variant.Text">
-                    @foreach (Caret caret in Enum.GetValues(typeof(Caret)))
+                <MudSelect T="Carat" Label="عیار" @bind-Value="context.Carat" Variant="Variant.Text">
+                    @foreach (Carat caret in Enum.GetValues(typeof(Carat)))
                     {
-                        <MudSelectItem T="Caret" Value="caret">@caret.ToDisplay()</MudSelectItem>
+                        <MudSelectItem T="Carat" Value="caret">@caret.ToDisplay()</MudSelectItem>
                     }
                 </MudSelect>
             </MudTd>

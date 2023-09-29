@@ -1,5 +1,5 @@
 ﻿using JewelryApp.Common.Enums;
-using JewelryApp.Models.Dtos;
+using JewelryApp.Models.Dtos.Common;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 

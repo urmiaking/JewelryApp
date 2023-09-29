@@ -1,5 +1,5 @@
 ﻿using JewelryApp.Common.Enums;
-using JewelryApp.Models.Dtos;
+using JewelryApp.Models.Dtos.Common;
 
 namespace JewelryApp.Business.Repositories.Interfaces;
 

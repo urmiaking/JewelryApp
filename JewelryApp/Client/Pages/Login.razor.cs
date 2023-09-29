@@ -1,11 +1,11 @@
 ﻿using JewelryApp.Client.Security;
-using JewelryApp.Models.Dtos;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Net.Http.Json;
 using System.Text.Json;
+using JewelryApp.Models.Dtos.Authentication;
 
 namespace JewelryApp.Client.Pages;
 

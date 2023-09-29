@@ -1,5 +1,5 @@
 ﻿using Blazored.LocalStorage;
-using JewelryApp.Models.Dtos;
+using JewelryApp.Models.Dtos.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System.Net.Http.Json;
 using System.Text.Json;

@@ -1,5 +1,5 @@
 ﻿using JewelryApp.Business.AppServices;
-using JewelryApp.Models.Dtos;
+using JewelryApp.Models.Dtos.Invoice;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JewelryApp.Api.Controllers;
@@ -31,8 +31,8 @@ public class InvoicesController : ControllerBase
     }
 
     [HttpPost(nameof(UpdateInvoiceHeader))]
-    public async Task<IActionResult> UpdateInvoiceHeader(InvoiceHeader invoiceHeader, CancellationToken cancellationToken)
-        => Ok(await _invoiceService.UpdateInvoiceHeaderAsync(invoiceHeader, cancellationToken));
+    public async Task<IActionResult> UpdateInvoiceHeader(InvoiceHeaderDto invoiceHeaderDto, CancellationToken cancellationToken)
+        => Ok(await _invoiceService.UpdateInvoiceHeaderAsync(invoiceHeaderDto, cancellationToken));
     
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken) => 

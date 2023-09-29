@@ -1,4 +1,4 @@
-﻿using JewelryApp.Models.Dtos;
+﻿using JewelryApp.Models.Dtos.Authentication;
 
 namespace JewelryApp.Business.AppServices;
 

@@ -17,7 +17,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 
 	public DbSet<Invoice> Invoices { get; set; }
 	public DbSet<Product> Products { get; set; }
-	public DbSet<InvoiceProduct> InvoiceProducts { get; set; }
+	public DbSet<InvoiceItem> InvoiceProducts { get; set; }
 	public DbSet<RefreshToken> RefreshTokens { get; set; }
 	public DbSet<Price> Prices { get; set; }
 
@@ -25,17 +25,14 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<InvoiceProduct>()
-        .HasKey(ip => new { ip.InvoiceId, ip.ProductId });
-
-        modelBuilder.Entity<InvoiceProduct>()
+        modelBuilder.Entity<InvoiceItem>()
             .HasOne(ip => ip.Invoice)
-            .WithMany(i => i.InvoiceProducts)
+            .WithMany(i => i.InvoiceItems)
             .HasForeignKey(ip => ip.InvoiceId);
 
-        modelBuilder.Entity<InvoiceProduct>()
+        modelBuilder.Entity<InvoiceItem>()
             .HasOne(ip => ip.Product)
-            .WithMany(p => p.InvoiceProducts)
+            .WithMany(p => p.InvoiceItems)
             .HasForeignKey(ip => ip.ProductId);
 
         SetupIdentityTables(modelBuilder);

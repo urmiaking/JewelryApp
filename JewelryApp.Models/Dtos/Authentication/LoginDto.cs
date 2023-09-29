@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace JewelryApp.Models.Dtos;
+namespace JewelryApp.Models.Dtos.Authentication;
 
 public class LoginDto
 {
