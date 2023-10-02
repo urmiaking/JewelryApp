@@ -5,7 +5,7 @@ namespace JewelryApp.Models.Dtos.Product;
 public class ProductTableItemDto
 {
     public int Id { get; set; }
-    public string BarcodeText { get; set; } = string.Empty;
+    public string Barcode { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public double Weight { get; set; }
     public double Wage { get; set; }

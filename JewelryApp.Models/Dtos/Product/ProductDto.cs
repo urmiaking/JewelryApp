@@ -26,5 +26,5 @@ public class ProductDto
     [Required(ErrorMessage = "{0} را وارد کنید")]
     public double Wage { get; set; }
 
-    public string BarcodeText { get; set; } = string.Empty;
+    public string Barcode { get; set; } = string.Empty;
 }

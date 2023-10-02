@@ -87,7 +87,7 @@ public partial class ProductList
             ProductType = product.ProductType,
             Wage = product.Wage,
             Weight = product.Weight,
-            BarcodeText = product.BarcodeText
+            Barcode = product.Barcode
         };
 
         await PostAsync("/api/Products", productDto);

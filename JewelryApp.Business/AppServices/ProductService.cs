@@ -48,7 +48,7 @@ public class ProductService : IProductService
 
         if (!string.IsNullOrEmpty(searchString))
         {
-            products = products.Where(a => a.BarcodeText.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+            products = products.Where(a => a.Barcode.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
                                            a.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
@@ -95,8 +95,7 @@ public class ProductService : IProductService
 
     public async Task<InvoiceItemDto> GetProductByBarcodeAsync(string barcodeText)
     {
-        var product =
-            await _productRepository.TableNoTracking.FirstOrDefaultAsync(x => x.Barcode.Equals(barcodeText));
+        var product = await _productRepository.TableNoTracking.FirstOrDefaultAsync(x => x.Barcode.Equals(barcodeText));
 
         if (product is null)
             return null;

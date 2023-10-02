@@ -36,7 +36,7 @@
             <MudTh><MudTableSortLabel T="ProductTableItemDto">عملیات</MudTableSortLabel></MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="بارکد جنس">@context.BarcodeText</MudTd>
+            <MudTd DataLabel="بارکد جنس">@context.Barcode</MudTd>
             <MudTd DataLabel="نام جنس">@context.Name</MudTd>
             <MudTd DataLabel="وزن">@(context.Weight + " گرم")</MudTd>
                 <MudTd DataLabel="اجرت">
@@ -63,7 +63,7 @@
             </MudTd>
         </RowTemplate>
         <RowEditingTemplate>
-            <MudTd DataLabel="بارکد جنس">@context.BarcodeText</MudTd>
+            <MudTd DataLabel="بارکد جنس">@context.Barcode</MudTd>
             <MudTd DataLabel="نام جنس">
                 <MudTextField @bind-Value="@context.Name" Required />
             </MudTd>
