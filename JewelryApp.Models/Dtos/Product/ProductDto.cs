@@ -26,5 +26,8 @@ public class ProductDto
     [Required(ErrorMessage = "{0} را وارد کنید")]
     public double Wage { get; set; }
 
+    [Display(Name = "اجرت")]
+    public WageType WageType { get; set; } = WageType.Percent;
+
     public string Barcode { get; set; } = string.Empty;
 }

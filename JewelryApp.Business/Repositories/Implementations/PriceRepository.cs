@@ -6,7 +6,9 @@ using JewelryApp.Common.Enums;
 using JewelryApp.Data;
 using JewelryApp.Data.Models;
 using JewelryApp.Models.Dtos.Common;
+using JewelryApp.Models.Dtos.Common.Currency.Body;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http.Json;
 
 namespace JewelryApp.Business.Repositories.Implementations;
 
@@ -44,6 +46,28 @@ public class PriceRepository : IPriceRepository
             var halfCoinTag = htmlDocument.GetElementbyId("sekke-nim");
             var quarterCoinTag = htmlDocument.GetElementbyId("sekke-rob");
 
+            var payload = new PostData
+            {
+                Property = new[] { "id", "name", "close" },
+                SortBy = "index",
+                Desc = false,
+                Market = "currency"
+            };
+
+            var signalResponse = await _httpClient.PostAsJsonAsync("https://signalpardazgroup.com/service/signalData@4.0.0/list", payload, cancellationToken: token);
+
+            if (!signalResponse.IsSuccessStatusCode)
+                return null;
+
+            var currencyResult = await signalResponse.Content.ReadFromJsonAsync<CurrencyResult>(cancellationToken: token);
+
+            var data = currencyResult?.data.data.FirstOrDefault(x => x.Id == 200000);
+
+            var number = data!.Close;
+            var numberString = number.ToString();
+            numberString = numberString.Remove(numberString.Length - 1);
+            var newNumber = int.Parse(numberString);
+
             _httpClient.Dispose();
 
             var priceModel = new PriceDto
@@ -54,6 +78,7 @@ public class PriceRepository : IPriceRepository
                 NewCoin = double.Parse(newCoinTag.InnerHtml.Replace(",", "")),
                 HalfCoin = double.Parse(halfCoinTag.InnerHtml.Replace(",", "")),
                 QuarterCoin = double.Parse(quarterCoinTag.InnerHtml.Replace(",", "")),
+                UsDollar = newNumber
             };
 
             return priceModel;
@@ -65,7 +90,6 @@ public class PriceRepository : IPriceRepository
         }
     }
 
-    
     public async Task<LineChartDto> GetCaretChartDataAsync(CaretChartType caretChartType)
     {
         var result = new LineChartDto();

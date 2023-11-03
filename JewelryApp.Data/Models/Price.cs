@@ -10,6 +10,7 @@ public class Price
     public double NewCoin { get; set; }
     public double HalfCoin { get; set; }
     public double QuarterCoin { get; set; }
+    public double UsDollar { get; set; }
 
     public DateTime? DateTime { get; set; }
 }
