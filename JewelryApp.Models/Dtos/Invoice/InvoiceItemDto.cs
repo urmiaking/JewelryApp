@@ -20,20 +20,25 @@ public class InvoiceItemDto
     [Display(Name = "سود")]
     public double Profit { get; set; } = 7;
 
-    public Product.ProductDto Product { get; set; }
-    public InvoiceDto Invoice { get; set; }
+    public Product.ProductDto Product { get; set; } = new();
+
+    public InvoiceDto Invoice { get; set; } = new();
 
     [JsonIgnore]
     public double Tax
     {
         get
         {
-            return Product.ProductType switch
+            if (Product is not null)
             {
-                ProductType.Gold => Product.Weight * (TaxOffset / 100.0 * (Profit + Product.Wage) / 100) * Invoice.GramPrice,
-                ProductType.Jewelry => (Product.Wage + Invoice.GramPrice * Profit) * (TaxOffset / 100),
-                _ => throw new ArgumentOutOfRangeException()
-            };
+                return Product.ProductType switch
+                {
+                    ProductType.Gold => Product.Weight * (TaxOffset / 100.0 * (Profit + Product.Wage) / 100) * Invoice.GramPrice,
+                    ProductType.Jewelry => (Product.Wage + Invoice.GramPrice * Profit) * (TaxOffset / 100),
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+            }
+            return 0;
         }
     }
 
@@ -42,12 +47,16 @@ public class InvoiceItemDto
     {
         get
         {
-            return Product.ProductType switch
+            if (Product is not null)
             {
-                ProductType.Gold => (Product.Weight + Product.Weight * Profit / 100.0 + (Product.Weight + Product.Weight * Profit / 100.0) * Product.Wage / 100.0) * Invoice.GramPrice,
-                ProductType.Jewelry => (Invoice.GramPrice + Product.Wage + Profit * Invoice.GramPrice) * Product.Weight,
-                _ => throw new ArgumentOutOfRangeException()
-            };
+                return Product.ProductType switch
+                {
+                    ProductType.Gold => (Product.Weight + Product.Weight * Profit / 100.0 + (Product.Weight + Product.Weight * Profit / 100.0) * Product.Wage / 100.0) * Invoice.GramPrice,
+                    ProductType.Jewelry => (Invoice.GramPrice + Product.Wage + Profit * Invoice.GramPrice) * Product.Weight,
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+            }
+            return 0;
         }
     }
 

@@ -4,13 +4,13 @@ namespace JewelryApp.Models.Dtos.Product;
 
 public class ProductCalculationDto
 {
-    public double GramPrice { get; set; }
-    public double Weight { get; set; }
-    public double Wage { get; set; }
-    public double Profit { get; set; }
-    public double TaxOffset { get; set; }
-    public string ProductName { get; set; }
-    public ProductType ProductType { get; set; }
+    public double GramPrice { get; set; } = 0;
+    public double Weight { get; set; } = 0;
+    public double Wage { get; set; } = 0;
+    public double Profit { get; set; } = 0;
+    public double TaxOffset { get; set; } = 0;
+    public string ProductName { get; set; } = string.Empty;
+    public ProductType ProductType { get; set; } = ProductType.Gold;
 
     public double RawPrice
     {

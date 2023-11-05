@@ -6,7 +6,7 @@ namespace JewelryApp.Client.Pages.Components.Shared;
 public partial class Calculator : IDisposable
 {
     private bool _isOpen;
-    private ProductCalculationDto _productDto = new();
+    private ProductCalculationDto? _productDto = new();
     public string? BarcodeText { get; set; }
     private double _gramPrice;
 
@@ -32,7 +32,7 @@ public partial class Calculator : IDisposable
 
         _gramPrice = priceDto!.Gold18K;
 
-        _productDto.GramPrice = _gramPrice;
+        _productDto!.GramPrice = _gramPrice;
     }
 
     public void Dispose()

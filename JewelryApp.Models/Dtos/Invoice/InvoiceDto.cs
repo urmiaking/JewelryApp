@@ -8,10 +8,10 @@ public class InvoiceDto
     public int Id { get; set; }
 
     [Display(Name = "تاریخ فاکتور")]
-    public DateTime BuyDateTime { get; set; }
+    public DateTime BuyDateTime { get; set; } = DateTime.Now;
 
     [Display(Name = "نرخ گرم روز")]
-    public double GramPrice { get; set; }
+    public double GramPrice { get; set; } = 0;
 
     [Display(Name = "تخفیف")]
     public double Discount { get; set; } = 0;
@@ -22,7 +22,7 @@ public class InvoiceDto
     [Display(Name = "موعد بدهی")]
     public DateTime? DebtDate { get; set; }
 
-    public CustomerDto Customer { get; set; }
+    public CustomerDto Customer { get; set; } = new CustomerDto();
     public List<InvoiceItemDto> Products { get; set; }
 
     [JsonIgnore]
