@@ -8,4 +8,5 @@ public class PriceDto
     public double NewCoin { get; set; }
     public double HalfCoin { get; set; }
     public double QuarterCoin { get; set; }
+    public double UsDollar { get; set; }
 }

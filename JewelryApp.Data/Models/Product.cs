@@ -9,6 +9,7 @@ public class Product
     public Carat Carat { get; set; }
     public double Weight { get; set; }
     public double Wage { get; set; }
+    public WageType WageType { get; set; }
     public string Barcode { get; set; }
     public ProductType ProductType { get; set; }
     public DateTime CreatedAt { get; set; }

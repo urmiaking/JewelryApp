@@ -20,7 +20,7 @@ public class ProductCalculationDto
             {
                 ProductType.Gold => (Weight + Weight * Profit / 100.0 + (Weight + Weight * Profit / 100.0) * Wage / 100.0) * GramPrice,
                 ProductType.Jewelry => (GramPrice + Wage + Profit * GramPrice) * Weight,
-                _ => throw new ArgumentOutOfRangeException()
+                _ => 0
             };
         }
     }
@@ -33,7 +33,7 @@ public class ProductCalculationDto
             {
                 ProductType.Gold => Weight * (TaxOffset / 100.0 * (Profit + Wage) / 100) * GramPrice,
                 ProductType.Jewelry => (Wage + GramPrice * Profit) * (TaxOffset / 100),
-                _ => throw new ArgumentOutOfRangeException()
+                _ => 0
             };
         }
     }

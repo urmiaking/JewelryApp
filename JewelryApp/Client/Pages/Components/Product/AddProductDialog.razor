@@ -4,13 +4,21 @@
     <DialogContent>
         <EditForm Model="@Model" OnValidSubmit="OnValidSubmit">
             <DataAnnotationsValidator />
-            <MudTextField @bind-Value="Model.Id" InputType="InputType.Hidden" For="@(() => Model.Id)" Variant="Variant.Outlined" />
+            <MudTextField Class="mb-5" @bind-Value="Model.Id" InputType="InputType.Hidden" For="@(() => Model.Id)" Variant="Variant.Outlined" />
             <MudGrid>
-                <MudItem xs="12" md="12" lg="12" Class="mt-5">
+                <MudItem xs="12" md="6" lg="6">
                     <MudTextField Label="نام جنس" @bind-Value="Model.Name" For="@(() => Model.Name)" Variant="Variant.Outlined" Margin="Margin.Dense" />
                 </MudItem>
                 <MudItem xs="12" md="6" lg="6">
                     <MudNumericField Label="وزن" @bind-Value="Model.Weight" For="@(() => Model.Weight)" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem xs="12" md="6" lg="6">
+                    <InputSelect class="select-text-calc" @bind-Value="Model.WageType">
+                        @foreach (WageType wageType in Enum.GetValues(typeof(WageType)))
+                        {
+                            <option class="p-4" value="@wageType">@wageType.ToDisplay()</option>
+                        }
+                    </InputSelect>
                 </MudItem>
                 <MudItem xs="12" md="6" lg="6">
                     <MudNumericField Label="اجرت" @bind-Value="Model.Wage" For="@(() => Model.Wage)" Variant="Variant.Outlined" Margin="Margin.Dense" Step="1" />
