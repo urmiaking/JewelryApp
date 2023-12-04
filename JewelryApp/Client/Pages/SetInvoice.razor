@@ -19,12 +19,12 @@
                     <MudItem lg="4" md="4" sm="12" xs="12">
                         <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="نام" HelperText="نام و نام خانوادگی خریدار"
                                       HelperTextOnFocus="true" Clearable
-                     @bind-Value="InvoiceModel.Customer.Name" For="@(() => InvoiceModel.Customer.Name)" />
+                     @bind-Value="InvoiceModel.Customer.FullName" For="@(() => InvoiceModel.Customer.FullName)" />
                      </MudItem>
                     <MudItem lg="4" md="4" sm="12" xs="12">
                      <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="شماره همراه" Mask="@PhoneNumberMask"
                                    HelperText="شماره همراه خریدار" HelperTextOnFocus="true"
-                     @bind-Value="InvoiceModel.Customer.Phone" For="@(() => InvoiceModel.Customer.Phone)" />
+                     @bind-Value="InvoiceModel.Customer.PhoneNumber" For="@(() => InvoiceModel.Customer.PhoneNumber)" />
                      </MudItem>
                      <MudItem lg="4" md="4" sm="12" xs="12">
                      <MudDatePicker Margin="Margin.Dense" Color="Color.Secondary" Rounded="true" HelperText="تاریخ ثبت فاکتور"

@@ -1,123 +1,80 @@
-﻿using JewelryApp.Data.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using JewelryApp.Common.Utilities;
+using JewelryApp.Data.Extensions;
+using JewelryApp.Data.Models;
+using JewelryApp.Data.Models.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace JewelryApp.Data;
 
-public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid, ApplicationUserClaim, ApplicationUserRole, ApplicationUserLogin, ApplicationRoleClaim, ApplicationUserToken>
+public class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid, AppUserClaim, AppUserRole, AppUserLogin, AppRoleClaim, AppUserToken>
 {
 	public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
 	{
-        if (Database.GetPendingMigrations().Any())
+       
+    }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        // Must be called first of all (if using identity)
+        base.OnModelCreating(builder);
+
+        var entitiesAssembly = typeof(IEntity).Assembly;
+
+        builder.RegisterAllEntities<IEntity>(entitiesAssembly);
+        builder.RegisterEntityTypeConfiguration(entitiesAssembly);
+        builder.SetupIdentityTables();
+        builder.AddRestrictDeleteBehaviorConvention();
+        builder.AddSequentialGuidForIdConvention();
+    }
+
+    public override int SaveChanges()
+    {
+        CleanString();
+        return base.SaveChanges();
+    }
+
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        CleanString();
+        return base.SaveChanges(acceptAllChangesOnSuccess);
+    }
+
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    {
+        CleanString();
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        CleanString();
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
+    private void CleanString()
+    {
+        var changedEntities = ChangeTracker.Entries()
+            .Where(x => x.State is EntityState.Added or EntityState.Modified);
+        foreach (var item in changedEntities)
         {
-            Database.Migrate();
+            var properties = item.Entity.GetType()
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p is { CanRead: true, CanWrite: true } && p.PropertyType == typeof(string));
+
+            foreach (var property in properties)
+            {
+                var val = (string)property.GetValue(item.Entity, null)!;
+
+                if (val.HasValue())
+                {
+                    var newVal = val.Fa2En().FixPersianChars();
+                    if (newVal == val)
+                        continue;
+                    property.SetValue(item.Entity, newVal, null);
+                }
+            }
         }
-    }
-
-	public DbSet<Invoice> Invoices { get; set; }
-	public DbSet<Product> Products { get; set; }
-	public DbSet<InvoiceItem> InvoiceProducts { get; set; }
-	public DbSet<RefreshToken> RefreshTokens { get; set; }
-	public DbSet<Price> Prices { get; set; }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-
-        modelBuilder.Entity<InvoiceItem>()
-            .HasOne(ip => ip.Invoice)
-            .WithMany(i => i.InvoiceItems)
-            .HasForeignKey(ip => ip.InvoiceId);
-
-        modelBuilder.Entity<InvoiceItem>()
-            .HasOne(ip => ip.Product)
-            .WithMany(p => p.InvoiceItems)
-            .HasForeignKey(ip => ip.ProductId);
-
-        SetupIdentityTables(modelBuilder);
-    }
-
-    private void SetupIdentityTables(ModelBuilder builder)
-    {
-        builder.Entity<ApplicationUser>(b =>
-        {
-            b.ToTable("Users");
-
-            // Each User can have many UserClaims
-            b.HasMany(e => e.Claims)
-                .WithOne()
-                .HasForeignKey(uc => uc.UserId)
-                .IsRequired();
-
-            // Each User can have many UserLogins
-            b.HasMany(e => e.Logins)
-                .WithOne()
-                .HasForeignKey(ul => ul.UserId)
-                .IsRequired();
-
-            // Each User can have many UserTokens
-            b.HasMany(e => e.Tokens)
-                .WithOne()
-                .HasForeignKey(ut => ut.UserId)
-                .IsRequired();
-
-            // Each User can have many entries in the UserRole join table
-            b.HasMany(e => e.UserRoles)
-                .WithOne()
-                .HasForeignKey(ur => ur.UserId)
-                .IsRequired();
-        });
-        builder.Entity<ApplicationRole>(b =>
-        {
-            b.ToTable("Roles");
-
-            // Each Role can have many entries in the UserRole join table
-            b.HasMany(e => e.UserRoles)
-                .WithOne(e => e.Role)
-                .HasForeignKey(ur => ur.RoleId)
-                .IsRequired();
-        });
-        builder.Entity<ApplicationRoleClaim>(b => {
-            b.ToTable("RoleClaims");
-
-            b.HasOne(e => e.Role)
-                .WithMany(e => e.Claims)
-                .HasForeignKey(rc => rc.RoleId)
-                .IsRequired();
-
-        });
-        builder.Entity<ApplicationUserClaim>(b => {
-            b.ToTable("UserClaims");
-
-            b.HasOne(e => e.User)
-                .WithMany(e => e.Claims)
-                .HasForeignKey(uc => uc.UserId)
-                .IsRequired();
-        });
-        builder.Entity<ApplicationUserLogin>(b => {
-            b.ToTable("UserLogins");
-
-            b.HasOne(e => e.User)
-                .WithMany(e => e.Logins)
-                .HasForeignKey(ul => ul.UserId)
-                .IsRequired();
-        });
-        builder.Entity<ApplicationUserRole>(b => {
-            b.ToTable("UserRoles");
-
-            b.HasOne(e => e.User)
-                .WithMany(e => e.UserRoles)
-                .HasForeignKey(ur => ur.UserId)
-                .IsRequired();
-        });
-        builder.Entity<ApplicationUserToken>(b => {
-            b.ToTable("UserTokens");
-
-            b.HasOne(e => e.User)
-                .WithMany(e => e.Tokens)
-                .HasForeignKey(ut => ut.UserId)
-                .IsRequired();
-        });
     }
 }

@@ -1,10 +1,7 @@
 ﻿namespace JewelryApp.Data.Models;
 
-public class Customer
+public class Customer : SoftDeleteModelBase
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public string Phone { get; set; }
-    
-    public virtual ICollection<Invoice> Invoices { get; set; }
+    public string FullName { get; set; } = default!;
+    public string PhoneNumber { get; set; } = default!;
 }

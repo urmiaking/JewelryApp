@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using JewelryApp.Common.Utilities;
 
 namespace JewelryApp.Common.Enums;
 
@@ -19,42 +20,27 @@ public static class EnumExtensions
             throw new NotSupportedException();
 
         foreach (var value in Enum.GetValues(input.GetType()))
-            if (((input as Enum)!).HasFlag((value as Enum)!))
+            if ((input as Enum)!.HasFlag((value as Enum)!))
                 yield return (T)value;
     }
 
     public static string ToDisplay(this Enum value, DisplayProperty property = DisplayProperty.Name)
     {
-        try
-        {
-            var attribute = value.GetType().GetField(value.ToString())!
+        Assert.NotNull(value, nameof(value));
+
+        var attribute = value.GetType()?.GetField(value.ToString())?
             .GetCustomAttributes<DisplayAttribute>(false).FirstOrDefault();
 
-            if (attribute == null)
-                return value.ToString();
+        if (attribute == null)
+            return value.ToString();
 
-            var propValue = attribute.GetType().GetProperty(property.ToString())?.GetValue(attribute, null);
-            return propValue?.ToString();
-        }
-        catch
-        {
-            return string.Empty;
-        }
-        
+        var propValue = attribute.GetType().GetProperty(property.ToString())?.GetValue(attribute, null);
+        return propValue?.ToString() ?? string.Empty;
     }
 
     public static Dictionary<int, string> ToDictionary(this Enum value)
     {
-        return Enum.GetValues(value.GetType()).Cast<Enum>().ToDictionary(Convert.ToInt32, q => ToDisplay(q));
-    }
-
-    public static TAttribute GetAttribute<TAttribute>(this Enum enumValue)
-        where TAttribute : Attribute
-    {
-        var type = enumValue.GetType();
-        var memberInfo = type.GetMember(enumValue.ToString());
-        var attributes = memberInfo[0].GetCustomAttributes(typeof(TAttribute), false);
-        return attributes.Length > 0 ? (TAttribute)attributes[0] : null;
+        return Enum.GetValues(value.GetType()).Cast<Enum>().ToDictionary(p => Convert.ToInt32(p), q => ToDisplay(q));
     }
 }
 

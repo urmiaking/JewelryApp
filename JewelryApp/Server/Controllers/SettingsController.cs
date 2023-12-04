@@ -1,5 +1,5 @@
 ﻿using JewelryApp.Data;
-using JewelryApp.Data.Models;
+using JewelryApp.Data.Models.Identity;
 using JewelryApp.Models.Dtos.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -14,9 +14,9 @@ namespace JewelryApp.Api.Controllers;
 public class SettingsController : ControllerBase
 {
     private readonly AppDbContext _context;
-    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly UserManager<AppUser> _userManager;
 
-    public SettingsController(AppDbContext context, UserManager<ApplicationUser> userManager)
+    public SettingsController(AppDbContext context, UserManager<AppUser> userManager)
     {
         _context = context;
         _userManager = userManager;

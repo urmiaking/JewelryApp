@@ -1,14 +1,15 @@
 ﻿namespace JewelryApp.Data.Models;
 
-public class InvoiceItem
+public class InvoiceItem : SoftDeleteModelBase
 {
-    public int Id { get; set; }
-    public int InvoiceId { get; set; }
-    public int ProductId { get; set; }
-    public int Quantity { get; set; }
+    public int Quantity { get; set; } = 1;
     public double Profit { get; set; }
     public double TaxOffset { get; set; }
-    
-    public Invoice Invoice { get; set; }
-    public Product Product { get; set; }
+    public double Tax { get; set; }
+    public double Price { get; set; }
+
+    public int InvoiceId { get; set; }
+    public int ProductId { get; set; }
+    public Invoice Invoice { get; set; } = default!;
+    public Product Product { get; set; } = default!;
 }

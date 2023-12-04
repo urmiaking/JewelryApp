@@ -22,11 +22,11 @@ public class MappingProfile : Profile
         CreateMap<InvoiceDto, InvoiceTableItemDto>()
             .ForMember(x => x.CustomerName,
                 a =>
-                    a.MapFrom(x => x.Customer.Name))
+                    a.MapFrom(x => x.Customer.FullName))
             .ForMember(x => x.BuyDate, 
                 x => x.MapFrom(a => a.BuyDateTime.ToShamsiDateString()))
             .ForMember(x => x.CustomerPhone, 
-                a => a.MapFrom(x => x.Customer.Phone))
+                a => a.MapFrom(x => x.Customer.PhoneNumber))
             .ForMember(x => x.ProductsCount, 
                 a => a.MapFrom(x => x.Products.Count))
             .ForMember(x => x.TotalCost,
@@ -35,6 +35,6 @@ public class MappingProfile : Profile
             .ForMember(x => x.InvoiceId, a =>
                 a.MapFrom(b => b.Id));
         CreateMap<Customer, CustomerDto>().ReverseMap();
-        CreateProjection<RefreshToken, RefreshTokenDto>();
+        CreateMap<RefreshToken, RefreshTokenDto>();
     }
 }

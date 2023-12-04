@@ -1,9 +1,11 @@
-﻿namespace JewelryApp.Data.Models;
+﻿using JewelryApp.Data.Models.Identity;
+
+namespace JewelryApp.Data.Models;
 
 public class RefreshToken : ModelBase<Guid>
 {
     public Guid UserId { get; set; }
-    public ApplicationUser User { get; set; } = default!;
+    public AppUser User { get; set; } = default!;
 
     public Guid JwtId { get; set; }
 

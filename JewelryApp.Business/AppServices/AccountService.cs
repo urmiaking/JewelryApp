@@ -6,10 +6,10 @@ using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using JewelryApp.Data.Models;
 using JewelryApp.Models.AppModels;
 using Microsoft.EntityFrameworkCore;
 using JewelryApp.Models.Dtos.Authentication;
+using JewelryApp.Data.Models.Identity;
 
 namespace JewelryApp.Business.AppServices;
 
@@ -19,17 +19,17 @@ public class AccountService : IAccountService
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly TokenValidationParameters _tokenValidationParameters;
     private readonly JwtSettings _jwtSettings;
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<ApplicationRole> _roleManager;
-    private readonly SignInManager<ApplicationUser> _signinManager;
+    private readonly UserManager<AppUser> _userManager;
+    private readonly RoleManager<AppRole> _roleManager;
+    private readonly SignInManager<AppUser> _signinManager;
 
     public AccountService(IMapper mapper,
         IOptions<JwtSettings> jwtSettingsOption,
         IRefreshTokenService refreshTokenService,
         TokenValidationParameters tokenValidationParameters,
-        UserManager<ApplicationUser> userManager,
-        RoleManager<ApplicationRole> roleManager,
-        SignInManager<ApplicationUser> signinManager)
+        UserManager<AppUser> userManager,
+        RoleManager<AppRole> roleManager,
+        SignInManager<AppUser> signinManager)
     {
         _mapper = mapper;
         _refreshTokenService = refreshTokenService;
@@ -117,7 +117,7 @@ public class AccountService : IAccountService
         return null;
     }
 
-    private async Task<UserTokenDto?> GenerateTokenForUserAsync(ApplicationUser user)
+    private async Task<UserTokenDto?> GenerateTokenForUserAsync(AppUser user)
     {
         var signingCredentials = GetSigningCredentials();
         var claims = await GetUserClaimsAsync(user);
@@ -165,7 +165,7 @@ public class AccountService : IAccountService
         return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
     }
 
-    private async Task<IEnumerable<Claim>> GetUserClaimsAsync(ApplicationUser user)
+    private async Task<IEnumerable<Claim>> GetUserClaimsAsync(AppUser user)
     {
         var claims = new List<Claim>
         {

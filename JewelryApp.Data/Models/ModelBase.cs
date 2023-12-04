@@ -1,11 +1,30 @@
-﻿namespace JewelryApp.Data.Models;
+﻿using JewelryApp.Data.Models.Identity;
 
-public abstract class ModelBase
+namespace JewelryApp.Data.Models;
+
+public interface IEntity
 {
 
 }
 
+public abstract class ModelBase : IEntity
+{
+    public DateTime? CreatedAt { get; set; }
+    public Guid? ModifiedUserId { get; set; }
+    public AppUser? ModifiedUser { get; set; }
+}
+
 public abstract class ModelBase<TId> : ModelBase
 {
-    public TId Id { get; set; } = default!;
+    public virtual TId Id { get; set; } = default!;
+}
+
+public abstract class SoftDeleteModelBase<TId> : ModelBase<TId>
+{
+    public virtual bool Deleted { get; set; }
+}
+
+public abstract class SoftDeleteModelBase : SoftDeleteModelBase<int>
+{
+
 }

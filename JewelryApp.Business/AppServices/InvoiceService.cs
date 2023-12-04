@@ -88,7 +88,7 @@ public class InvoiceService : IInvoiceService
         //        GramPrice = invoiceItem.GramPrice,
         //        Id = product.Id,
         //        ProductType = product.ProductType,
-        //        Name = product.Name,
+        //        FullName = product.FullName,
         //        Profit = Math.Round(invoiceItem.Profit * 100, 0),
         //        TaxOffset = Math.Round(invoiceItem.TaxOffset * 100, 0),
         //        Wage = product.Wage,
@@ -109,7 +109,7 @@ public class InvoiceService : IInvoiceService
             // Adding Customer
             var availableCustomer =
                 await _customerRepository.Table.FirstOrDefaultAsync(
-                    x => x.Name == invoice.Customer.Name && x.Phone == invoice.Customer.Phone,
+                    x => x.FullName == invoice.Customer.FullName && x.PhoneNumber == invoice.Customer.PhoneNumber,
                     cancellationToken);
 
             if (availableCustomer is not null)
@@ -203,8 +203,8 @@ public class InvoiceService : IInvoiceService
 
         var customer = invoice.Customer;
 
-        customer.Name = invoiceHeaderDto.CustomerName;
-        customer.Phone = invoiceHeaderDto.CustomerPhone;
+        customer.FullName = invoiceHeaderDto.CustomerName;
+        customer.PhoneNumber = invoiceHeaderDto.CustomerPhone;
 
         await _customerRepository.UpdateAsync(customer, cancellationToken);
 

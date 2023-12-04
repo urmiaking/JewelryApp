@@ -13,8 +13,8 @@ public partial class CaretChart
     private ChartOptions options = new();
     public List<ChartSeries> Series = new();
     //{
-    //    new ChartSeries { Name = "طلای 18 عیار", Data = new double[] { 90, 79, 72, 69, 62, 62, 55 } },
-    //    new ChartSeries { Name = "طلای 24 عیار", Data = new double[] { 35, 41, 35, 51, 49, 62, 69 } },
+    //    new ChartSeries { FullName = "طلای 18 عیار", Data = new double[] { 90, 79, 72, 69, 62, 62, 55 } },
+    //    new ChartSeries { FullName = "طلای 24 عیار", Data = new double[] { 35, 41, 35, 51, 49, 62, 69 } },
     //};
     public string[] XAxisLabels = { "شنبه", "یکشنبه", "دوشنبه", "سه شنبه", "چهارشنبه", "پنجشنبه", "جمعه" };
 

@@ -1,15 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using JewelryApp.Data.Models;
+using JewelryApp.Models.Dtos.Common;
 
 namespace JewelryApp.Models.Dtos.Invoice;
 
-public class CustomerDto
+public class CustomerDto : BaseDto<CustomerDto, Customer>
 {
-    public int Id { get; set; }
-
     [Display(Name = "نام و نام خانوادگی مشتری")]
     [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
-    public string Name { get; set; }
+    public string FullName { get; set; }
 
     [Display(Name = "شماره همراه")]
-    public string Phone { get; set; }
+    public string PhoneNumber { get; set; }
 }

@@ -4,25 +4,6 @@ namespace JewelryApp.Common.DateFunctions;
 
 public static class ShamsiDateTime
 {
-    public static DateTime ParseShamsiDateTime(string shamsiDateTime)
-    {
-        // Split the Shamsi date and time components
-        var shamsiParts = shamsiDateTime.Split(new[] { ' ', '-' });
-
-        // Parse the year, month, and day components using the PersianCalendar class
-        var pc = new PersianCalendar();
-        var year = int.Parse(shamsiParts[0]);
-        var month = int.Parse(shamsiParts[1]);
-        var day = int.Parse(shamsiParts[2]);
-        var georgianDate = pc.ToDateTime(year, month, day, 0, 0, 0, 0);
-
-        // Parse the time component using the DateTime.Parse method
-        var time = TimeSpan.Parse(shamsiParts[3]);
-
-        // Combine the date and time components into a single DateTime object
-        return georgianDate.Add(time);
-    }
-
     public static string ToShamsiDateString(this DateTime dateTime)
     {
         // Get the Persian calendar

@@ -1,19 +1,23 @@
 ﻿using System.Reflection;
 using JewelryApp.Business.AppServices;
 using JewelryApp.Business.Repositories.Implementations;
-using JewelryApp.Business.Repositories.Interfaces;
 using JewelryApp.Data;
 using JewelryApp.Data.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using AutoMapper;
 using JewelryApp.Business.Jobs;
+using JewelryApp.Business.Mapper;
+using JewelryApp.Data.Implementations.Repositories;
+using JewelryApp.Data.Interfaces;
+using JewelryApp.Data.Interfaces.Repositories;
+using JewelryApp.Data.Interfaces.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NCrontab;
+using JewelryApp.Data.Models.Identity;
 
 namespace JewelryApp.Api.Extensions;
 
@@ -21,7 +25,7 @@ public static class ServiceCollectionExtensions
 {
     public static void AddCustomIdentity(this IServiceCollection services)
     {
-        services.AddIdentity<ApplicationUser, ApplicationRole>()
+        services.AddIdentity<AppUser, AppRole>()
             .AddEntityFrameworkStores<AppDbContext>();
 
         services.Configure<IdentityOptions>(options =>
@@ -77,15 +81,16 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRepository<Customer>, CustomerRepository>();
     }
 
-    public static void RegisterAutoMapper(this IServiceCollection services)
+    public static void RegisterAutoMapper(this IServiceCollection services, params Assembly[] assemblies)
     {
-        var assemblies = Assembly.GetExecutingAssembly().GetReferencedAssemblies()
-            .Select(Assembly.Load)
-            .SelectMany(a => a.DefinedTypes)
-            .Where(t => typeof(Profile).IsAssignableFrom(t.AsType()))
-            .Select(t => t.AsType()).ToArray();
-
-        services.AddAutoMapper(assemblies);
+        services.AddAutoMapper(config =>
+        {
+            config.AddCustomMappingProfile();
+            config.Advanced.BeforeSeal(configProvider =>
+            {
+                configProvider.CompileMappings();
+            });
+        }, assemblies);
     }
 
     public static void AddPriceUpdateJob(this IServiceCollection services, IConfiguration configuration)
