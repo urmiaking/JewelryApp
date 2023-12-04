@@ -33,7 +33,6 @@ public partial class Profile
 
     private void TimerElapsed(object? sender, ElapsedEventArgs e)
     {
-        ;
         _currentDateTime = DateTime.Now.ToShamsiDateTimeString();
         InvokeAsync(StateHasChanged);
     }

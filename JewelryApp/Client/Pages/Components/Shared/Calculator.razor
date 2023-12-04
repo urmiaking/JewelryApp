@@ -26,8 +26,9 @@
                     </MudTextField>
                 </MudItem>
                 <MudItem xs="6" sm="6" lg="6">
-                    <MudTextField @bind-Value="_productDto.Weight" AdornmentIcon="@Icons.Material.Filled.ProductionQuantityLimits"
+                     <MudTextField @bind-Value="_productDto.Weight" AdornmentIcon="@Icons.Material.Filled.ProductionQuantityLimits"
                                   Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined"
+                                  @onkeypress:preventDefault="true"
                                   HelperText="وزن">
                     </MudTextField>
                 </MudItem>
