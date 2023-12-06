@@ -1,9 +1,7 @@
-﻿using JewelryApp.Business.Repositories.Interfaces;
-using JewelryApp.Common.Constants;
-using JewelryApp.Data;
+﻿using JewelryApp.Common.Constants;
+using JewelryApp.Data.Interfaces;
 using JewelryApp.Data.Models.Identity;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Business.Repositories.Implementations;
 

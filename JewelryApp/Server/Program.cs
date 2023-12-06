@@ -1,38 +1,20 @@
-using System.Reflection;
-using AutoMapper;
-using JewelryApp.Api.Extensions;
+using JewelryApp.Api;
+using JewelryApp.Business;
 using JewelryApp.Business.Hubs;
-using JewelryApp.Business.Jobs;
-using JewelryApp.Models.AppModels;
+using JewelryApp.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
 
-builder.Services.AddControllers();
-builder.Services.AddRazorPages();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddDatabase(configuration);
-
-builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
-
-builder.Services.RegisterAutoMapper();
-
-builder.Services.RegisterServices();
-
-builder.Services.AddCustomIdentity();
-
-builder.Services.AddCustomAuthentication(configuration);
-
-builder.Services.AddPriceUpdateJob(configuration);
-
-builder.Services.AddSignalR();
-
-builder.Services.AddHttpContextAccessor();
+builder.Services
+    .AddApi(builder.Configuration)
+    .AddBusiness(builder.Configuration)
+    .AddData(builder.Configuration);
 
 var app = builder.Build();
+
+app.InitializeDatabase();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -56,9 +38,6 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseInitializer();
-
 
 app.MapRazorPages();
 app.MapControllers().RequireAuthorization();

@@ -1,4 +1,4 @@
-﻿using JewelryApp.Business.AppServices;
+﻿using JewelryApp.Business.Interfaces;
 using JewelryApp.Models.Dtos.Invoice;
 using Microsoft.AspNetCore.Mvc;
 

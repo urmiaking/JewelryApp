@@ -1,7 +1,6 @@
 ﻿using JewelryApp.Business.Hubs;
-using JewelryApp.Business.Repositories.Interfaces;
+using JewelryApp.Business.Interfaces;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -24,8 +23,8 @@ public class UpdatePriceJob : ICronJob
     public async Task Run(CancellationToken token = default)
     {
         await using var scope = _serviceProvider.CreateAsyncScope();
-        var priceRepository = scope.ServiceProvider.GetRequiredService<IPriceRepository>();
-        var price = await priceRepository.UpdatePriceAsync(token);
+        var priceRepository = scope.ServiceProvider.GetRequiredService<IPriceService>();
+        var price = await priceRepository.GetPriceAsync(token);
 
         var json = JsonConvert.SerializeObject(price);
 

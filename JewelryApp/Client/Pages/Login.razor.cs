@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Net.Http.Json;
 using System.Text.Json;
-using JewelryApp.Models.Dtos.Authentication;
 
 namespace JewelryApp.Client.Pages;
 

@@ -1,4 +1,4 @@
-﻿using JewelryApp.Models.Dtos.Authentication;
+﻿using JewelryApp.Models.Dtos.AuthenticationDtos;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Net.Http.Json;

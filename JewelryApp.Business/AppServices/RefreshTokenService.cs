@@ -1,19 +1,16 @@
-﻿using AutoMapper;
-using JewelryApp.Business.Repositories.Interfaces;
+﻿using JewelryApp.Business.Interfaces;
+using JewelryApp.Data.Interfaces.Repositories.Base;
 using JewelryApp.Data.Models;
-using JewelryApp.Models.Dtos.Authentication;
 using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Business.AppServices;
 
 public class RefreshTokenService : IRefreshTokenService
 {
-    private readonly IMapper _mapper;
     private readonly IRepository<RefreshToken> _repository;
 
-    public RefreshTokenService(IMapper mapper, IRepository<RefreshToken> repository)
+    public RefreshTokenService(IRepository<RefreshToken> repository)
     {
-        _mapper = mapper;
         _repository = repository;
     }
 
@@ -32,13 +29,9 @@ public class RefreshTokenService : IRefreshTokenService
         return model.Id;
     }
 
-    public async Task<RefreshTokenDto?> FindAsync(Guid id)
-    {
-        var query = _repository.TableNoTracking.Where(x => x.Id == id);
-
-        return await _mapper.ProjectTo<RefreshTokenDto>(query).FirstOrDefaultAsync();
-    }
-
+    public async Task<RefreshToken?> FindAsync(Guid id)
+        => await _repository.TableNoTracking.FirstOrDefaultAsync(x => x.Id == id);
+    
     public async Task SetUsedAsync(Guid id)
     {
         var model = await _repository.Entities

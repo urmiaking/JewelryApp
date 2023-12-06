@@ -7,15 +7,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="HtmlAgilityPack" Version="1.11.50" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.14" />
 		<PackageReference Include="NCrontab" Version="3.3.3" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\JewelryApp.Models\JewelryApp.Models.csproj" />
+		<ProjectReference Include="..\JewelryApp.Shared\JewelryApp.Shared.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

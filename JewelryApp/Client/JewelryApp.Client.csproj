@@ -20,9 +20,6 @@
 		<PackageReference Include="MudBlazor" Version="6.9.0" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\..\JewelryApp.Business\JewelryApp.Business.csproj" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
@@ -31,6 +28,10 @@
 	<ItemGroup>
 	  <Folder Include="Extensions\" />
 	  <Folder Include="Services\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\JewelryApp.Shared\JewelryApp.Shared.csproj" />
 	</ItemGroup>
 
 </Project>

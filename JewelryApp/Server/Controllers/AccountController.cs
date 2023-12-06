@@ -1,14 +1,15 @@
-﻿using JewelryApp.Business.AppServices;
-using JewelryApp.Models.Dtos.Authentication;
+﻿using JewelryApp.Business.Interfaces;
+using JewelryApp.Common.Errors;
+using JewelryApp.Models.Dtos.AuthenticationDtos;
+using JewelryApp.Shared.Requests.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace JewelryApp.Api.Controllers;
 
-[Route("/")]
-[ApiController]
-public class AccountController : ControllerBase
+public class AccountController : ApiController
 {
     private readonly IAccountService _service;
 
@@ -19,22 +20,31 @@ public class AccountController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginDto request)
+    public async Task<IActionResult> Login(AuthenticationRequest request)
     {
-        if (!ModelState.IsValid)
-            return ValidationProblem(ModelState);
+        try
+        {
+            if (!ModelState.IsValid)
+                return ValidationProblem(ModelState);
 
-        var response = await _service.AuthenticateAsync(request);
+            var response = await _service.AuthenticateAsync(request);
 
-        if (response != null)
-            return Ok(response);
+            if (response.IsError && response.FirstError == Errors.Authentication.InvalidCredentials)
+                return Problem(
+                    statusCode: StatusCodes.Status401Unauthorized,
+                    title: response.FirstError.Description);
 
-        return Unauthorized();
+            return response.Match(Ok, Problem);
+        }
+        catch (Exception e)
+        {
+            return Problem(title: e.Message);
+        }
     }
 
     [AllowAnonymous]
     [HttpPost("refresh")]
-    public async Task<IActionResult> Refresh(UserTokenDto request)
+    public async Task<IActionResult> Refresh(RefreshTokenRequest request)
     {
         try
         {
@@ -43,10 +53,14 @@ public class AccountController : ControllerBase
 
             var response = await _service.RefreshAsync(request);
 
-            if (response != null)
-                return Ok(response);
+            if (response.IsError)
+            {
+                return Problem(
+                    statusCode: StatusCodes.Status401Unauthorized,
+                    title: response.FirstError.Description);
+            }
 
-            return Unauthorized();
+            return response.Match(Ok, Problem);
         }
         catch (ValidationException e)
         {
@@ -55,5 +69,22 @@ public class AccountController : ControllerBase
         }
     }
 
+    [Route("changepassword")]
+    public async Task<IActionResult> ChangePassword(ChangePasswordDto passwordDto)
+    {
+        var userName = User.Identity!.Name;
+
+        var user = await _context.Users.FirstOrDefaultAsync(a => a.UserName == userName);
+
+        if (user is null)
+            return BadRequest();
+
+        var result = await _userManager.ChangePasswordAsync(user, passwordDto.OldPassword, passwordDto.NewPassword);
+
+        if (result.Succeeded)
+            return Ok();
+
+        return BadRequest();
+    }
 }
 

@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using JewelryApp.Business.Repositories.Interfaces;
+using JewelryApp.Business.Interfaces;
 using JewelryApp.Common.Enums;
+using JewelryApp.Data.Interfaces.Repositories.Base;
 using JewelryApp.Data.Models;
-using JewelryApp.Models.Dtos.Invoice;
-using JewelryApp.Models.Dtos.Product;
+using JewelryApp.Models.Dtos.InvoiceDtos;
+using JewelryApp.Models.Dtos.ProductDtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Business.AppServices;
@@ -13,12 +14,10 @@ public class ProductService : IProductService
 {
     private readonly IRepository<Product> _productRepository;
     private readonly IRepository<InvoiceItem> _invoiceProductRepository;
-    private readonly IBarcodeRepository _barcodeRepository;
     private readonly IMapper _mapper;
 
-    public ProductService(IBarcodeRepository barcodeRepository, IMapper mapper, IRepository<Product> productRepository, IRepository<InvoiceItem> invoiceProductRepository)
+    public ProductService(IMapper mapper, IRepository<Product> productRepository, IRepository<InvoiceItem> invoiceProductRepository)
     {
-        _barcodeRepository = barcodeRepository;
         _mapper = mapper;
         _productRepository = productRepository;
         _invoiceProductRepository = invoiceProductRepository;
@@ -30,7 +29,6 @@ public class ProductService : IProductService
 
         if (productModel.Id == 0)
         {
-            productModel.Barcode = await _barcodeRepository.GetBarcodeAsync(productModel);
             productModel.CreatedAt = DateTime.Now;
         }
 

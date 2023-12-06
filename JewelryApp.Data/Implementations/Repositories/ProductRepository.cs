@@ -1,4 +1,5 @@
 ﻿using JewelryApp.Common.Utilities;
+using JewelryApp.Data.Implementations.Repositories.Base;
 using JewelryApp.Data.Interfaces.Repositories;
 using JewelryApp.Data.Models;
 using JewelryApp.Data.Models.Identity;

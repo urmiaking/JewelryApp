@@ -1,21 +1,24 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using JewelryApp.Models.AppModels;
 using Microsoft.EntityFrameworkCore;
-using JewelryApp.Models.Dtos.Authentication;
 using JewelryApp.Data.Models.Identity;
+using JewelryApp.Business.Interfaces;
+using ErrorOr;
+using JewelryApp.Common.Errors;
+using Microsoft.Extensions.Logging;
+using JewelryApp.Shared.Requests.Authentication;
+using JewelryApp.Shared.Responses.Authentication;
+using JewelryApp.Common.Settings;
 
 namespace JewelryApp.Business.AppServices;
 
 public class AccountService : IAccountService
 {
-    private readonly IMapper _mapper;
+    private readonly ILogger<AccountService> _logger;
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly TokenValidationParameters _tokenValidationParameters;
     private readonly JwtSettings _jwtSettings;
@@ -23,7 +26,8 @@ public class AccountService : IAccountService
     private readonly RoleManager<AppRole> _roleManager;
     private readonly SignInManager<AppUser> _signinManager;
 
-    public AccountService(IMapper mapper,
+    public AccountService(
+        ILogger<AccountService> logger,
         IOptions<JwtSettings> jwtSettingsOption,
         IRefreshTokenService refreshTokenService,
         TokenValidationParameters tokenValidationParameters,
@@ -31,7 +35,7 @@ public class AccountService : IAccountService
         RoleManager<AppRole> roleManager,
         SignInManager<AppUser> signinManager)
     {
-        _mapper = mapper;
+        _logger = logger;
         _refreshTokenService = refreshTokenService;
         _tokenValidationParameters = tokenValidationParameters;
         _jwtSettings = jwtSettingsOption.Value;
@@ -40,68 +44,107 @@ public class AccountService : IAccountService
         _signinManager = signinManager;
     }
 
-    public async Task<UserTokenDto?> AuthenticateAsync(LoginDto request)
+    public async Task<ErrorOr<AuthenticationResponse?>> AuthenticateAsync(AuthenticationRequest request)
     {
-        var signinResult = await _signinManager.PasswordSignInAsync(request.UserName, request.Password, false, false);
-
-        if (signinResult.Succeeded)
+        try
         {
-            return await GenerateTokenForUserAsync(request.UserName);
-        }
+            var signinResult = await _signinManager.PasswordSignInAsync(request.UserName, request.Password, false, false);
 
-        return null;
+            if (signinResult.Succeeded)
+                return await GenerateTokenForUserAsync(request.UserName);
+            
+            return Errors.Authentication.InvalidCredentials;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message);
+            return Errors.General.ServerError;
+        }
+        
     }
 
-    public async Task<UserTokenDto?> RefreshAsync(UserTokenDto request)
+    public async Task<ErrorOr<AuthenticationResponse?>> RefreshAsync(RefreshTokenRequest request)
     {
-        var validatedToken = GetPrincipalFromToken(request.Token);
-
-        if (validatedToken == null)
-            throw new ValidationException("Invalid token");
-
-        var expiryDateUnix = long.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
-        var expiryDateUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(expiryDateUnix)
-            .Subtract(_jwtSettings.TokenLifeTime);
-
-        if (expiryDateUtc > DateTime.UtcNow)
-            throw new ValidationException("The token has not expired yet.");
-
-        var jti = Guid.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value);
-        var userId = Guid.Parse(validatedToken.Claims.Single(x => x.Type == ClaimTypes.NameIdentifier).Value);
-        var userName = validatedToken.Claims.Single(x => x.Type == ClaimTypes.Name).Value;
-
-        // get stored token
-        var refreshToken = await _refreshTokenService.FindAsync(request.RefreshToken);
-        if (refreshToken == null)
-            throw new ValidationException("Refresh token not found.");
-
-        if (refreshToken.ExpiryDate < DateTime.UtcNow)
-            throw new ValidationException("Refresh token is expired.");
-
-        if (refreshToken.Invalidated)
-            throw new ValidationException("Refresh token has been invalidated.");
-
-        if (refreshToken.Used)
+        try
         {
-            // set it as invalidated
-            await _refreshTokenService.SetInvalidatedAsync(refreshToken.Id);
+            var validatedToken = GetPrincipalFromToken(request.Token);
 
-            // TODO:
-            // We would need a middleware to un-authorize requests with a valid, but invalidated token.
+            if (validatedToken == null)
+                return Errors.Authentication.InvalidToken;
 
-            throw new ValidationException("Refresh token has been used.");
+            var expiryDateUnix = long.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
+            var expiryDateUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(expiryDateUnix)
+                .Subtract(_jwtSettings.TokenLifeTime);
+
+            if (expiryDateUtc > DateTime.UtcNow)
+                return Errors.Authentication.TokenNotExpired;
+
+            var jti = Guid.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value);
+            var userId = Guid.Parse(validatedToken.Claims.Single(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            var userName = validatedToken.Claims.Single(x => x.Type == ClaimTypes.Name).Value;
+
+            // get stored token
+            var refreshToken = await _refreshTokenService.FindAsync(request.RefreshToken);
+            if (refreshToken == null)
+                return Errors.Authentication.RefreshTokenNotFound;
+
+            if (refreshToken.ExpiryDate < DateTime.UtcNow)
+                return Errors.Authentication.TokenExpired;
+
+            if (refreshToken.Invalidated)
+                return Errors.Authentication.RefreshTokenInvalidated;
+
+            if (refreshToken.Used)
+            {
+                // set it as invalidated
+                await _refreshTokenService.SetInvalidatedAsync(refreshToken.Id);
+
+                // TODO:
+                // We would need a middleware to un-authorize requests with a valid, but invalidated token.
+
+                return Errors.Authentication.RefreshTokenUsed;
+            }
+
+            if (refreshToken.JwtId != jti || refreshToken.UserId != userId)
+                return Errors.Authentication.RefreshTokenNotValid;
+
+            // set it as used
+            await _refreshTokenService.SetUsedAsync(refreshToken.Id);
+
+            return await GenerateTokenForUserAsync(userName);
         }
-
-        if (refreshToken.JwtId != jti || refreshToken.UserId != userId)
-            throw new ValidationException("Refresh token is not valid.");
-
-        // set it as used
-        await _refreshTokenService.SetUsedAsync(refreshToken.Id);
-
-        return await GenerateTokenForUserAsync(userName);
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message);
+            return Errors.General.ServerError;
+        }
+        
     }
 
-    private async Task<UserTokenDto?> GenerateTokenForUserAsync(string userName)
+    public async Task<ErrorOr<ChangePasswordResponse>> ChangePasswordAsync(ChangePasswordRequest request)
+    {
+        try
+        {
+            var user = await _userManager.FindByNameAsync(request.UserName);
+
+            if (user is null)
+                return Errors.User.NotFound;
+            
+            var result = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
+            
+            if (result is not null && result.Succeeded)
+                return new ChangePasswordResponse("تغییر رمز با موفقیت انجام شد", true);
+
+            return Errors.Authentication.PasswordNotValid;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message);
+            return Errors.General.ServerError;
+        }
+    }
+
+    private async Task<AuthenticationResponse?> GenerateTokenForUserAsync(string userName)
     {
         var user = await _userManager.Users
             .Include(x => x.UserRoles)
@@ -117,7 +160,7 @@ public class AccountService : IAccountService
         return null;
     }
 
-    private async Task<UserTokenDto?> GenerateTokenForUserAsync(AppUser user)
+    private async Task<AuthenticationResponse?> GenerateTokenForUserAsync(AppUser user)
     {
         var signingCredentials = GetSigningCredentials();
         var claims = await GetUserClaimsAsync(user);
@@ -129,7 +172,7 @@ public class AccountService : IAccountService
         var refreshToken =
             await _refreshTokenService.AddAsync(user.Id, _jwtSettings.RefreshTokenLifeTime, jti);
 
-        return new UserTokenDto(token, refreshToken);
+        return new AuthenticationResponse(token, refreshToken);
     }
 
     private ClaimsPrincipal? GetPrincipalFromToken(string token)
@@ -202,6 +245,7 @@ public class AccountService : IAccountService
 
         return claims;
     }
+
     private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, IEnumerable<Claim> claims)
     {
         var tokenOptions = new JwtSecurityToken(
@@ -212,6 +256,5 @@ public class AccountService : IAccountService
             signingCredentials: signingCredentials);
 
         return tokenOptions;
-
     }
 }

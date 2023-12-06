@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using JewelryApp.Business.Repositories.Interfaces;
+using JewelryApp.Business.Interfaces;
 using JewelryApp.Common.Enums;
+using JewelryApp.Data.Interfaces.Repositories.Base;
 using JewelryApp.Data.Models;
-using JewelryApp.Models.Dtos.Invoice;
+using JewelryApp.Models.Dtos.InvoiceDtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Business.AppServices;
@@ -14,13 +15,11 @@ public class InvoiceService : IInvoiceService
     private readonly IRepository<InvoiceItem> _invoiceProductRepository;
     private readonly IRepository<Product> _productRepository;
     private readonly IRepository<Customer> _customerRepository;
-    private readonly IBarcodeRepository _barcodeRepository;
     private readonly IMapper _mapper;
 
-    public InvoiceService(IMapper mapper, IBarcodeRepository barcodeRepository, IRepository<Invoice> invoiceRepository, IRepository<InvoiceItem> invoiceProductRepository, IRepository<Product> productRepository, IRepository<Customer> customerRepository)
+    public InvoiceService(IMapper mapper, IRepository<Invoice> invoiceRepository, IRepository<InvoiceItem> invoiceProductRepository, IRepository<Product> productRepository, IRepository<Customer> customerRepository)
     {
         _mapper = mapper;
-        _barcodeRepository = barcodeRepository;
         _invoiceRepository = invoiceRepository;
         _invoiceProductRepository = invoiceProductRepository;
         _productRepository = productRepository;
@@ -56,12 +55,12 @@ public class InvoiceService : IInvoiceService
         return invoiceItems;
     }
 
-    private static object GetPropertyValue(object obj, string propertyName)
+    private static object? GetPropertyValue(object obj, string propertyName)
     {
         return obj.GetType().GetProperty(propertyName)?.GetValue(obj, null);
     }
 
-    public async Task<InvoiceDto> GetInvoiceAsync(int id, CancellationToken cancellationToken)
+    public async Task<InvoiceDto?> GetInvoiceAsync(int id, CancellationToken cancellationToken)
     {
         if (id is 0)
             return null;
@@ -76,26 +75,6 @@ public class InvoiceService : IInvoiceService
             return null;
 
         var invoiceDto = _mapper.Map<Invoice, InvoiceDto>(invoice);
-
-        //foreach (var invoiceItem in invoice.InvoiceItems)
-        //{
-        //    var product = invoiceItem.Product;
-
-        //    invoiceDto.Products.Add(new InvoiceItemDto
-        //    {
-        //        Carat = product.Carat,
-        //        Quantity = invoiceItem.Quantity,
-        //        GramPrice = invoiceItem.GramPrice,
-        //        Id = product.Id,
-        //        ProductType = product.ProductType,
-        //        FullName = product.FullName,
-        //        Profit = Math.Round(invoiceItem.Profit * 100, 0),
-        //        TaxOffset = Math.Round(invoiceItem.TaxOffset * 100, 0),
-        //        Wage = product.Wage,
-        //        Weight = product.Weight,
-        //        Product = 
-        //    });
-        //}
 
         return invoiceDto;
     }
@@ -142,8 +121,6 @@ public class InvoiceService : IInvoiceService
 
                 if (product.Id == 0)
                 {
-                    product.Barcode = await _barcodeRepository.GetBarcodeAsync(product);
-                    product.CreatedAt = DateTime.Now;
                     await _productRepository.AddAsync(product, cancellationToken);
                 }
 

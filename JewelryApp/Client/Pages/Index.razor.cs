@@ -1,6 +1,4 @@
-﻿using JewelryApp.Common.Enums;
-using JewelryApp.Models.Dtos;
-using MudBlazor;
+﻿using MudBlazor;
 
 namespace JewelryApp.Client.Pages;
 

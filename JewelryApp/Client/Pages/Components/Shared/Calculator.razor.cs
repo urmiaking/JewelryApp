@@ -1,4 +1,4 @@
-﻿using JewelryApp.Models.Dtos.Common;
+﻿using JewelryApp.Models.Dtos.Price;
 using JewelryApp.Models.Dtos.Product;
 using Microsoft.AspNetCore.Components.Web;
 

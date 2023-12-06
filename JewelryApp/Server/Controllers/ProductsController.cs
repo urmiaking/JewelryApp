@@ -1,5 +1,5 @@
-﻿using JewelryApp.Business.AppServices;
-using JewelryApp.Models.Dtos.Product;
+﻿using JewelryApp.Business.Interfaces;
+using JewelryApp.Models.Dtos.ProductDtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JewelryApp.Api.Controllers;

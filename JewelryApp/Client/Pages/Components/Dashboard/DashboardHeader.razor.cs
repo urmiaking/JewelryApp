@@ -1,5 +1,6 @@
 ﻿using JewelryApp.Client.Services;
-using JewelryApp.Models.Dtos.Common;
+using JewelryApp.Models.Dtos.Price;
+using JewelryApp.Models.Dtos.PriceDtos;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Newtonsoft.Json;
