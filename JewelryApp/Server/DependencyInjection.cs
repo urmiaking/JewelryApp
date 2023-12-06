@@ -3,7 +3,6 @@ using JewelryApp.Common.Utilities;
 using JewelryApp.Data.Interfaces;
 using JewelryApp.Data;
 using Microsoft.EntityFrameworkCore;
-using JewelryApp.Models.AppModels;
 using JewelryApp.Common.Settings;
 
 namespace JewelryApp.Api;
@@ -36,7 +35,6 @@ public static class DependencyInjection
 
         try
         {
-            //Applies any pending migrations for the context to the database like (Update-Database)
             appDbContext?.Database.Migrate();
 
             var dataInitializers = scope.ServiceProvider.GetServices<IDbInitializer>();

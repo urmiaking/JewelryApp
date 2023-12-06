@@ -1,8 +1,9 @@
-﻿using JewelryApp.Models.Dtos.PriceDtos;
+﻿using ErrorOr;
+using JewelryApp.Shared.Responses.Authentication;
 
 namespace JewelryApp.Business.Interfaces;
 
 public interface IPriceService
 {
-    Task<PriceDto> GetPriceAsync(CancellationToken token = default);
+    Task<ErrorOr<PriceResponse?>> GetPriceAsync(CancellationToken token = default);
 }

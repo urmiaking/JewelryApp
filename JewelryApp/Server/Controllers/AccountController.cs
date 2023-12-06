@@ -1,10 +1,8 @@
 ﻿using JewelryApp.Business.Interfaces;
 using JewelryApp.Common.Errors;
-using JewelryApp.Models.Dtos.AuthenticationDtos;
 using JewelryApp.Shared.Requests.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace JewelryApp.Api.Controllers;
@@ -70,21 +68,25 @@ public class AccountController : ApiController
     }
 
     [Route("changepassword")]
-    public async Task<IActionResult> ChangePassword(ChangePasswordDto passwordDto)
+    public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
     {
-        var userName = User.Identity!.Name;
+        try
+        {
+            var response = await _service.ChangePasswordAsync(request);
 
-        var user = await _context.Users.FirstOrDefaultAsync(a => a.UserName == userName);
+            if (response.IsError)
+            {
+                return Problem(
+                    statusCode: StatusCodes.Status400BadRequest,
+                    title: response.FirstError.Description);
+            }
 
-        if (user is null)
-            return BadRequest();
-
-        var result = await _userManager.ChangePasswordAsync(user, passwordDto.OldPassword, passwordDto.NewPassword);
-
-        if (result.Succeeded)
-            return Ok();
-
-        return BadRequest();
+            return response.Match(Ok, Problem);
+        }
+        catch (Exception e)
+        {
+            return Problem(title: e.Message);
+        }
     }
 }
 

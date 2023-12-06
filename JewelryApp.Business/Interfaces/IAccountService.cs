@@ -8,5 +8,5 @@ public interface IAccountService
 {
     Task<ErrorOr<AuthenticationResponse?>> AuthenticateAsync(AuthenticationRequest request);
     Task<ErrorOr<AuthenticationResponse?>> RefreshAsync(RefreshTokenRequest request);
-    Task<ErrorOr<ChangePasswordResponse>> ChangePasswordAsync(ChangePasswordRequest request);
+    Task<ErrorOr<ChangePasswordResponse?>> ChangePasswordAsync(ChangePasswordRequest request);
 }

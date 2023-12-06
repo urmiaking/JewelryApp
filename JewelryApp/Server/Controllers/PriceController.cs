@@ -1,38 +1,35 @@
-﻿using JewelryApp.Business.Repositories.Interfaces;
-using JewelryApp.Common.Enums;
-using Microsoft.AspNetCore.Http;
+﻿using JewelryApp.Business.Interfaces;
+using JewelryApp.Common.Errors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JewelryApp.Api.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class PriceController : ControllerBase
+public class PriceController : ApiController
 {
-    private readonly IPriceRepository _priceRepository;
+    private readonly IPriceService _priceService;
 
-    public PriceController(IPriceRepository priceRepository)
+    public PriceController(IPriceService priceService)
     {
-        _priceRepository = priceRepository;
+        _priceService = priceService;
     }
 
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        var result = await _priceRepository.GetPriceAsync();
+        try
+        {
+            var response = await _priceService.GetPriceAsync();
 
-        if (result is null)
-            return BadRequest();
+            if (response.IsError && response.FirstError == Errors.General.NoInternet)
+                return Problem(
+                    statusCode: StatusCodes.Status500InternalServerError,
+                    title: response.FirstError.Description);
 
-        return Ok(result);
-    }
-
-    [HttpGet(nameof(GetCaretData))]
-    public async Task<IActionResult> GetCaretData(CaretChartType caretChartType)
-    {
-        var result = await _priceRepository.GetCaretChartDataAsync(caretChartType);
-
-        return Ok(result);
+            return response.Match(Ok, Problem);
+        }
+        catch (Exception e)
+        {
+            return Problem(title: e.Message);
+        }
     }
 }
-

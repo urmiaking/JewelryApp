@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NCrontab;
 using System.Reflection;
+using JewelryApp.Business.AppServices;
 
 namespace JewelryApp.Business;
 
@@ -16,7 +17,6 @@ public static class DependencyInjection
     {
         services.AddAutoMapper(config =>
         {
-            config.AddCustomMappingProfile();
             config.Advanced.BeforeSeal(configProvider =>
             {
                 configProvider.CompileMappings();

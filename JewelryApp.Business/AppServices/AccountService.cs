@@ -121,7 +121,7 @@ public class AccountService : IAccountService
         
     }
 
-    public async Task<ErrorOr<ChangePasswordResponse>> ChangePasswordAsync(ChangePasswordRequest request)
+    public async Task<ErrorOr<ChangePasswordResponse?>> ChangePasswordAsync(ChangePasswordRequest request)
     {
         try
         {
@@ -132,7 +132,7 @@ public class AccountService : IAccountService
             
             var result = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
             
-            if (result is not null && result.Succeeded)
+            if (result.Succeeded)
                 return new ChangePasswordResponse("تغییر رمز با موفقیت انجام شد", true);
 
             return Errors.Authentication.PasswordNotValid;
