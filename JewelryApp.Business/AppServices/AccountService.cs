@@ -9,7 +9,6 @@ using JewelryApp.Data.Models.Identity;
 using JewelryApp.Business.Interfaces;
 using ErrorOr;
 using JewelryApp.Common.Errors;
-using Microsoft.Extensions.Logging;
 using JewelryApp.Shared.Requests.Authentication;
 using JewelryApp.Shared.Responses.Authentication;
 using JewelryApp.Common.Settings;
@@ -18,7 +17,6 @@ namespace JewelryApp.Business.AppServices;
 
 public class AccountService : IAccountService
 {
-    private readonly ILogger<AccountService> _logger;
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly TokenValidationParameters _tokenValidationParameters;
     private readonly JwtSettings _jwtSettings;
@@ -27,7 +25,6 @@ public class AccountService : IAccountService
     private readonly SignInManager<AppUser> _signinManager;
 
     public AccountService(
-        ILogger<AccountService> logger,
         IOptions<JwtSettings> jwtSettingsOption,
         IRefreshTokenService refreshTokenService,
         TokenValidationParameters tokenValidationParameters,
@@ -35,7 +32,6 @@ public class AccountService : IAccountService
         RoleManager<AppRole> roleManager,
         SignInManager<AppUser> signinManager)
     {
-        _logger = logger;
         _refreshTokenService = refreshTokenService;
         _tokenValidationParameters = tokenValidationParameters;
         _jwtSettings = jwtSettingsOption.Value;
@@ -46,102 +42,76 @@ public class AccountService : IAccountService
 
     public async Task<ErrorOr<AuthenticationResponse?>> AuthenticateAsync(AuthenticationRequest request)
     {
-        try
-        {
-            var signinResult = await _signinManager.PasswordSignInAsync(request.UserName, request.Password, false, false);
+        var signinResult = await _signinManager.PasswordSignInAsync(request.UserName, request.Password, false, false);
 
-            if (signinResult.Succeeded)
-                return await GenerateTokenForUserAsync(request.UserName);
-            
-            return Errors.Authentication.InvalidCredentials;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.Message);
-            return Errors.General.ServerError;
-        }
-        
+        if (signinResult.Succeeded)
+            return await GenerateTokenForUserAsync(request.UserName);
+
+        return Errors.Authentication.InvalidCredentials;
     }
 
     public async Task<ErrorOr<AuthenticationResponse?>> RefreshAsync(RefreshTokenRequest request)
     {
-        try
+        var validatedToken = GetPrincipalFromToken(request.Token);
+
+        if (validatedToken == null)
+            return Errors.Authentication.InvalidToken;
+
+        var expiryDateUnix = long.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
+        var expiryDateUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(expiryDateUnix)
+            .Subtract(_jwtSettings.TokenLifeTime);
+
+        if (expiryDateUtc > DateTime.UtcNow)
+            throw new Exception("token has not expired yet");
+
+        var jti = Guid.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value);
+        var userId = Guid.Parse(validatedToken.Claims.Single(x => x.Type == ClaimTypes.NameIdentifier).Value);
+        var userName = validatedToken.Claims.Single(x => x.Type == ClaimTypes.Name).Value;
+
+        // get stored token
+        var refreshToken = await _refreshTokenService.FindAsync(request.RefreshToken);
+        if (refreshToken == null)
+            throw new Exception("refresh token not found");
+
+        if (refreshToken.ExpiryDate < DateTime.UtcNow)
+            throw new Exception("refresh token expired");
+
+        if (refreshToken.Invalidated)
+            throw new Exception("refresh token invalidated");
+
+        if (refreshToken.Used)
         {
-            var validatedToken = GetPrincipalFromToken(request.Token);
+            // set it as invalidated
+            await _refreshTokenService.SetInvalidatedAsync(refreshToken.Id);
 
-            if (validatedToken == null)
-                return Errors.Authentication.InvalidToken;
+            // TODO:
+            // We would need a middleware to un-authorize requests with a valid, but invalidated token.
 
-            var expiryDateUnix = long.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
-            var expiryDateUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(expiryDateUnix)
-                .Subtract(_jwtSettings.TokenLifeTime);
-
-            if (expiryDateUtc > DateTime.UtcNow)
-                return Errors.Authentication.TokenNotExpired;
-
-            var jti = Guid.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value);
-            var userId = Guid.Parse(validatedToken.Claims.Single(x => x.Type == ClaimTypes.NameIdentifier).Value);
-            var userName = validatedToken.Claims.Single(x => x.Type == ClaimTypes.Name).Value;
-
-            // get stored token
-            var refreshToken = await _refreshTokenService.FindAsync(request.RefreshToken);
-            if (refreshToken == null)
-                return Errors.Authentication.RefreshTokenNotFound;
-
-            if (refreshToken.ExpiryDate < DateTime.UtcNow)
-                return Errors.Authentication.TokenExpired;
-
-            if (refreshToken.Invalidated)
-                return Errors.Authentication.RefreshTokenInvalidated;
-
-            if (refreshToken.Used)
-            {
-                // set it as invalidated
-                await _refreshTokenService.SetInvalidatedAsync(refreshToken.Id);
-
-                // TODO:
-                // We would need a middleware to un-authorize requests with a valid, but invalidated token.
-
-                return Errors.Authentication.RefreshTokenUsed;
-            }
-
-            if (refreshToken.JwtId != jti || refreshToken.UserId != userId)
-                return Errors.Authentication.RefreshTokenNotValid;
-
-            // set it as used
-            await _refreshTokenService.SetUsedAsync(refreshToken.Id);
-
-            return await GenerateTokenForUserAsync(userName);
+            throw new Exception("refresh token used");
         }
-        catch (Exception e)
-        {
-            _logger.LogError(e.Message);
-            return Errors.General.ServerError;
-        }
-        
+
+        if (refreshToken.JwtId != jti || refreshToken.UserId != userId)
+            throw new Exception("refresh token is not valid");
+
+        // set it as used
+        await _refreshTokenService.SetUsedAsync(refreshToken.Id);
+
+        return await GenerateTokenForUserAsync(userName);
     }
 
     public async Task<ErrorOr<ChangePasswordResponse?>> ChangePasswordAsync(ChangePasswordRequest request)
     {
-        try
-        {
-            var user = await _userManager.FindByNameAsync(request.UserName);
+        var user = await _userManager.FindByNameAsync(request.UserName);
 
-            if (user is null)
-                return Errors.User.NotFound;
-            
-            var result = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
-            
-            if (result.Succeeded)
-                return new ChangePasswordResponse("تغییر رمز با موفقیت انجام شد", true);
+        if (user is null)
+            return Errors.User.NotFound;
 
-            return Errors.Authentication.PasswordNotValid;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.Message);
-            return Errors.General.ServerError;
-        }
+        var result = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
+
+        if (result.Succeeded)
+            return new ChangePasswordResponse("تغییر رمز با موفقیت انجام شد", true);
+
+        return Errors.Authentication.PasswordNotValid;
     }
 
     private async Task<AuthenticationResponse?> GenerateTokenForUserAsync(string userName)

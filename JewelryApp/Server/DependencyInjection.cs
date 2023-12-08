@@ -4,6 +4,8 @@ using JewelryApp.Data.Interfaces;
 using JewelryApp.Data;
 using Microsoft.EntityFrameworkCore;
 using JewelryApp.Common.Settings;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using JewelryApp.Api.Common.Errors;
 
 namespace JewelryApp.Api;
 
@@ -19,6 +21,8 @@ public static class DependencyInjection
         services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
         services.AddSignalR();
         services.AddHttpContextAccessor();
+
+        services.AddSingleton<ProblemDetailsFactory, AppProblemDetailsFactory>();
 
         return services;
     }

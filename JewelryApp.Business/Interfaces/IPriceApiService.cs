@@ -1,4 +1,4 @@
-﻿using JewelryApp.Models.Dtos.PriceDtos.Signal;
+﻿using JewelryApp.Business.ExternalModels.Signal;
 
 namespace JewelryApp.Business.Interfaces;
 

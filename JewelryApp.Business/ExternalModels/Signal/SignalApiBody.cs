@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace JewelryApp.Models.Dtos.PriceDtos.Signal;
+namespace JewelryApp.Business.ExternalModels.Signal;
 
 public class SignalApiBody
 {

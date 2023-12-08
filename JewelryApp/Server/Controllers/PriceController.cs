@@ -1,6 +1,7 @@
 ﻿using JewelryApp.Business.Interfaces;
 using JewelryApp.Common.Errors;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace JewelryApp.Api.Controllers;
 
@@ -26,6 +27,10 @@ public class PriceController : ApiController
                     title: response.FirstError.Description);
 
             return response.Match(Ok, Problem);
+        }
+        catch (ValidationException e)
+        {
+            return ValidationProblem(title: e.Message);
         }
         catch (Exception e)
         {

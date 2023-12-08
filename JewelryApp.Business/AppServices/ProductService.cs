@@ -1,105 +1,124 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using ErrorOr;
 using JewelryApp.Business.Interfaces;
+using JewelryApp.Common.Constants;
 using JewelryApp.Common.Enums;
+using JewelryApp.Common.Errors;
+using JewelryApp.Data.Interfaces.Repositories;
 using JewelryApp.Data.Interfaces.Repositories.Base;
 using JewelryApp.Data.Models;
 using JewelryApp.Models.Dtos.InvoiceDtos;
 using JewelryApp.Models.Dtos.ProductDtos;
+using JewelryApp.Shared.Requests.Products;
+using JewelryApp.Shared.Responses.Products;
 using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Business.AppServices;
 
 public class ProductService : IProductService
 {
-    private readonly IRepository<Product> _productRepository;
-    private readonly IRepository<InvoiceItem> _invoiceProductRepository;
+    private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
 
-    public ProductService(IMapper mapper, IRepository<Product> productRepository, IRepository<InvoiceItem> invoiceProductRepository)
+    public ProductService(IMapper mapper, IProductRepository productRepository)
     {
         _mapper = mapper;
         _productRepository = productRepository;
-        _invoiceProductRepository = invoiceProductRepository;
     }
 
-    public async Task<Product> SetProductAsync(ProductDto productDto)
+    public async Task<ErrorOr<AddProductResponse>> AddProductAsync(AddProductRequest request, CancellationToken token = default)
     {
-        var productModel = _mapper.Map<ProductDto, Product>(productDto);
+        var product = _mapper.Map<Product>(request);
 
-        if (productModel.Id == 0)
-        {
-            productModel.CreatedAt = DateTime.Now;
-        }
+        await _productRepository.AddAsync(product, token);
 
-        _productRepository.Update(productModel);
+        var response = _mapper.Map<AddProductResponse>(product);
 
-        return productModel;
+        return response;
     }
 
-    public async Task<IEnumerable<ProductTableItemDto>> GetProductsAsync(int page, int pageSize, string sortDirection, 
-        string sortLabel, string searchString, CancellationToken cancellationToken)
+    public async Task<ErrorOr<UpdateProductResponse>> UpdateProductAsync(UpdateProductRequest request, CancellationToken token = default)
     {
-        var products =  await _productRepository.TableNoTracking
-            .ProjectTo<ProductTableItemDto>(_mapper.ConfigurationProvider)
-            .ToListAsync(cancellationToken: cancellationToken);
+        var product = await _productRepository.GetByIdAsync(request.Id, token);
 
-        if (!string.IsNullOrEmpty(searchString))
+        if (product is null)
         {
-            products = products.Where(a => a.Barcode.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
-                                           a.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase)).ToList();
+            return Errors.Product.NotFound;
         }
 
-        products = sortDirection switch
+        product = _mapper.Map<Product>(request);
+
+        await _productRepository.UpdateAsync(product, token);
+
+        var response = _mapper.Map<UpdateProductResponse>(product);
+
+        return response;
+    }
+
+    public async Task<ErrorOr<RemoveProductResponse>> RemoveProductAsync(RemoveProductRequest request, CancellationToken token = default)
+    {
+        var product = await _productRepository.GetByIdAsync(request.Id, token);
+
+        if (product is null)
         {
-            "Ascending" => products.OrderBy(p => GetPropertyValue(p, sortLabel)).ToList(),
-            "Descending" => products.OrderByDescending(p => GetPropertyValue(p, sortLabel)).ToList(),
+            return Errors.Product.NotFound;
+        }
+
+        var isSold = await _productRepository.CheckProductIsSoldAsync(product.Id, token);
+
+        if (isSold)
+        {
+            return Errors.Product.Sold;
+        }
+
+        await _productRepository.DeleteAsync(product, token);
+
+        return new RemoveProductResponse(true, "جنس مورد نظر با موفقیت حذف شد");
+    }
+
+    public async Task<IEnumerable<GetProductResponse>?> GetProductsAsync(GetProductsRequest request, CancellationToken token = default)
+    {
+        var products = await _productRepository.GetAllProductsAsync(token);
+
+        if (products is null)
+            return null;
+        
+        if (!string.IsNullOrEmpty(request.SearchString))
+        {
+            products = products.Where(a => a.Barcode.Contains(request.SearchString, StringComparison.OrdinalIgnoreCase) ||
+                                           a.Name.Contains(request.SearchString, StringComparison.OrdinalIgnoreCase));
+        }
+
+        products = request.SortDirection switch
+        {
+            SortDirections.Ascending => products.OrderBy(p => GetPropertyValue(p, request.SortLabel)),
+            SortDirections.Descending => products.OrderByDescending(p => GetPropertyValue(p, request.SortLabel)),
             _ => products
         };
 
-        var startIndex = page * pageSize;
-        products = products.Skip(startIndex).Take(pageSize).ToList();
+        var startIndex = request.Page * request.PageSize;
+        products = products.Skip(startIndex).Take(request.PageSize);
 
-        return products;
+        return await products.ProjectTo<GetProductResponse>(_mapper.ConfigurationProvider).ToListAsync(token);
     }
     
-    private static object GetPropertyValue(object obj, string propertyName)
+    public async Task<int> GetTotalProductsCount(CancellationToken cancellationToken = default)
+        => await _productRepository.GetProductsCountAsync(cancellationToken);
+
+    public async Task<GetProductResponse?> GetProductByBarcodeAsync(string barcode, CancellationToken token = default)
     {
-        return obj.GetType().GetProperty(propertyName)?.GetValue(obj, null);
-    }
-
-    public async Task<DeleteResult> DeleteProductAsync(int id, CancellationToken cancellationToken)
-    {
-        if (id is 0)
-            return DeleteResult.IsNotAvailable;
-
-        var product = await _productRepository.GetByIdAsync(cancellationToken, id);
-
-        if (product is null)
-            return DeleteResult.IsNotAvailable;
-
-        var canNotDelete = await _invoiceProductRepository.TableNoTracking
-            .AnyAsync(a => a.ProductId == id, cancellationToken);
-
-        if (canNotDelete)
-            return DeleteResult.CanNotDelete;
-
-        await _productRepository.DeleteAsync(product, cancellationToken);
-        return DeleteResult.Deleted;
-    }
-
-    public async Task<int> GetTotalProductsCount(CancellationToken cancellationToken)
-        => await _productRepository.TableNoTracking.CountAsync(cancellationToken);
-
-    public async Task<InvoiceItemDto> GetProductByBarcodeAsync(string barcodeText)
-    {
-        var product = await _productRepository.TableNoTracking.FirstOrDefaultAsync(x => x.Barcode.Equals(barcodeText));
+        var product = await _productRepository.GetByBarcodeAsync(barcode, token);
 
         if (product is null)
             return null;
 
-        var productDto = _mapper.Map<Product, InvoiceItemDto>(product);
+        var response = _mapper.Map<Product, GetProductResponse>(product);
 
-        return productDto;
+        return response;
     }
+
+    private static object? GetPropertyValue(object obj, string propertyName)
+        => obj.GetType().GetProperty(propertyName)?.GetValue(obj, null);
+
 }

@@ -1,4 +1,6 @@
-﻿using JewelryApp.Business.Interfaces;
+﻿using FluentValidation;
+using JewelryApp.Api.Common.Extensions;
+using JewelryApp.Business.Interfaces;
 using JewelryApp.Common.Errors;
 using JewelryApp.Shared.Requests.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -10,10 +12,12 @@ namespace JewelryApp.Api.Controllers;
 public class AccountController : ApiController
 {
     private readonly IAccountService _service;
+    private readonly IValidator<AuthenticationRequest> _validator;
 
-    public AccountController(IAccountService service)
+    public AccountController(IAccountService service, IValidator<AuthenticationRequest> validator)
     {
         _service = service;
+        _validator = validator;
     }
 
     [AllowAnonymous]
@@ -22,8 +26,13 @@ public class AccountController : ApiController
     {
         try
         {
-            if (!ModelState.IsValid)
+            var validationResult = await _validator.ValidateAsync(request);
+
+            if (!validationResult.IsValid) 
+            {
+                validationResult.AddToModelState(ModelState);
                 return ValidationProblem(ModelState);
+            }
 
             var response = await _service.AuthenticateAsync(request);
 
@@ -46,9 +55,6 @@ public class AccountController : ApiController
     {
         try
         {
-            if (!ModelState.IsValid)
-                return ValidationProblem(ModelState);
-
             var response = await _service.RefreshAsync(request);
 
             if (response.IsError)

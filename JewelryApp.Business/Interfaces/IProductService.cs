@@ -1,16 +1,15 @@
-﻿using JewelryApp.Common.Enums;
-using JewelryApp.Data.Models;
-using JewelryApp.Models.Dtos.InvoiceDtos;
-using JewelryApp.Models.Dtos.ProductDtos;
+﻿using ErrorOr;
+using JewelryApp.Shared.Requests.Products;
+using JewelryApp.Shared.Responses.Products;
 
 namespace JewelryApp.Business.Interfaces;
 
 public interface IProductService
 {
-    Task<Product> SetProductAsync(ProductDto productDto);
-    Task<IEnumerable<ProductTableItemDto>> GetProductsAsync(int page, int pageSize, string sortDirection, string sortLabel,
-        string searchString, CancellationToken cancellationToken);
-    Task<DeleteResult> DeleteProductAsync(int id, CancellationToken cancellationToken);
-    Task<int> GetTotalProductsCount(CancellationToken cancellationToken);
-    Task<InvoiceItemDto> GetProductByBarcodeAsync(string barcodeText);
+    Task<ErrorOr<AddProductResponse>> AddProductAsync(AddProductRequest request, CancellationToken token = default);
+    Task<ErrorOr<UpdateProductResponse>> UpdateProductAsync(UpdateProductRequest request, CancellationToken token = default);
+    Task<ErrorOr<RemoveProductResponse>> RemoveProductAsync(RemoveProductRequest request, CancellationToken token = default);
+    Task<IEnumerable<GetProductResponse>?> GetProductsAsync(GetProductsRequest request, CancellationToken token = default);
+    Task<int> GetTotalProductsCount(CancellationToken cancellationToken = default);
+    Task<GetProductResponse?> GetProductByBarcodeAsync(string barcode, CancellationToken token = default);
 }

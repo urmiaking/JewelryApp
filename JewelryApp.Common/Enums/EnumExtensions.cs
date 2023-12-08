@@ -38,6 +38,22 @@ public static class EnumExtensions
         return propValue?.ToString() ?? string.Empty;
     }
 
+    public static string ToDisplay(this Enum value)
+    {
+        Assert.NotNull(value, nameof(value));
+
+        DisplayProperty property = DisplayProperty.Name;
+
+        var attribute = value.GetType()?.GetField(value.ToString())?
+            .GetCustomAttributes<DisplayAttribute>(false).FirstOrDefault();
+
+        if (attribute == null)
+            return value.ToString();
+
+        var propValue = attribute.GetType().GetProperty(property.ToString())?.GetValue(attribute, null);
+        return propValue?.ToString() ?? string.Empty;
+    }
+
     public static Dictionary<int, string> ToDictionary(this Enum value)
     {
         return Enum.GetValues(value.GetType()).Cast<Enum>().ToDictionary(p => Convert.ToInt32(p), q => ToDisplay(q));

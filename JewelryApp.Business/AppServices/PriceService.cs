@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
 using ErrorOr;
+using JewelryApp.Business.ExternalModels.Signal;
 using JewelryApp.Business.Interfaces;
 using JewelryApp.Common.Errors;
 using JewelryApp.Data.Interfaces.Repositories;
 using JewelryApp.Data.Models;
-using JewelryApp.Models.Dtos.PriceDtos;
-using JewelryApp.Models.Dtos.PriceDtos.Signal;
 using JewelryApp.Shared.Responses.Authentication;
 using Microsoft.Extensions.Logging;
 
@@ -14,49 +13,37 @@ namespace JewelryApp.Business.AppServices;
 public class PriceService : IPriceService
 {
     private readonly IMapper _mapper;
-    private readonly ILogger<PriceService> _logger;
     private readonly IPriceApiService _priceApiService;
     private readonly IPriceRepository _priceRepository;
 
-    public PriceService(IMapper mapper, IPriceApiService priceApiService, IPriceRepository priceRepository, ILogger<PriceService> logger)
+    public PriceService(IMapper mapper, IPriceApiService priceApiService, IPriceRepository priceRepository)
     {
         _mapper = mapper;
-        _logger = logger;
         _priceApiService = priceApiService;
         _priceRepository = priceRepository;
     }
 
     public async Task<ErrorOr<PriceResponse?>> GetPriceAsync(CancellationToken cancellationToken = default)
     {
-        try
+        var latestPrice = await _priceApiService.GetPriceAsync(cancellationToken);
+
+        if (latestPrice is null)
+            return Errors.General.NoInternet;
+
+        var price = _mapper.Map<PriceApiResult?, Price>(latestPrice);
+
+        var latestSavedPrice = await _priceRepository.GetLastSavedPriceAsync(cancellationToken);
+
+        if (latestSavedPrice is null || !ArePricesIdentical(price, latestSavedPrice))
         {
-            var latestPrice = await _priceApiService.GetPriceAsync(cancellationToken);
+            price.DateTime = DateTime.Now;
 
-            if (latestPrice is null)
-                return Errors.General.NoInternet;
-
-            var price = _mapper.Map<PriceApiResult?, Price>(latestPrice);
-
-            var latestSavedPrice = await _priceRepository.GetLastSavedPriceAsync(cancellationToken);
-
-            if (latestSavedPrice is null || !ArePricesIdentical(price, latestSavedPrice))
-            {
-                price.DateTime = DateTime.Now;
-
-                await _priceRepository.AddAsync(price, cancellationToken);
-            }
-
-            var priceResponse = _mapper.Map<Price, PriceResponse>(price);
-
-            return priceResponse;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.Message);
-            return Errors.General.ServerError;
+            await _priceRepository.AddAsync(price, cancellationToken);
         }
 
-        
+        var priceResponse = _mapper.Map<Price, PriceResponse>(price);
+
+        return priceResponse;
     }
 
     private static bool ArePricesIdentical(Price price1, Price price2)

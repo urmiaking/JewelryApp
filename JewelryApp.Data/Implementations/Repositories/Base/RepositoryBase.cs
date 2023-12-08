@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using JewelryApp.Common.Constants;
 using JewelryApp.Common.Utilities;
 using JewelryApp.Data.Interfaces.Repositories.Base;
 using JewelryApp.Data.Models;
@@ -30,9 +31,9 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
     }
 
     #region Async Method
-    public virtual ValueTask<TEntity?> GetByIdAsync(CancellationToken cancellationToken, params object[] ids)
+    public virtual ValueTask<TEntity?> GetByIdAsync(object? id, CancellationToken cancellationToken)
     {
-        return Entities.FindAsync(ids, cancellationToken);
+        return Entities.FindAsync(id, cancellationToken);
     }
 
     public virtual async Task AddAsync(TEntity entity, CancellationToken cancellationToken, bool saveNow = true)
@@ -315,20 +316,29 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
     }
     #endregion
 
-    #region Private Methods
+    #region Common Methods
 
-    private async Task<Guid?> GetUserIdAsync()
+    protected async Task<Guid?> GetUserIdAsync()
     {
-        var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+        var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
 
         return user?.Id;
     }
 
-    private Guid? GetUserId()
+    protected Guid? GetUserId()
     {
-        var user = _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User).GetAwaiter().GetResult();
+        var user = _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User).GetAwaiter().GetResult();
 
         return user?.Id;
+    }
+
+    protected async Task<bool> IsAdminAsync()
+    {
+        var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
+        if (user is null)
+            return false;
+        
+        return await _userManager.IsInRoleAsync(user, Identity.AdminRole);
     }
 
     #endregion

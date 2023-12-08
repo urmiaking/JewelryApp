@@ -10,7 +10,7 @@ public class Product : SoftDeleteModelBase
     public double Weight { get; set; }
     public double Wage { get; set; }
 
-    public Carat Carat { get; set; }
+    public CaratType Carat { get; set; }
     public WageType WageType { get; set; }
     public ProductType ProductType { get; set; }
 
