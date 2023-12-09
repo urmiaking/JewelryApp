@@ -1,23 +1,27 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using JewelryApp.Business.Interfaces;
+using JewelryApp.Common.Constants;
 using JewelryApp.Common.Enums;
+using JewelryApp.Data.Interfaces.Repositories;
 using JewelryApp.Data.Interfaces.Repositories.Base;
 using JewelryApp.Data.Models;
 using JewelryApp.Models.Dtos.InvoiceDtos;
+using JewelryApp.Shared.Requests.Invoices;
+using JewelryApp.Shared.Responses.Invoices;
 using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Business.AppServices;
 
 public class InvoiceService : IInvoiceService
 {
-    private readonly IRepository<Invoice> _invoiceRepository;
+    private readonly IInvoiceRepository _invoiceRepository;
     private readonly IRepository<InvoiceItem> _invoiceProductRepository;
     private readonly IRepository<Product> _productRepository;
     private readonly IRepository<Customer> _customerRepository;
     private readonly IMapper _mapper;
 
-    public InvoiceService(IMapper mapper, IRepository<Invoice> invoiceRepository, IRepository<InvoiceItem> invoiceProductRepository, IRepository<Product> productRepository, IRepository<Customer> customerRepository)
+    public InvoiceService(IMapper mapper, IInvoiceRepository invoiceRepository, IRepository<InvoiceItem> invoiceProductRepository, IRepository<Product> productRepository, IRepository<Customer> customerRepository)
     {
         _mapper = mapper;
         _invoiceRepository = invoiceRepository;
@@ -26,55 +30,51 @@ public class InvoiceService : IInvoiceService
         _customerRepository = customerRepository;
     }
 
-    public async Task<IEnumerable<InvoiceTableItemDto>> GetInvoicesAsync(int page, int pageSize, string sortDirection, string sortLabel, string searchString, CancellationToken cancellationToken)
+    public async Task<IEnumerable<GetInvoiceTableResponse>?> GetInvoicesAsync(GetInvoiceTableRequest request, CancellationToken cancellationToken = default)
     {
-        var invoices = await _invoiceRepository.TableNoTracking
-            .Include(a => a.InvoiceItems)
-            .ProjectTo<InvoiceDto>(_mapper.ConfigurationProvider)
-            .ToListAsync(cancellationToken);
+        var invoices = await _invoiceRepository.GetAllInvoices(cancellationToken);
 
-        var invoiceItems = _mapper.Map<List<InvoiceDto>, List<InvoiceTableItemDto>>(invoices);
-
-        if (!string.IsNullOrEmpty(searchString))
+        if (invoices is null)
+            return null;
+        
+        if (!string.IsNullOrEmpty(request.SearchString))
         {
-            invoiceItems = invoiceItems.Where(a => a.CustomerName.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
-                                                   a.CustomerPhone.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
-                                                   a.BuyDate.Contains(searchString, StringComparison.OrdinalIgnoreCase)).ToList();
+            invoices = invoices.Where(a => a.Customer.FullName.Contains(request.SearchString, StringComparison.OrdinalIgnoreCase) ||
+                                                   a.Customer.PhoneNumber.Contains(request.SearchString, StringComparison.OrdinalIgnoreCase));
         }
 
-        invoiceItems = sortDirection switch
+        invoices = request.SortDirection switch
         {
-            "Ascending" => invoiceItems.OrderBy(p => GetPropertyValue(p, sortLabel)).ToList(),
-            "Descending" => invoiceItems.OrderByDescending(p => GetPropertyValue(p, sortLabel)).ToList(),
-            _ => invoiceItems
+            SortDirections.Ascending => invoices.OrderBy(p => GetPropertyValue(p, request.SortLabel)),
+            SortDirections.Descending => invoices.OrderByDescending(p => GetPropertyValue(p, request.SortLabel)),
+            _ => invoices
         };
 
-        var startIndex = page * pageSize;
-        invoiceItems = invoiceItems.Skip(startIndex).Take(pageSize).ToList();
+        var startIndex = request.Page * request.PageSize;
+        invoices = invoices.Skip(startIndex).Take(request.PageSize);
 
-        return invoiceItems;
+        var response = await invoices
+            .ProjectTo<GetInvoiceTableResponse>(_mapper.ConfigurationProvider)
+            .ToListAsync(cancellationToken);
+
+        return response;
     }
 
-    private static object? GetPropertyValue(object obj, string propertyName)
+    public async Task<GetInvoiceDetailsResponse?> GetInvoiceDetailsAsync(GetInvoiceDetailsRequest request, CancellationToken cancellationToken = default)
     {
-        return obj.GetType().GetProperty(propertyName)?.GetValue(obj, null);
-    }
-
-    public async Task<InvoiceDto?> GetInvoiceAsync(int id, CancellationToken cancellationToken)
-    {
-        if (id is 0)
+        if (request.Id is 0)
             return null;
 
         var invoice = await _invoiceRepository.TableNoTracking
             .Include(x => x.Customer)
             .Include(x => x.InvoiceItems)
             .ThenInclude(x => x.Product)
-            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
         if (invoice is null)
             return null;
 
-        var invoiceDto = _mapper.Map<Invoice, InvoiceDto>(invoice);
+        var invoiceDto = _mapper.Map<Invoice, GetInvoiceDetailsResponse>(invoice);
 
         return invoiceDto;
     }
@@ -187,4 +187,7 @@ public class InvoiceService : IInvoiceService
 
         return true;
     }
+
+    private static object? GetPropertyValue(object obj, string propertyName)
+        => obj.GetType().GetProperty(propertyName)?.GetValue(obj, null);
 }

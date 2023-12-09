@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using JewelryApp.Data.Models;
-using JewelryApp.Models.Dtos.CommonDtos;
 
 namespace JewelryApp.Models.Dtos.InvoiceDtos;
 

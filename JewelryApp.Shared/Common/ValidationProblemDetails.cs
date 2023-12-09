@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace JewelryApp.Models.Dtos.CommonDtos;
+namespace JewelryApp.Shared.Common;
 
 public class ValidationProblemDetails
 {

@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using JewelryApp.Data.Models;
-using JewelryApp.Models.Dtos.CommonDtos;
 using Newtonsoft.Json;
 
 namespace JewelryApp.Models.Dtos.InvoiceDtos;

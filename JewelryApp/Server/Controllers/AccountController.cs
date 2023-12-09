@@ -5,7 +5,6 @@ using JewelryApp.Common.Errors;
 using JewelryApp.Shared.Requests.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 
 namespace JewelryApp.Api.Controllers;
 
@@ -66,10 +65,9 @@ public class AccountController : ApiController
 
             return response.Match(Ok, Problem);
         }
-        catch (ValidationException e)
+        catch (Exception e)
         {
-            ModelState.AddModelError(nameof(request.RefreshToken), e.Message);
-            return Unauthorized(ModelState);
+            return Problem(title: e.Message);
         }
     }
 

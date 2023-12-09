@@ -7,6 +7,8 @@ public class InvoiceItem : SoftDeleteModelBase
     public double TaxOffset { get; set; }
     public double Tax { get; set; }
     public double Price { get; set; }
+    public double? DollarPrice { get; set; }
+    public double GramPrice { get; set; }
 
     public int InvoiceId { get; set; }
     public int ProductId { get; set; }
