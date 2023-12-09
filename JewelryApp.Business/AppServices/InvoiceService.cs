@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using ErrorOr;
 using JewelryApp.Business.Interfaces;
 using JewelryApp.Common.Constants;
 using JewelryApp.Common.Enums;
@@ -16,16 +17,14 @@ namespace JewelryApp.Business.AppServices;
 public class InvoiceService : IInvoiceService
 {
     private readonly IInvoiceRepository _invoiceRepository;
-    private readonly IRepository<InvoiceItem> _invoiceProductRepository;
     private readonly IRepository<Product> _productRepository;
     private readonly IRepository<Customer> _customerRepository;
     private readonly IMapper _mapper;
 
-    public InvoiceService(IMapper mapper, IInvoiceRepository invoiceRepository, IRepository<InvoiceItem> invoiceProductRepository, IRepository<Product> productRepository, IRepository<Customer> customerRepository)
+    public InvoiceService(IMapper mapper, IInvoiceRepository invoiceRepository, IRepository<Product> productRepository, IRepository<Customer> customerRepository)
     {
         _mapper = mapper;
         _invoiceRepository = invoiceRepository;
-        _invoiceProductRepository = invoiceProductRepository;
         _productRepository = productRepository;
         _customerRepository = customerRepository;
     }
@@ -60,7 +59,7 @@ public class InvoiceService : IInvoiceService
         return response;
     }
 
-    public async Task<GetInvoiceDetailsResponse?> GetInvoiceDetailsAsync(GetInvoiceDetailsRequest request, CancellationToken cancellationToken = default)
+    public async Task<GetInvoiceResponse?> GetInvoiceAsync(GetInvoiceRequest request, CancellationToken cancellationToken = default)
     {
         if (request.Id is 0)
             return null;
@@ -74,119 +73,42 @@ public class InvoiceService : IInvoiceService
         if (invoice is null)
             return null;
 
-        var invoiceDto = _mapper.Map<Invoice, GetInvoiceDetailsResponse>(invoice);
+        var invoiceDto = _mapper.Map<Invoice, GetInvoiceResponse>(invoice);
 
         return invoiceDto;
     }
 
-    public async Task<bool> SetInvoiceAsync(InvoiceDto invoiceDto, CancellationToken cancellationToken)
+    public async Task<ErrorOr<AddInvoiceResponse>> AddInvoiceAsync(AddInvoiceRequest request, CancellationToken cancellationToken = default)
     {
-        try
+        var customer = new Customer
         {
-            var invoice = _mapper.Map<InvoiceDto, Invoice>(invoiceDto);
+            FullName = request.CustomerName,
+            PhoneNumber = request.CustomerPhoneNumber
+        };
 
-            // Adding Customer
-            var availableCustomer =
-                await _customerRepository.Table.FirstOrDefaultAsync(
-                    x => x.FullName == invoice.Customer.FullName && x.PhoneNumber == invoice.Customer.PhoneNumber,
-                    cancellationToken);
+        await _customerRepository.AddAsync(customer, cancellationToken);
 
-            if (availableCustomer is not null)
-            {
-                invoice.CustomerId = availableCustomer.Id;
-            }
-            else
-            {
-                await _customerRepository.AddAsync(invoice.Customer, cancellationToken);
-            }
+        var invoice = _mapper.Map<Invoice>(request);
 
-            // Adding Invoice
-            if (invoice.Id is 0)
-            {
-                await _invoiceRepository.AddAsync(invoice, cancellationToken);
-            }
-            else // Updating Invoice
-            {
-                await _invoiceRepository.UpdateAsync(invoice, cancellationToken, false);
+        await _invoiceRepository.AddAsync(invoice, cancellationToken);
 
-                var invoiceItems = await _invoiceProductRepository.Table
-                    .Where(a => a.InvoiceId == invoiceDto.Id).ToListAsync(cancellationToken);
+        var response = _mapper.Map<AddInvoiceResponse>(invoice);
 
-                await _invoiceProductRepository.DeleteRangeAsync(invoiceItems, cancellationToken);
-            }
-
-            foreach (var productDto in invoiceDto.Products)
-            {
-                var product = _mapper.Map<InvoiceItemDto, Product>(productDto);
-
-                if (product.Id == 0)
-                {
-                    await _productRepository.AddAsync(product, cancellationToken);
-                }
-
-                var invoiceProduct = new InvoiceItem
-                {
-                    InvoiceId = invoice.Id,
-                    ProductId = product.Id,
-                    Quantity = productDto.Quantity,
-                    Profit = productDto.Profit / 100.0,
-                    TaxOffset = productDto.TaxOffset / 100.0
-                };
-
-                await _invoiceProductRepository.AddAsync(invoiceProduct, cancellationToken);
-            }
-
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
+        return response;
     }
 
-    public async Task<DeleteResult> DeleteAsync(int id, CancellationToken cancellationToken)
+    public Task<ErrorOr<UpdateInvoiceResponse>> UpdateInvoiceAsync(UpdateInvoiceRequest request, CancellationToken cancellationToken = default)
     {
-        if (id is 0)
-            return DeleteResult.IsNotAvailable;
+        throw new NotImplementedException();
+    }
 
-        var invoice = await _invoiceRepository.GetByIdAsync(cancellationToken, id);
-
-        if (invoice is null)
-            return DeleteResult.IsNotAvailable;
-
-        try
-        {
-            await _invoiceRepository.DeleteAsync(invoice, cancellationToken);
-
-            return DeleteResult.Deleted;
-        }
-        catch
-        {
-            return DeleteResult.CanNotDelete;
-        }
+    public Task<ErrorOr<RemoveInvoiceResponse>> RemoveInvoiceAsync(RemoveInvoiceRequest request, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<int> GetTotalInvoicesCount(CancellationToken cancellationToken)
         => await _invoiceRepository.TableNoTracking.CountAsync(cancellationToken);
-
-    public async Task<bool> UpdateInvoiceHeaderAsync(InvoiceHeaderDto invoiceHeaderDto, CancellationToken cancellationToken)
-    {
-        var invoice = await _invoiceRepository.TableNoTracking
-            .Include(x => x.Customer)
-            .FirstOrDefaultAsync(x => x.Id == invoiceHeaderDto.InvoiceId, cancellationToken);
-
-        if (invoice is null) 
-            return false;
-
-        var customer = invoice.Customer;
-
-        customer.FullName = invoiceHeaderDto.CustomerName;
-        customer.PhoneNumber = invoiceHeaderDto.CustomerPhone;
-
-        await _customerRepository.UpdateAsync(customer, cancellationToken);
-
-        return true;
-    }
 
     private static object? GetPropertyValue(object obj, string propertyName)
         => obj.GetType().GetProperty(propertyName)?.GetValue(obj, null);

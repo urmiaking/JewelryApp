@@ -1,3 +1,3 @@
 ﻿namespace JewelryApp.Shared.Responses.Invoices;
 
-public record RemoveInvoiceResponse(int Id);
+public record UpdateInvoiceResponse(int InvoiceId);

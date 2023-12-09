@@ -1,3 +1,3 @@
 ﻿namespace JewelryApp.Shared.Requests.Invoices;
 
-public record GetInvoiceDetailsRequest(int Id);
+public record GetInvoiceRequest(int Id);

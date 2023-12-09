@@ -50,7 +50,7 @@ public class MappingProfile : Profile
             .ForMember(i => i.CustomerPhoneNumber, a => a.MapFrom(b => b.Customer.PhoneNumber))
             .ForMember(i => i.CustomerName, a => a.MapFrom(b => b.Customer.FullName));
 
-        CreateMap<GetInvoiceDetailsResponse, Invoice>().ReverseMap()
+        CreateMap<GetInvoiceResponse, Invoice>().ReverseMap()
             .ForMember(x => x.CustomerName, a => a.MapFrom(b => b.Customer.FullName))
             .ForMember(x => x.CustomerPhoneNumber, a => a.MapFrom(b => b.Customer.PhoneNumber))
             .ForMember(x => x.CustomerId, a => a.MapFrom(b => b.Customer.Id))

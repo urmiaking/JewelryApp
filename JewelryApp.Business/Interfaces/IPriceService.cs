@@ -1,5 +1,5 @@
 ﻿using ErrorOr;
-using JewelryApp.Shared.Responses.Authentication;
+using JewelryApp.Shared.Responses.Prices;
 
 namespace JewelryApp.Business.Interfaces;
 
