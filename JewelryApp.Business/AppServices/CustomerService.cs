@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ErrorOr;
 using JewelryApp.Business.Interfaces;
+using JewelryApp.Common.Errors;
 using JewelryApp.Data.Interfaces.Repositories;
 using JewelryApp.Data.Interfaces.Repositories.Base;
 using JewelryApp.Data.Models;
@@ -31,18 +32,47 @@ public class CustomerService : ICustomerService
         return new AddCustomerResponse(customer.Id);
     }
 
-    public Task<ErrorOr<GetCustomerResponse>> GetCustomerByInvoiceIdAsync(GetCustomerRequest request, CancellationToken token = default)
+    public async Task<ErrorOr<GetCustomerResponse>> GetCustomerByInvoiceIdAsync(GetCustomerRequest request, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var invoice = await _invoiceRepository.GetByIdAsync(request.InvoiceId, token);
+
+        if (invoice is null)
+            return Errors.Invoice.NotFound;
+
+        await _invoiceRepository.LoadReferenceAsync(invoice, x => x.Customer, token);
+
+        var response = _mapper.Map<GetCustomerResponse>(invoice.Customer);
+
+        return response;
     }
 
-    public Task<ErrorOr<UpdateCustomerResponse>> UpdateCustomerAsync(UpdateCustomerRequest request, CancellationToken token = default)
+    public async Task<ErrorOr<UpdateCustomerResponse>> UpdateCustomerAsync(UpdateCustomerRequest request, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var invoice = await _invoiceRepository.GetByIdAsync(request.InvoiceId, token);
+
+        if (invoice is null)
+            return Errors.Invoice.NotFound;
+
+        await _invoiceRepository.LoadReferenceAsync(invoice, x => x.Customer, token);
+
+        invoice.Customer = _mapper.Map<Customer>(request);
+
+        await _customerRepository.UpdateAsync(invoice.Customer, token);
+
+        return new UpdateCustomerResponse(invoice.CustomerId);
     }
 
-    public Task<ErrorOr<RemoveCustomerResponse>> RemoveCustomerAsync(RemoveCustomerRequest request, CancellationToken token = default)
+    public async Task<ErrorOr<RemoveCustomerResponse>> RemoveCustomerAsync(RemoveCustomerRequest request, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var invoice = await _invoiceRepository.GetByIdAsync(request.InvoiceId, token);
+
+        if (invoice is null)
+            return Errors.Invoice.NotFound;
+
+        await _invoiceRepository.LoadReferenceAsync(invoice, x => x.Customer, token);
+
+        await _customerRepository.DeleteAsync(invoice.Customer, token);
+
+        return new RemoveCustomerResponse(invoice.CustomerId);
     }
 }

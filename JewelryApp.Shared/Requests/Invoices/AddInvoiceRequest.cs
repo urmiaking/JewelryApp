@@ -1,6 +1,3 @@
-﻿using JewelryApp.Shared.Requests.InvoiceItems;
+﻿namespace JewelryApp.Shared.Requests.Invoices;
 
-namespace JewelryApp.Shared.Requests.Invoices;
-
-public record AddInvoiceRequest(string CustomerName, string CustomerPhoneNumber, DateTime InvoiceDate,
-    double? Debt, DateTime? DebtDate, double? AdditionalPrices, double? Discount, List<AddCustomerRequest> InvoiceItems);
+public record AddInvoiceRequest( DateTime InvoiceDate, double? Debt, DateTime? DebtDate, double? AdditionalPrices, double? Discount);

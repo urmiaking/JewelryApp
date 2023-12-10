@@ -23,6 +23,8 @@ public static class DependencyInjection
         services.AddScoped(typeof(IRepository<>), typeof(RepositoryBase<>));
         services.AddScoped<IPriceRepository, PriceRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+        services.AddScoped<IInvoiceItemRepository, InvoiceItemRepository>();
         services.AddScoped<IDbInitializer, DbInitializer>();
         services.AddAppIdentity();
         services.AddCustomAuthentication(configuration);

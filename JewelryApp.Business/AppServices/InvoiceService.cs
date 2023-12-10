@@ -16,19 +16,12 @@ namespace JewelryApp.Business.AppServices;
 public class InvoiceService : IInvoiceService
 {
     private readonly IInvoiceRepository _invoiceRepository;
-    private readonly IRepository<InvoiceItem> _invoiceItemRepository;
-    private readonly IRepository<Product> _productRepository;
-    private readonly IRepository<Customer> _customerRepository;
     private readonly IMapper _mapper;
 
-    public InvoiceService(IMapper mapper, IInvoiceRepository invoiceRepository, IRepository<Product> productRepository, 
-        IRepository<Customer> customerRepository, IRepository<InvoiceItem> invoiceItemRepository)
+    public InvoiceService(IMapper mapper, IInvoiceRepository invoiceRepository)
     {
         _mapper = mapper;
         _invoiceRepository = invoiceRepository;
-        _productRepository = productRepository;
-        _customerRepository = customerRepository;
-        _invoiceItemRepository = invoiceItemRepository;
     }
 
     public async Task<IEnumerable<GetInvoiceTableResponse>?> GetInvoicesAsync(GetInvoiceTableRequest request, CancellationToken cancellationToken = default)
@@ -82,30 +75,27 @@ public class InvoiceService : IInvoiceService
 
     public async Task<ErrorOr<AddInvoiceResponse>> AddInvoiceAsync(AddInvoiceRequest request, CancellationToken cancellationToken = default)
     {
-        // 1. Add Customer
-        var customer = _mapper.Map<Customer>(request);
-        await _customerRepository.AddAsync(customer, cancellationToken);
-
-        // 2. Add Invoice
         var invoice = _mapper.Map<Invoice>(request);
-        await _invoiceRepository.AddAsync(invoice, cancellationToken);
 
-        // 3. Add InvoiceItems
-        var invoiceItems = _mapper.Map<List<InvoiceItem>>(request.InvoiceItems);
-        await _invoiceItemRepository.AddRangeAsync(invoiceItems, cancellationToken);
+        await _invoiceRepository.AddAsync(invoice, cancellationToken);
 
         var response = _mapper.Map<AddInvoiceResponse>(invoice);
 
         return response;
     }
 
-    public Task<ErrorOr<UpdateInvoiceResponse>> UpdateInvoiceAsync(UpdateInvoiceRequest request, CancellationToken cancellationToken = default)
+    public async Task<ErrorOr<UpdateInvoiceResponse>> UpdateInvoiceAsync(UpdateInvoiceRequest request, CancellationToken cancellationToken = default)
     {
-        // 1. Update Customer
+        var invoice = await _invoiceRepository.GetByIdAsync(request.Id, cancellationToken);
 
-        // 2. Update Invoice
+        if (invoice is null)
+            return Errors.Invoice.NotFound;
 
-        // 3. Update 
+        invoice = _mapper.Map<Invoice>(request);
+
+        await _invoiceRepository.UpdateAsync(invoice, cancellationToken);
+
+        return new UpdateInvoiceResponse(invoice.Id);
     }
 
     public async Task<ErrorOr<RemoveInvoiceResponse>> RemoveInvoiceAsync(RemoveInvoiceRequest request, CancellationToken cancellationToken = default)
