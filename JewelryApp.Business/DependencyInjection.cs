@@ -24,6 +24,10 @@ public static class DependencyInjection
 
         services.AddHttpClient<IPriceApiService, PriceApiService>();
         services.AddScoped<IPriceService, PriceService>();
+        services.AddScoped<IAccountService, AccountService>();
+        services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<IInvoiceService, InvoiceService>();
+        services.AddScoped<ICustomerService, CustomerService>();
 
         services.AddSignalR();
 

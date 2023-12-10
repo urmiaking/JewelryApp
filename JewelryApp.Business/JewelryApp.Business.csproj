@@ -18,7 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\JewelryApp.Models\JewelryApp.Models.csproj" />
+		<ProjectReference Include="..\JewelryApp.Data\JewelryApp.Data.csproj" />
 		<ProjectReference Include="..\JewelryApp.Shared\JewelryApp.Shared.csproj" />
 	</ItemGroup>
 

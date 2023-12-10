@@ -1,0 +1,48 @@
+﻿using AutoMapper;
+using ErrorOr;
+using JewelryApp.Business.Interfaces;
+using JewelryApp.Data.Interfaces.Repositories;
+using JewelryApp.Data.Interfaces.Repositories.Base;
+using JewelryApp.Data.Models;
+using JewelryApp.Shared.Requests.Customer;
+using JewelryApp.Shared.Responses.Customer;
+
+namespace JewelryApp.Business.AppServices;
+
+public class CustomerService : ICustomerService
+{
+    private readonly IRepository<Customer> _customerRepository;
+    private readonly IInvoiceRepository _invoiceRepository;
+    private readonly IMapper _mapper;
+
+    public CustomerService(IRepository<Customer> customerRepository, IMapper mapper, IInvoiceRepository invoiceRepository)
+    {
+        _customerRepository = customerRepository;
+        _mapper = mapper;
+        _invoiceRepository = invoiceRepository;
+    }
+
+    public async Task<ErrorOr<AddCustomerResponse>> AddCustomerAsync(AddCustomerRequest request, CancellationToken token = default)
+    {
+        var customer = _mapper.Map<Customer>(request);
+
+        await _customerRepository.AddAsync(customer, token);
+
+        return new AddCustomerResponse(customer.Id);
+    }
+
+    public Task<ErrorOr<GetCustomerResponse>> GetCustomerByInvoiceIdAsync(GetCustomerRequest request, CancellationToken token = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ErrorOr<UpdateCustomerResponse>> UpdateCustomerAsync(UpdateCustomerRequest request, CancellationToken token = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ErrorOr<RemoveCustomerResponse>> RemoveCustomerAsync(RemoveCustomerRequest request, CancellationToken token = default)
+    {
+        throw new NotImplementedException();
+    }
+}
