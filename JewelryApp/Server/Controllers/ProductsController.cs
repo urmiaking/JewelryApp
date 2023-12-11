@@ -22,102 +22,60 @@ public class ProductsController : ApiController
     [HttpGet]
     public async Task<IActionResult> GetAll(GetProductsRequest request, CancellationToken cancellationToken)
     {
-        try
-        {
-            var products = await _productService.GetProductsAsync(request, cancellationToken);
+        var products = await _productService.GetProductsAsync(request, cancellationToken);
 
-            return Ok(products);
-        }
-        catch (Exception e)
-        {
-            return Problem(title: e.Message);
-        }
+        return Ok(products);
     }
 
     [HttpPost]
     public async Task<IActionResult> AddProduct(AddProductRequest request, CancellationToken cancellationToken)
     {
-        try
+        var validationResult = await _addProductValidator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
         {
-            var validationResult = await _addProductValidator.ValidateAsync(request, cancellationToken);
-
-            if (!validationResult.IsValid)
-            {
-                validationResult.AddToModelState(ModelState);
-                return ValidationProblem(ModelState);
-            }
-
-            var response = await _productService.AddProductAsync(request, cancellationToken);
-
-            return response.Match(Ok, Problem);
+            validationResult.AddToModelState(ModelState);
+            return ValidationProblem(ModelState);
         }
-        catch (Exception e)
-        {
-            return Problem(title: e.Message);
-        }
+
+        var response = await _productService.AddProductAsync(request, cancellationToken);
+
+        return response.Match(Ok, Problem);
     }
 
     [HttpPut]
     public async Task<IActionResult> UpdateProduct(UpdateProductRequest request, CancellationToken cancellationToken)
     {
-        try
+        var validationResult = await _updateProductValidator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
         {
-            var validationResult = await _updateProductValidator.ValidateAsync(request, cancellationToken);
-
-            if (!validationResult.IsValid)
-            {
-                validationResult.AddToModelState(ModelState);
-                return ValidationProblem(ModelState);
-            }
-
-            var response = await _productService.UpdateProductAsync(request, cancellationToken);
-
-            return response.Match(Ok, Problem);
+            validationResult.AddToModelState(ModelState);
+            return ValidationProblem(ModelState);
         }
-        catch (Exception e)
-        {
-            return Problem(title: e.Message);
-        }
+
+        var response = await _productService.UpdateProductAsync(request, cancellationToken);
+
+        return response.Match(Ok, Problem);
     }
-    
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> RemoveProduct(RemoveProductRequest request, CancellationToken cancellationToken)
     {
-        try
-        {
-            var response = await _productService.RemoveProductAsync(request, cancellationToken);
+        var response = await _productService.RemoveProductAsync(request, cancellationToken);
 
-            return response.Match(Ok, Problem);
-        }
-        catch (Exception e)
-        {
-            return Problem(title: e.Message);
-        }
+        return response.Match(Ok, Problem);
     }
 
     [HttpGet(nameof(GetTotalProductsCount))]
     public async Task<IActionResult> GetTotalProductsCount(CancellationToken cancellationToken)
     {
-        try
-        {
-            return Ok(await _productService.GetTotalProductsCount(cancellationToken));
-        }
-        catch (Exception e)
-        {
-            return Problem(title: e.Message);
-        }
+        return Ok(await _productService.GetTotalProductsCount(cancellationToken));
     }
 
     [HttpGet("{barcodeText}")]
     public async Task<IActionResult> GetByBarcode(string barcode, CancellationToken cancellationToken)
     {
-        try
-        {
-            return Ok(await _productService.GetProductByBarcodeAsync(barcode, cancellationToken));
-        }
-        catch (Exception e)
-        {
-            return Problem(title: e.Message);
-        }
+        return Ok(await _productService.GetProductByBarcodeAsync(barcode, cancellationToken));
     }
 }

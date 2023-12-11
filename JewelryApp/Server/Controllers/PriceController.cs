@@ -17,24 +17,13 @@ public class PriceController : ApiController
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        try
-        {
-            var response = await _priceService.GetPriceAsync();
+        var response = await _priceService.GetPriceAsync();
 
-            if (response.IsError && response.FirstError == Errors.General.NoInternet)
-                return Problem(
-                    statusCode: StatusCodes.Status500InternalServerError,
-                    title: response.FirstError.Description);
+        if (response.IsError && response.FirstError == Errors.General.NoInternet)
+            return Problem(
+                statusCode: StatusCodes.Status500InternalServerError,
+                title: response.FirstError.Description);
 
-            return response.Match(Ok, Problem);
-        }
-        catch (ValidationException e)
-        {
-            return ValidationProblem(title: e.Message);
-        }
-        catch (Exception e)
-        {
-            return Problem(title: e.Message);
-        }
+        return response.Match(Ok, Problem);
     }
 }

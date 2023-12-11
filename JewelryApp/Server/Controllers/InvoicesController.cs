@@ -1,5 +1,5 @@
 ﻿using JewelryApp.Application.Interfaces;
-using JewelryApp.Models.Dtos.Invoice;
+using JewelryApp.Shared.Requests.Invoices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JewelryApp.Api.Controllers;
@@ -15,18 +15,19 @@ public class InvoicesController : ControllerBase
         _invoiceService = invoiceService;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Get(int page, int pageSize, string sortDirection, string? sortLabel, string? searchString, CancellationToken cancellationToken)
-        => Ok(await _invoiceService.GetInvoicesAsync(page, pageSize, sortDirection, sortLabel, searchString, cancellationToken));
+    [HttpGet(nameof(GetAll))]
+    public async Task<IActionResult> GetAll(GetInvoiceTableRequest request, CancellationToken cancellationToken)
+        => Ok(await _invoiceService.GetInvoicesAsync(request, cancellationToken));
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetInvoice(int id, CancellationToken cancellationToken) =>
-        Ok(await _invoiceService.GetInvoiceAsync(id, cancellationToken));
+    [HttpGet(nameof(Get))]
+    public async Task<IActionResult> Get(GetInvoiceRequest request, CancellationToken cancellationToken) =>
+        Ok(await _invoiceService.GetInvoiceAsync(request, cancellationToken));
 
     [HttpPost]
-    public async Task<IActionResult> Set(InvoiceDto invoiceDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Add(AddInvoiceRequest request, CancellationToken cancellationToken)
     {
-        var succeed = await _invoiceService.SetInvoiceAsync(invoiceDto, cancellationToken);
+        // TODO: Add validation
+        var succeed = await _invoiceService.AddInvoiceAsync(request, cancellationToken);
         return succeed ? Ok() : BadRequest();
     }
 

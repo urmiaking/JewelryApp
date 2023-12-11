@@ -23,7 +23,7 @@ public class ErrorsController : ControllerBase
         var (statusCode, message) = exception switch
         {
             IServiceException serviceException => ((int)serviceException.StatusCode, serviceException.ErrorMessage),
-            _ => (StatusCodes.Status500InternalServerError, "خطای غیرمنتظره ای در سرور رخ داد.")
+            _ => (StatusCodes.Status500InternalServerError, exception?.Message)
         };
 
         _logger.LogError(exception, message);
