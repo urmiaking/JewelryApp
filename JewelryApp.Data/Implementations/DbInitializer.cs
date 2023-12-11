@@ -1,9 +1,9 @@
-﻿using JewelryApp.Common.Constants;
-using JewelryApp.Data.Interfaces;
-using JewelryApp.Data.Models.Identity;
+﻿using JewelryApp.Core.Constants;
+using JewelryApp.Core.DomainModels.Identity;
+using JewelryApp.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
-namespace JewelryApp.Business.Repositories.Implementations;
+namespace JewelryApp.Infrastructure.Implementations;
 
 public class DbInitializer : IDbInitializer
 {

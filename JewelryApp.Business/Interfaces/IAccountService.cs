@@ -2,7 +2,7 @@
 using JewelryApp.Shared.Requests.Authentication;
 using JewelryApp.Shared.Responses.Authentication;
 
-namespace JewelryApp.Business.Interfaces;
+namespace JewelryApp.Application.Interfaces;
 
 public interface IAccountService
 {

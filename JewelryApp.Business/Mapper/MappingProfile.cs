@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
-using JewelryApp.Business.ExternalModels.Signal;
-using JewelryApp.Common.Enums;
-using JewelryApp.Data.Models;
+using JewelryApp.Application.ExternalModels.Signal;
+using JewelryApp.Core.DomainModels;
+using JewelryApp.Core.Enums;
 using JewelryApp.Shared.Requests.Products;
-using JewelryApp.Shared.Responses.Authentication;
 using JewelryApp.Shared.Responses.Invoices;
+using JewelryApp.Shared.Responses.Prices;
 using JewelryApp.Shared.Responses.Products;
 
-namespace JewelryApp.Business.Mapper;
+namespace JewelryApp.Application.Mapper;
 
 public class MappingProfile : Profile
 {
@@ -51,8 +51,6 @@ public class MappingProfile : Profile
             .ForMember(i => i.CustomerName, a => a.MapFrom(b => b.Customer.FullName));
 
         CreateMap<GetInvoiceResponse, Invoice>().ReverseMap()
-            .ForMember(x => x.CustomerName, a => a.MapFrom(b => b.Customer.FullName))
-            .ForMember(x => x.CustomerPhoneNumber, a => a.MapFrom(b => b.Customer.PhoneNumber))
             .ForMember(x => x.CustomerId, a => a.MapFrom(b => b.Customer.Id))
             .ForMember(x => x.TotalRawPrice, a => a.MapFrom(b => b.InvoiceItems.Sum(x => x.Price)))
             .ForMember(x => x.TotalTax, a => a.MapFrom(b => b.InvoiceItems.Sum(x => x.Tax)))

@@ -1,6 +1,6 @@
-﻿using JewelryApp.Data.Models;
+﻿using JewelryApp.Core.DomainModels;
 
-namespace JewelryApp.Business.Interfaces;
+namespace JewelryApp.Application.Interfaces;
 
 public interface IRefreshTokenService
 {

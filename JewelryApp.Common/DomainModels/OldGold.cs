@@ -1,4 +1,4 @@
-﻿namespace JewelryApp.Data.Models;
+﻿namespace JewelryApp.Core.DomainModels;
 
 public class OldGold : SoftDeleteModelBase
 {

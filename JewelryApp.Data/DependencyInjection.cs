@@ -1,23 +1,23 @@
-﻿using JewelryApp.Business.Repositories.Implementations;
-using JewelryApp.Common.Constants;
-using JewelryApp.Data.Implementations.Repositories;
-using JewelryApp.Data.Interfaces.Repositories.Base;
-using JewelryApp.Data.Interfaces.Repositories;
-using JewelryApp.Data.Interfaces;
-using JewelryApp.Data.Models.Identity;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+﻿using System.Text;
+using JewelryApp.Core.Constants;
+using JewelryApp.Core.DomainModels.Identity;
+using JewelryApp.Core.Interfaces;
+using JewelryApp.Core.Interfaces.Repositories;
+using JewelryApp.Core.Interfaces.Repositories.Base;
+using JewelryApp.Infrastructure.Implementations;
+using JewelryApp.Infrastructure.Implementations.Repositories;
+using JewelryApp.Infrastructure.Implementations.Repositories.Base;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using JewelryApp.Data.Implementations.Repositories.Base;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
-namespace JewelryApp.Data;
+namespace JewelryApp.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddData(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddSqlServer<AppDbContext>(configuration.GetConnectionString(AppConstants.ConnectionStringName));
         services.AddScoped(typeof(IRepository<>), typeof(RepositoryBase<>));

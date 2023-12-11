@@ -1,15 +1,15 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using ErrorOr;
-using JewelryApp.Business.Interfaces;
-using JewelryApp.Common.Errors;
-using JewelryApp.Data.Interfaces.Repositories;
-using JewelryApp.Data.Models;
+using JewelryApp.Application.Interfaces;
+using JewelryApp.Core.DomainModels;
+using JewelryApp.Core.Errors;
+using JewelryApp.Core.Interfaces.Repositories;
 using JewelryApp.Shared.Requests.InvoiceItems;
 using JewelryApp.Shared.Responses.InvoiceItems;
 using Microsoft.EntityFrameworkCore;
 
-namespace JewelryApp.Business.AppServices;
+namespace JewelryApp.Application.AppServices;
 
 public class InvoiceItemService : IInvoiceItemService
 {

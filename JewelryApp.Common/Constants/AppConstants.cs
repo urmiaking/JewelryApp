@@ -1,9 +1,8 @@
-﻿namespace JewelryApp.Common.Constants;
+﻿namespace JewelryApp.Core.Constants;
 
 public static class AppConstants
 {
     public const string ConnectionStringName = "SqlConnection";
     public const string SignalApiUrl = "https://signalpardazgroup.com/service/signalData@4.0.0/list";
-    public const string TalaApiUrl = "https://www.tala.ir/webservice/price_live.php";
     public const int RetryCount = 5;
 }

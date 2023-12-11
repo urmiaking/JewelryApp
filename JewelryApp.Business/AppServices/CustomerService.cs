@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using ErrorOr;
-using JewelryApp.Business.Interfaces;
-using JewelryApp.Common.Errors;
-using JewelryApp.Data.Interfaces.Repositories;
-using JewelryApp.Data.Interfaces.Repositories.Base;
-using JewelryApp.Data.Models;
+using JewelryApp.Application.Interfaces;
+using JewelryApp.Core.DomainModels;
+using JewelryApp.Core.Errors;
+using JewelryApp.Core.Interfaces.Repositories;
+using JewelryApp.Core.Interfaces.Repositories.Base;
 using JewelryApp.Shared.Requests.Customer;
 using JewelryApp.Shared.Responses.Customer;
 
-namespace JewelryApp.Business.AppServices;
+namespace JewelryApp.Application.AppServices;
 
 public class CustomerService : ICustomerService
 {

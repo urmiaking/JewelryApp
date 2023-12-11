@@ -1,15 +1,14 @@
 ﻿using System.Linq.Expressions;
-using JewelryApp.Common.Constants;
-using JewelryApp.Common.Utilities;
-using JewelryApp.Data.Interfaces.Repositories.Base;
-using JewelryApp.Data.Models;
-using JewelryApp.Data.Models.Identity;
+using JewelryApp.Core.Constants;
+using JewelryApp.Core.DomainModels;
+using JewelryApp.Core.DomainModels.Identity;
+using JewelryApp.Core.Interfaces.Repositories.Base;
+using JewelryApp.Core.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace JewelryApp.Data.Implementations.Repositories.Base;
+namespace JewelryApp.Infrastructure.Implementations.Repositories.Base;
 
 public class RepositoryBase<TEntity> : IRepository<TEntity>
     where TEntity : class, IEntity
@@ -18,7 +17,6 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
     public DbSet<TEntity> Entities { get; }
     public virtual IQueryable<TEntity> Table => Entities;
     public virtual IQueryable<TEntity> TableNoTracking => Entities.AsNoTracking();
-    public virtual DatabaseFacade Database => DbContext.Database;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly UserManager<AppUser> _userManager;
 
@@ -31,12 +29,12 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
     }
 
     #region Async Method
-    public virtual ValueTask<TEntity?> GetByIdAsync(object? id, CancellationToken cancellationToken)
+    public virtual ValueTask<TEntity?> GetByIdAsync(object? id, CancellationToken cancellationToken = default)
     {
         return Entities.FindAsync(id, cancellationToken);
     }
 
-    public virtual async Task AddAsync(TEntity entity, CancellationToken cancellationToken, bool saveNow = true)
+    public virtual async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default, bool saveNow = true)
     {
         Assert.NotNull(entity, nameof(entity));
 
@@ -51,7 +49,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             await DbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public virtual async Task AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken, bool saveNow = true)
+    public virtual async Task AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default, bool saveNow = true)
     {
         var entitiesList = entities.ToList();
         Assert.NotNull(entitiesList, nameof(entities));
@@ -70,7 +68,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             await DbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public virtual async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken, bool saveNow = true)
+    public virtual async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default, bool saveNow = true)
     {
         Assert.NotNull(entity, nameof(entity));
 
@@ -85,7 +83,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             await DbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public virtual async Task UpdateRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken, bool saveNow = true)
+    public virtual async Task UpdateRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default, bool saveNow = true)
     {
         var entitiesList = entities.ToList();
         Assert.NotNull(entitiesList, nameof(entities));
@@ -104,7 +102,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             await DbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public virtual async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken, bool saveNow = true)
+    public virtual async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default, bool saveNow = true)
     {
         Assert.NotNull(entity, nameof(entity));
 
@@ -122,7 +120,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             await DbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public virtual async Task DeleteRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken, bool saveNow = true)
+    public virtual async Task DeleteRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default, bool saveNow = true)
     {
         var entitiesList = entities.ToList();
         Assert.NotNull(entitiesList, nameof(entities));

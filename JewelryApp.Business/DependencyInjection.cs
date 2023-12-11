@@ -1,24 +1,23 @@
-﻿using BlazingJewelry.Application.Services;
-using JewelryApp.Business.Interfaces;
-using JewelryApp.Business.Jobs;
+﻿using System.Reflection;
+using FluentValidation;
+using JewelryApp.Application.AppServices;
+using JewelryApp.Application.Interfaces;
+using JewelryApp.Application.Jobs;
+using JewelryApp.Application.Mapper;
+using JewelryApp.Application.Validators.Authentication;
+using JewelryApp.Application.Validators.Products;
+using JewelryApp.Shared.Requests.Authentication;
+using JewelryApp.Shared.Requests.Products;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NCrontab;
-using System.Reflection;
-using JewelryApp.Business.AppServices;
-using JewelryApp.Business.Mapper;
-using FluentValidation;
-using JewelryApp.Business.Validators.Authentication;
-using JewelryApp.Shared.Requests.Authentication;
-using JewelryApp.Shared.Requests.Products;
-using JewelryApp.Business.Validators.Products;
 
-namespace JewelryApp.Business;
+namespace JewelryApp.Application;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddBusiness(this IServiceCollection services, IConfiguration configuration, params Assembly[] assemblies)
+    public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration, params Assembly[] assemblies)
     {
         services.AddAutoMapper(typeof(MappingProfile));
 

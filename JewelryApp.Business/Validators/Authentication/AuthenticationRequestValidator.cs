@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using JewelryApp.Shared.Requests.Authentication;
 
-namespace JewelryApp.Business.Validators.Authentication;
+namespace JewelryApp.Application.Validators.Authentication;
 
 public class AuthenticationRequestValidator : AbstractValidator<AuthenticationRequest>
 {

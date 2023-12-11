@@ -1,12 +1,12 @@
-﻿using JewelryApp.Data.Implementations.Repositories.Base;
-using JewelryApp.Data.Interfaces.Repositories;
-using JewelryApp.Data.Models;
-using JewelryApp.Data.Models.Identity;
+﻿using JewelryApp.Core.DomainModels;
+using JewelryApp.Core.DomainModels.Identity;
+using JewelryApp.Core.Interfaces.Repositories;
+using JewelryApp.Infrastructure.Implementations.Repositories.Base;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace JewelryApp.Data.Implementations.Repositories;
+namespace JewelryApp.Infrastructure.Implementations.Repositories;
 
 public class PriceRepository : RepositoryBase<Price>, IPriceRepository
 {

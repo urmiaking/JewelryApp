@@ -1,4 +1,4 @@
-﻿namespace JewelryApp.Common.Constants;
+﻿namespace JewelryApp.Core.Constants;
 
 public static class HttpContextItemKeys
 {

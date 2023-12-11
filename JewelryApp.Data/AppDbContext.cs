@@ -1,12 +1,12 @@
-﻿using JewelryApp.Common.Utilities;
-using JewelryApp.Data.Extensions;
-using JewelryApp.Data.Models;
-using JewelryApp.Data.Models.Identity;
+﻿using System.Reflection;
+using JewelryApp.Core.DomainModels;
+using JewelryApp.Core.DomainModels.Identity;
+using JewelryApp.Core.Utilities;
+using JewelryApp.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
-namespace JewelryApp.Data;
+namespace JewelryApp.Infrastructure;
 
 public class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid, AppUserClaim, AppUserRole, AppUserLogin, AppRoleClaim, AppUserToken>
 {

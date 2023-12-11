@@ -1,10 +1,10 @@
-﻿using JewelryApp.Common.Constants;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
+﻿using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
 using ErrorOr;
+using JewelryApp.Core.Constants;
 
 namespace JewelryApp.Api.Common.Errors;
 

@@ -1,16 +1,16 @@
 using JewelryApp.Api;
-using JewelryApp.Business;
-using JewelryApp.Business.Hubs;
-using JewelryApp.Data;
+using JewelryApp.Application;
+using JewelryApp.Application.Hubs;
+using JewelryApp.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
 
 builder.Services
-    .AddApi(builder.Configuration)
-    .AddBusiness(builder.Configuration)
-    .AddData(builder.Configuration);
+    .AddApi(configuration)
+    .AddApplication(configuration)
+    .AddInfrastructure(configuration);
 
 var app = builder.Build();
 

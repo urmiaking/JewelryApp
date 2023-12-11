@@ -1,19 +1,19 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
-using JewelryApp.Data.Models.Identity;
-using JewelryApp.Business.Interfaces;
 using ErrorOr;
-using JewelryApp.Common.Errors;
+using JewelryApp.Application.Interfaces;
+using JewelryApp.Core.DomainModels.Identity;
+using JewelryApp.Core.Settings;
 using JewelryApp.Shared.Requests.Authentication;
 using JewelryApp.Shared.Responses.Authentication;
-using JewelryApp.Common.Settings;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Errors = JewelryApp.Core.Errors.Errors;
 
-namespace JewelryApp.Business.AppServices;
+namespace JewelryApp.Application.AppServices;
 
 public class AccountService : IAccountService
 {

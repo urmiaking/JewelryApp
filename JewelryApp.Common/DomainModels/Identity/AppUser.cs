@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace JewelryApp.Data.Models.Identity;
+namespace JewelryApp.Core.DomainModels.Identity;
 
 public class AppUser : IdentityUser<Guid>
 {
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     public virtual ICollection<AppUserClaim> Claims { get; set; } = default!;
     public virtual ICollection<AppUserLogin> Logins { get; set; } = default!;

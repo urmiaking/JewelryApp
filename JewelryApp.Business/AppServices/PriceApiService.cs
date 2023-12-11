@@ -1,10 +1,10 @@
 ﻿using System.Net.Http.Json;
-using JewelryApp.Common.Constants;
-using JewelryApp.Common.Utilities;
-using JewelryApp.Business.Interfaces;
-using JewelryApp.Business.ExternalModels.Signal;
+using JewelryApp.Application.ExternalModels.Signal;
+using JewelryApp.Application.Interfaces;
+using JewelryApp.Core.Constants;
+using JewelryApp.Core.Utilities;
 
-namespace BlazingJewelry.Application.Services;
+namespace JewelryApp.Application.AppServices;
 
 public class PriceApiService : IPriceApiService
 {

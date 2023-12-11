@@ -1,7 +1,7 @@
 ﻿using ErrorOr;
 using JewelryApp.Shared.Responses.Prices;
 
-namespace JewelryApp.Business.Interfaces;
+namespace JewelryApp.Application.Interfaces;
 
 public interface IPriceService
 {

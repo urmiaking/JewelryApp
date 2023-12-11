@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Reflection;
 
-namespace JewelryApp.Common.Utilities;
+namespace JewelryApp.Core.Utilities;
 
 public static class ReflectionHelper
 {

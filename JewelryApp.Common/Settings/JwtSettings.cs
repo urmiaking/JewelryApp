@@ -1,4 +1,4 @@
-﻿namespace JewelryApp.Common.Settings;
+﻿namespace JewelryApp.Core.Settings;
 
 public sealed class JwtSettings
 {

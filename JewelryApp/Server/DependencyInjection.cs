@@ -1,11 +1,11 @@
-﻿using JewelryApp.Common.Constants;
-using JewelryApp.Common.Utilities;
-using JewelryApp.Data.Interfaces;
-using JewelryApp.Data;
-using Microsoft.EntityFrameworkCore;
-using JewelryApp.Common.Settings;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
+﻿using Microsoft.AspNetCore.Mvc.Infrastructure;
 using JewelryApp.Api.Common.Errors;
+using JewelryApp.Core.Constants;
+using JewelryApp.Core.Interfaces;
+using JewelryApp.Core.Settings;
+using JewelryApp.Core.Utilities;
+using JewelryApp.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Api;
 

@@ -1,6 +1,6 @@
-﻿using JewelryApp.Business.ExternalModels.Signal;
+﻿using JewelryApp.Application.ExternalModels.Signal;
 
-namespace JewelryApp.Business.Interfaces;
+namespace JewelryApp.Application.Interfaces;
 
 public interface IPriceApiService
 {

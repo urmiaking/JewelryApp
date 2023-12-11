@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace JewelryApp.Common.Enums;
+namespace JewelryApp.Core.Enums;
 
 public enum CaratType
 {

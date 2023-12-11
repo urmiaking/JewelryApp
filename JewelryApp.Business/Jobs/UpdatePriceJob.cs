@@ -1,11 +1,11 @@
-﻿using JewelryApp.Business.Hubs;
-using JewelryApp.Business.Interfaces;
+﻿using JewelryApp.Application.Hubs;
+using JewelryApp.Application.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace JewelryApp.Business.Jobs;
+namespace JewelryApp.Application.Jobs;
 
 public class UpdatePriceJob : ICronJob
 {

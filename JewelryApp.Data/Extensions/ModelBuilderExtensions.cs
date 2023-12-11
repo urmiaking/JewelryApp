@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
-using JewelryApp.Data.Models.Identity;
+using JewelryApp.Core.DomainModels.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace JewelryApp.Data.Extensions;
+namespace JewelryApp.Infrastructure.Extensions;
 
 public static class ModelBuilderExtensions
 {

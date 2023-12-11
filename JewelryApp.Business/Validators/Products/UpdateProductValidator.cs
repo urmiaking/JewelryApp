@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
-using JewelryApp.Common.Enums;
+using JewelryApp.Core.Enums;
 using JewelryApp.Shared.Requests.Products;
 
-namespace JewelryApp.Business.Validators.Products;
+namespace JewelryApp.Application.Validators.Products;
 
 public class UpdateProductValidator : AbstractValidator<UpdateProductRequest>
 {

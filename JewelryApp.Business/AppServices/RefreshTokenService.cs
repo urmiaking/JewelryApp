@@ -1,9 +1,9 @@
-﻿using JewelryApp.Business.Interfaces;
-using JewelryApp.Data.Interfaces.Repositories.Base;
-using JewelryApp.Data.Models;
+﻿using JewelryApp.Application.Interfaces;
+using JewelryApp.Core.DomainModels;
+using JewelryApp.Core.Interfaces.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
 
-namespace JewelryApp.Business.AppServices;
+namespace JewelryApp.Application.AppServices;
 
 public class RefreshTokenService : IRefreshTokenService
 {
@@ -34,8 +34,7 @@ public class RefreshTokenService : IRefreshTokenService
     
     public async Task SetUsedAsync(Guid id)
     {
-        var model = await _repository.Entities
-            .AsTracking()
+        var model = await _repository.Table
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (model != null)
@@ -48,8 +47,7 @@ public class RefreshTokenService : IRefreshTokenService
 
     public async Task SetInvalidatedAsync(Guid id)
     {
-        var model = await _repository.Entities
-            .AsTracking()
+        var model = await _repository.Table
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (model != null)

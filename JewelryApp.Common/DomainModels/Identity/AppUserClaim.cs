@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace JewelryApp.Data.Models.Identity;
+namespace JewelryApp.Core.DomainModels.Identity;
 
 public class AppUserClaim : IdentityUserClaim<Guid>
 {

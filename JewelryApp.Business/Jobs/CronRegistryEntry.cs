@@ -1,5 +1,5 @@
 ﻿using NCrontab;
 
-namespace JewelryApp.Business.Jobs;
+namespace JewelryApp.Application.Jobs;
 
 public sealed record CronRegistryEntry(Type Type, CrontabSchedule CronTabSchedule);

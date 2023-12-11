@@ -1,4 +1,4 @@
-﻿namespace JewelryApp.Business.ExternalModels.Signal;
+﻿namespace JewelryApp.Application.ExternalModels.Signal;
 
 public class PriceApiResult
 {

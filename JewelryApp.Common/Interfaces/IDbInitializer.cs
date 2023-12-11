@@ -1,4 +1,4 @@
-﻿namespace JewelryApp.Data.Interfaces;
+﻿namespace JewelryApp.Core.Interfaces;
 
 public interface IDbInitializer
 {

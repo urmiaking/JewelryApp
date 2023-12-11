@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace JewelryApp.Business.Jobs;
+namespace JewelryApp.Application.Jobs;
 
 public sealed class CronScheduler : BackgroundService
 {

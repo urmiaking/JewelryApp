@@ -2,7 +2,7 @@
 using JewelryApp.Shared.Requests.Products;
 using JewelryApp.Shared.Responses.Products;
 
-namespace JewelryApp.Business.Interfaces;
+namespace JewelryApp.Application.Interfaces;
 
 public interface IProductService
 {

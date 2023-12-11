@@ -1,7 +1,7 @@
-﻿using JewelryApp.Business.Interfaces;
-using JewelryApp.Common.Errors;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using JewelryApp.Application.Interfaces;
+using Errors = JewelryApp.Core.Errors.Errors;
 
 namespace JewelryApp.Api.Controllers;
 

@@ -1,15 +1,14 @@
 ﻿using AutoMapper;
 using ErrorOr;
-using JewelryApp.Business.Interfaces;
-using JewelryApp.Common.Errors;
-using JewelryApp.Data.Interfaces.Repositories;
-using JewelryApp.Data.Models;
-using JewelryApp.Models.Dtos.PriceDtos;
-using JewelryApp.Models.Dtos.PriceDtos.Signal;
+using JewelryApp.Application.ExternalModels.Signal;
+using JewelryApp.Application.Interfaces;
+using JewelryApp.Core.DomainModels;
+using JewelryApp.Core.Errors;
+using JewelryApp.Core.Interfaces.Repositories;
 using JewelryApp.Shared.Responses.Prices;
 using Microsoft.Extensions.Logging;
 
-namespace JewelryApp.Business.AppServices;
+namespace JewelryApp.Application.AppServices;
 
 public class PriceService : IPriceService
 {

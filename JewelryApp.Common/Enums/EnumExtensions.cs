@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using JewelryApp.Common.Utilities;
+using JewelryApp.Core.Utilities;
 
-namespace JewelryApp.Common.Enums;
+namespace JewelryApp.Core.Enums;
 
 public static class EnumExtensions
 {

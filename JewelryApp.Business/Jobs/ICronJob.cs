@@ -1,4 +1,4 @@
-﻿namespace JewelryApp.Business.Jobs;
+﻿namespace JewelryApp.Application.Jobs;
 
 public interface ICronJob
 {

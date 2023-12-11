@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace JewelryApp.Data.Models.Identity;
+namespace JewelryApp.Core.DomainModels.Identity;
 
-public class AppUserToken : IdentityUserToken<Guid>
+public class AppUserLogin : IdentityUserLogin<Guid>
 {
     public virtual AppUser User { get; set; } = default!;
 }

@@ -1,7 +1,7 @@
-﻿using JewelryApp.Data.Interfaces.Repositories.Base;
-using JewelryApp.Data.Models;
+﻿using JewelryApp.Core.DomainModels;
+using JewelryApp.Core.Interfaces.Repositories.Base;
 
-namespace JewelryApp.Data.Interfaces.Repositories;
+namespace JewelryApp.Core.Interfaces.Repositories;
 
 public interface IInvoiceItemRepository : IRepository<InvoiceItem>
 {

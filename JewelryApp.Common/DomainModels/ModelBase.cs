@@ -1,6 +1,6 @@
-﻿using JewelryApp.Data.Models.Identity;
+﻿using JewelryApp.Core.DomainModels.Identity;
 
-namespace JewelryApp.Data.Models;
+namespace JewelryApp.Core.DomainModels;
 
 public interface IEntity
 {

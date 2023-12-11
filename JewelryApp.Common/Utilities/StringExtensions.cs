@@ -1,4 +1,4 @@
-﻿namespace JewelryApp.Common.Utilities;
+﻿namespace JewelryApp.Core.Utilities;
 
 public static class StringExtensions
 {

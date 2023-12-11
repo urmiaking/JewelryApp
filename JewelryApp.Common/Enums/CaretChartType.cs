@@ -1,4 +1,4 @@
-﻿namespace JewelryApp.Common.Enums;
+﻿namespace JewelryApp.Core.Enums;
 
 public enum CaretChartType
 {

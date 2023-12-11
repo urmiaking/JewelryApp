@@ -1,6 +1,6 @@
-﻿using JewelryApp.Common.Enums;
+﻿using JewelryApp.Core.Enums;
 
-namespace JewelryApp.Data.Models;
+namespace JewelryApp.Core.DomainModels;
 
 public class Product : SoftDeleteModelBase
 {

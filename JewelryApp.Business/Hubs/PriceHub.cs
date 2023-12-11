@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace JewelryApp.Business.Hubs;
+namespace JewelryApp.Application.Hubs;
 
 public class PriceHub : Hub { }
