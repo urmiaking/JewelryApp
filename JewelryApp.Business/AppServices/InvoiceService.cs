@@ -110,7 +110,7 @@ public class InvoiceService : IInvoiceService
     }
 
     public async Task<int> GetTotalInvoicesCount(CancellationToken cancellationToken)
-        => await _invoiceRepository.TableNoTracking.CountAsync(cancellationToken);
+        => await _invoiceRepository.GetTotalInvoicesCount(cancellationToken);
 
     private static object? GetPropertyValue(object obj, string propertyName)
         => obj.GetType().GetProperty(propertyName)?.GetValue(obj, null);

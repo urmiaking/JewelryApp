@@ -4,10 +4,6 @@ using JewelryApp.Application.AppServices;
 using JewelryApp.Application.Interfaces;
 using JewelryApp.Application.Jobs;
 using JewelryApp.Application.Mapper;
-using JewelryApp.Application.Validators.Authentication;
-using JewelryApp.Application.Validators.Products;
-using JewelryApp.Shared.Requests.Authentication;
-using JewelryApp.Shared.Requests.Products;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -35,10 +31,6 @@ public static class DependencyInjection
                              ?? throw new ArgumentException("There is no cron expression");
 
         services.AddCronJob<UpdatePriceJob>(cronExpression);
-
-        services.AddScoped<IValidator<AuthenticationRequest>, AuthenticationRequestValidator>();
-        services.AddScoped<IValidator<AddProductRequest>, AddProductValidator>();
-        services.AddScoped<IValidator<UpdateProductRequest>, UpdateProductValidator>();
 
         return services;
     }

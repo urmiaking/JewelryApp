@@ -6,4 +6,5 @@ namespace JewelryApp.Core.Interfaces.Repositories;
 public interface IInvoiceRepository : IRepository<Invoice>
 {
     Task<IQueryable<Invoice>?> GetAllInvoices(CancellationToken token = default);
+    Task<int> GetTotalInvoicesCount(CancellationToken cancellationToken = default);
 }

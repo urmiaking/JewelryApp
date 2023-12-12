@@ -4,6 +4,8 @@ using JewelryApp.Core.Interfaces.Repositories;
 using JewelryApp.Infrastructure.Implementations.Repositories.Base;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 
 namespace JewelryApp.Infrastructure.Implementations.Repositories;
 
@@ -28,5 +30,20 @@ public class InvoiceRepository : RepositoryBase<Invoice>, IInvoiceRepository
         }
 
         return TableNoTracking;
+    }
+
+    public async Task<int> GetTotalInvoicesCount(CancellationToken token = default)
+    {
+        var userId = await GetUserIdAsync();
+
+        if (userId == null)
+            return 0;
+
+        if (!await IsAdminAsync())
+        {
+            return await TableNoTracking.CountAsync(x => x.ModifiedUserId == userId, token);
+        }
+
+        return await TableNoTracking.CountAsync(token);
     }
 }

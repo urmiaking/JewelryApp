@@ -1,4 +1,6 @@
-﻿using JewelryApp.Application.Interfaces;
+﻿using FluentValidation;
+using JewelryApp.Api.Common.Extensions;
+using JewelryApp.Application.Interfaces;
 using JewelryApp.Shared.Requests.Invoices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,13 +8,17 @@ namespace JewelryApp.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class InvoicesController : ControllerBase
+public class InvoicesController : ApiController
 {
     private readonly IInvoiceService _invoiceService;
+    private readonly IValidator<AddInvoiceRequest> _addInvoiceValidator;
+    private readonly IValidator<UpdateInvoiceRequest> _updateInvoiceRequest;
 
-    public InvoicesController(IInvoiceService invoiceService)
+    public InvoicesController(IInvoiceService invoiceService, IValidator<AddInvoiceRequest> addInvoiceValidator, IValidator<UpdateInvoiceRequest> updateInvoiceRequest)
     {
         _invoiceService = invoiceService;
+        _addInvoiceValidator = addInvoiceValidator;
+        _updateInvoiceRequest = updateInvoiceRequest;
     }
 
     [HttpGet(nameof(GetAll))]
@@ -26,18 +32,42 @@ public class InvoicesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Add(AddInvoiceRequest request, CancellationToken cancellationToken)
     {
-        // TODO: Add validation
-        var succeed = await _invoiceService.AddInvoiceAsync(request, cancellationToken);
-        return succeed ? Ok() : BadRequest();
+        var validationResult = await _addInvoiceValidator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+        {
+            validationResult.AddToModelState(ModelState);
+            return ValidationProblem(ModelState);
+        }
+
+        var addResult = await _invoiceService.AddInvoiceAsync(request, cancellationToken);
+
+        return addResult.Match(Ok, Problem);
     }
 
-    [HttpPost(nameof(UpdateInvoiceHeader))]
-    public async Task<IActionResult> UpdateInvoiceHeader(InvoiceHeaderDto invoiceHeaderDto, CancellationToken cancellationToken)
-        => Ok(await _invoiceService.UpdateInvoiceHeaderAsync(invoiceHeaderDto, cancellationToken));
-    
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken) => 
-        Ok(await _invoiceService.DeleteAsync(id, cancellationToken));
+    [HttpPut(nameof(Update))]
+    public async Task<IActionResult> Update(UpdateInvoiceRequest request, CancellationToken cancellationToken)
+    {
+        var validationResult = await _updateInvoiceRequest.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+        {
+            validationResult.AddToModelState(ModelState);
+            return ValidationProblem(ModelState);
+        }
+
+        var updateResult = await _invoiceService.UpdateInvoiceAsync(request, cancellationToken);
+
+        return updateResult.Match(Ok, Problem);
+    }
+
+    [HttpDelete(nameof(Remove))]
+    public async Task<IActionResult> Remove(RemoveInvoiceRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _invoiceService.RemoveInvoiceAsync(request, cancellationToken);
+
+        return result.Match(Ok, Problem);
+    }
 
     [HttpGet(nameof(GetTotalInvoicesCount))]
     public async Task<IActionResult> GetTotalInvoicesCount(CancellationToken cancellationToken)

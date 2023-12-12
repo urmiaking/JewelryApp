@@ -6,6 +6,11 @@ using JewelryApp.Core.Settings;
 using JewelryApp.Core.Utilities;
 using JewelryApp.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation;
+using JewelryApp.Api.Validators.Authentication;
+using JewelryApp.Api.Validators.Products;
+using JewelryApp.Shared.Requests.Authentication;
+using JewelryApp.Shared.Requests.Products;
 
 namespace JewelryApp.Api;
 
@@ -23,6 +28,10 @@ public static class DependencyInjection
         services.AddHttpContextAccessor();
 
         services.AddSingleton<ProblemDetailsFactory, AppProblemDetailsFactory>();
+
+        services.AddScoped<IValidator<AuthenticationRequest>, AuthenticationRequestValidator>();
+        services.AddScoped<IValidator<AddProductRequest>, AddProductValidator>();
+        services.AddScoped<IValidator<UpdateProductRequest>, UpdateProductValidator>();
 
         return services;
     }

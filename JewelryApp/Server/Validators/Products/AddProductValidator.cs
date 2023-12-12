@@ -2,11 +2,11 @@
 using JewelryApp.Core.Enums;
 using JewelryApp.Shared.Requests.Products;
 
-namespace JewelryApp.Application.Validators.Products;
+namespace JewelryApp.Api.Validators.Products;
 
-public class UpdateProductValidator : AbstractValidator<UpdateProductRequest>
+public class AddProductValidator : AbstractValidator<AddProductRequest>
 {
-    public UpdateProductValidator()
+    public AddProductValidator()
     {
         RuleFor(x => x.Name).NotEmpty().WithMessage("نام جنس نمی تواند خالی باشد");
         RuleFor(x => x.Barcode).NotEmpty().WithMessage("بارکد نمی تواند خالی باشد");
