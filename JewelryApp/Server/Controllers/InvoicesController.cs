@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JewelryApp.Api.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
 public class InvoicesController : ApiController
 {
     private readonly IInvoiceService _invoiceService;

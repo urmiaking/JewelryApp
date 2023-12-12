@@ -32,8 +32,9 @@ public class InvoiceService : IInvoiceService
         
         if (!string.IsNullOrEmpty(request.SearchString))
         {
-            invoices = invoices.Where(a => a.Customer.FullName.Contains(request.SearchString, StringComparison.OrdinalIgnoreCase) ||
-                                                   a.Customer.PhoneNumber.Contains(request.SearchString, StringComparison.OrdinalIgnoreCase));
+            invoices = invoices.Where(a => a.Customer.FullName.Contains(request.SearchString, StringComparison.OrdinalIgnoreCase) || (
+                                                   !string.IsNullOrEmpty(a.Customer.PhoneNumber) &&
+                                                   a.Customer.PhoneNumber.Contains(request.SearchString, StringComparison.OrdinalIgnoreCase)));
         }
 
         invoices = request.SortDirection switch
