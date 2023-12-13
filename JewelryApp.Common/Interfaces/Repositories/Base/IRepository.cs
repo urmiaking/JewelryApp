@@ -8,10 +8,10 @@ public interface IRepository<TEntity> where TEntity : class, IEntity
     IQueryable<TEntity> Table { get; }
     IQueryable<TEntity> TableNoTracking { get; }
 
-    void Add(TEntity entity, bool saveNow = true);
-    Task AddAsync(TEntity entity, CancellationToken cancellationToken = default, bool saveNow = true);
-    void AddRange(IEnumerable<TEntity> entities, bool saveNow = true);
-    Task AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default, bool saveNow = true);
+    void Add(TEntity entity, bool saveNow = true, bool useAuthentication = true);
+    Task AddAsync(TEntity entity, CancellationToken cancellationToken = default, bool saveNow = true, bool useAuthentication = true);
+    void AddRange(IEnumerable<TEntity> entities, bool saveNow = true, bool useAuthentication = true);
+    Task AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default, bool saveNow = true, bool useAuthentication = true);
     void Attach(TEntity entity);
     void Delete(TEntity entity, bool saveNow = true);
     Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default, bool saveNow = true);
@@ -24,8 +24,8 @@ public interface IRepository<TEntity> where TEntity : class, IEntity
     Task LoadCollectionAsync<TProperty>(TEntity entity, Expression<Func<TEntity, IEnumerable<TProperty>>> collectionProperty, CancellationToken cancellationToken) where TProperty : class;
     void LoadReference<TProperty>(TEntity entity, Expression<Func<TEntity, TProperty>> referenceProperty) where TProperty : class;
     Task LoadReferenceAsync<TProperty>(TEntity entity, Expression<Func<TEntity, TProperty>> referenceProperty, CancellationToken cancellationToken = default) where TProperty : class;
-    void Update(TEntity entity, bool saveNow = true);
-    Task UpdateAsync(TEntity entity, CancellationToken cancellationToken, bool saveNow = true);
-    void UpdateRange(IEnumerable<TEntity> entities, bool saveNow = true);
-    Task UpdateRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default, bool saveNow = true);
+    void Update(TEntity entity, bool saveNow = true, bool useAuthentication = true);
+    Task UpdateAsync(TEntity entity, CancellationToken cancellationToken, bool saveNow = true, bool useAuthentication = true);
+    void UpdateRange(IEnumerable<TEntity> entities, bool saveNow = true, bool useAuthentication = true);
+    Task UpdateRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default, bool saveNow = true, bool useAuthentication = true);
 }

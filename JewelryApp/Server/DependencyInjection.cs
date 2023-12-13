@@ -17,6 +17,8 @@ using JewelryApp.Api.Validators.InvoiceItems;
 using JewelryApp.Shared.Requests.InvoiceItems;
 using JewelryApp.Shared.Requests.Invoices;
 using JewelryApp.Api.Validators.Invoices;
+using JewelryApp.Api.Validators.ProductCategories;
+using JewelryApp.Shared.Requests.ProductCategories;
 
 namespace JewelryApp.Api;
 
@@ -44,6 +46,8 @@ public static class DependencyInjection
         services.AddScoped<IValidator<UpdateInvoiceItemRequest>, UpdateInvoiceItemRequestValidator>();
         services.AddScoped<IValidator<AddInvoiceRequest>, AddInvoiceRequestValidator>();
         services.AddScoped<IValidator<UpdateInvoiceRequest>, UpdateInvoiceRequestValidator>();
+        services.AddScoped<IValidator<AddProductCategoryRequest>, AddProductCategoryRequestValidator>();
+        services.AddScoped<IValidator<UpdateProductCategoryRequest>, UpdateProductCategoryRequestValidator>();
 
         return services;
     }

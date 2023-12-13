@@ -34,14 +34,14 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
         return Entities.FindAsync(id, cancellationToken);
     }
 
-    public virtual async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default, bool saveNow = true)
+    public virtual async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default, bool saveNow = true, bool useAuthentication = true)
     {
         Assert.NotNull(entity, nameof(entity));
 
         if (entity is SoftDeleteModelBase softDeleteModelBase)
         {
             softDeleteModelBase.CreatedAt = DateTime.Now;
-            softDeleteModelBase.ModifiedUserId = await GetUserIdAsync();
+            softDeleteModelBase.ModifiedUserId = useAuthentication ? await GetUserIdAsync() : null;
         }
 
         await Entities.AddAsync(entity, cancellationToken).ConfigureAwait(false);
@@ -49,7 +49,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             await DbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public virtual async Task AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default, bool saveNow = true)
+    public virtual async Task AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default, bool saveNow = true, bool useAuthentication = true)
     {
         var entitiesList = entities.ToList();
         Assert.NotNull(entitiesList, nameof(entities));
@@ -59,7 +59,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             if (entity is SoftDeleteModelBase softDeleteModelBase)
             {
                 softDeleteModelBase.CreatedAt = DateTime.Now;
-                softDeleteModelBase.ModifiedUserId = await GetUserIdAsync();
+                softDeleteModelBase.ModifiedUserId = useAuthentication ? await GetUserIdAsync() : null;
             }
         }
 
@@ -68,14 +68,14 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             await DbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public virtual async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default, bool saveNow = true)
+    public virtual async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default, bool saveNow = true, bool useAuthentication = true)
     {
         Assert.NotNull(entity, nameof(entity));
 
         if (entity is SoftDeleteModelBase softDeleteModelBase)
         {
             softDeleteModelBase.CreatedAt = DateTime.Now;
-            softDeleteModelBase.ModifiedUserId = await GetUserIdAsync();
+            softDeleteModelBase.ModifiedUserId = useAuthentication ? await GetUserIdAsync() : null;
         }
 
         Entities.Update(entity);
@@ -83,7 +83,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             await DbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public virtual async Task UpdateRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default, bool saveNow = true)
+    public virtual async Task UpdateRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default, bool saveNow = true, bool useAuthentication = true)
     {
         var entitiesList = entities.ToList();
         Assert.NotNull(entitiesList, nameof(entities));
@@ -93,7 +93,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             if (entity is SoftDeleteModelBase softDeleteModelBase)
             {
                 softDeleteModelBase.CreatedAt = DateTime.Now;
-                softDeleteModelBase.ModifiedUserId = await GetUserIdAsync();
+                softDeleteModelBase.ModifiedUserId = useAuthentication ? await GetUserIdAsync() : null;
             }
         }
 
@@ -150,14 +150,14 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
         return Entities.Find(ids);
     }
 
-    public virtual void Add(TEntity entity, bool saveNow = true)
+    public virtual void Add(TEntity entity, bool saveNow = true, bool useAuthentication = true)
     {
         Assert.NotNull(entity, nameof(entity));
 
         if (entity is SoftDeleteModelBase softDeleteModelBase)
         {
             softDeleteModelBase.CreatedAt = DateTime.Now;
-            softDeleteModelBase.ModifiedUserId = GetUserId();
+            softDeleteModelBase.ModifiedUserId = useAuthentication ? GetUserId() : null;
         }
 
         Entities.Add(entity);
@@ -165,7 +165,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             DbContext.SaveChanges();
     }
 
-    public virtual void AddRange(IEnumerable<TEntity> entities, bool saveNow = true)
+    public virtual void AddRange(IEnumerable<TEntity> entities, bool saveNow = true, bool useAuthentication = true)
     {
         var entitiesList = entities.ToList();
         Assert.NotNull(entitiesList, nameof(entities));
@@ -175,7 +175,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             if (entity is SoftDeleteModelBase softDeleteModelBase)
             {
                 softDeleteModelBase.CreatedAt = DateTime.Now;
-                softDeleteModelBase.ModifiedUserId = GetUserId();
+                softDeleteModelBase.ModifiedUserId = useAuthentication ? GetUserId() : null;
             }
         }
 
@@ -184,14 +184,14 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             DbContext.SaveChanges();
     }
 
-    public virtual void Update(TEntity entity, bool saveNow = true)
+    public virtual void Update(TEntity entity, bool saveNow = true, bool useAuthentication = true)
     {
         Assert.NotNull(entity, nameof(entity));
 
         if (entity is SoftDeleteModelBase softDeleteModelBase)
         {
             softDeleteModelBase.CreatedAt = DateTime.Now;
-            softDeleteModelBase.ModifiedUserId = GetUserId();
+            softDeleteModelBase.ModifiedUserId = useAuthentication ? GetUserId() : null;
         }
 
         Entities.Update(entity);
@@ -199,7 +199,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             DbContext.SaveChanges();
     }
 
-    public virtual void UpdateRange(IEnumerable<TEntity> entities, bool saveNow = true)
+    public virtual void UpdateRange(IEnumerable<TEntity> entities, bool saveNow = true, bool useAuthentication = true)
     {
         var entitiesList = entities as TEntity[] ?? entities.ToArray();
         Assert.NotNull(entitiesList, nameof(entities));
@@ -209,7 +209,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             if (entity is SoftDeleteModelBase softDeleteModelBase)
             {
                 softDeleteModelBase.CreatedAt = DateTime.Now;
-                softDeleteModelBase.ModifiedUserId = GetUserId();
+                softDeleteModelBase.ModifiedUserId = useAuthentication ? GetUserId() : null;
             }
         }
 
@@ -336,7 +336,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
         if (user is null)
             return false;
         
-        return await _userManager.IsInRoleAsync(user, Identity.AdminRole);
+        return await _userManager.IsInRoleAsync(user, Data.Identity.AdminRole);
     }
 
     #endregion

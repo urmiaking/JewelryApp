@@ -1,0 +1,13 @@
+﻿using FluentValidation;
+using JewelryApp.Shared.Requests.ProductCategories;
+
+namespace JewelryApp.Api.Validators.ProductCategories;
+
+public class UpdateProductCategoryRequestValidator : AbstractValidator<UpdateProductCategoryRequest>
+{
+    public UpdateProductCategoryRequestValidator()
+    {
+        RuleFor(x => x.Id).NotEqual(0).WithMessage("لطفا دسته بندی مورد نظر برای ویرایش را مشخص کنید");
+        RuleFor(x => x.Name).NotEmpty().WithMessage("لطفا نام دسته بندی را وارد کنید");
+    }
+}

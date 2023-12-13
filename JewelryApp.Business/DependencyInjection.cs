@@ -25,6 +25,7 @@ public static class DependencyInjection
         services.AddScoped<IInvoiceService, InvoiceService>();
         services.AddScoped<ICustomerService, CustomerService>();
         services.AddScoped<IInvoiceItemService, InvoiceItemService>();
+        services.AddScoped<IProductCategoryService, ProductCategoryService>();
 
         services.AddSignalR();
 
