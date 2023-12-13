@@ -20,7 +20,7 @@ public class AccountController : ApiController
     }
 
     [AllowAnonymous]
-    [HttpPost("login")]
+    [HttpPost(nameof(Login))]
     public async Task<IActionResult> Login(AuthenticationRequest request)
     {
         var validationResult = await _validator.ValidateAsync(request);
@@ -42,7 +42,7 @@ public class AccountController : ApiController
     }
 
     [AllowAnonymous]
-    [HttpPost("refresh")]
+    [HttpPost(nameof(Refresh))]
     public async Task<IActionResult> Refresh(RefreshTokenRequest request)
     {
         var response = await _service.RefreshAsync(request);
@@ -57,7 +57,7 @@ public class AccountController : ApiController
         return response.Match(Ok, Problem);
     }
 
-    [Route("changepassword")]
+    [HttpGet(nameof(ChangePassword))]
     public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
     {
         var response = await _service.ChangePasswordAsync(request);

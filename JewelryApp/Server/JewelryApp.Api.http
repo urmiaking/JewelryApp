@@ -1,0 +1,22 @@
+﻿@JewelryApp.Api_HostAddress = https://localhost:7056
+
+POST {{JewelryApp.Api_HostAddress}}/api/account/Login
+Content-Type: application/json
+
+{
+  "userName": "admin",
+  "password": "admin@123"
+}
+
+###
+
+POST {{JewelryApp.Api_HostAddress}}/api/customers
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjVjMmU2Yjc1LWEwOTktZWUxMS1iNzNlLTE4YzA0ZGNjMjI5NiIsImp0aSI6IjMxOGRiMjJmLTVmNDgtNGMxMS1iNzYyLTI4ZDdiNjFmN2ZhNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNzAyNDY2MjYwLCJpc3MiOiJodHRwczovL2pld2VscnlhcHAuaW8iLCJhdWQiOiJodHRwczovL2pld2VscnlhcHAuaW8ifQ.tS9bzndgs8ex8SnLC9SlV4vS6ZzxQVkRxDYgcHFcM2g
+
+{
+  "name": "masoud",
+  "phonuNumber": "09905492104"
+}
+
+###

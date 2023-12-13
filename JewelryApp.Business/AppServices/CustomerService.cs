@@ -34,10 +34,13 @@ public class CustomerService : ICustomerService
 
     public async Task<ErrorOr<GetCustomerResponse>> GetCustomerByInvoiceIdAsync(GetCustomerRequest request, CancellationToken token = default)
     {
-        var invoice = await _invoiceRepository.GetByIdAsync(request.InvoiceId, token);
+        var invoice = await _invoiceRepository.GetByIdAsync(request.Id, token);
 
         if (invoice is null)
             return Errors.Invoice.NotFound;
+
+        if (invoice.Customer is null)
+            return Errors.Customer.NotFound;
 
         await _invoiceRepository.LoadReferenceAsync(invoice, x => x.Customer, token);
 
@@ -52,6 +55,9 @@ public class CustomerService : ICustomerService
 
         if (invoice is null)
             return Errors.Invoice.NotFound;
+
+        if (invoice.Customer is null)
+            return Errors.Customer.NotFound;
 
         await _invoiceRepository.LoadReferenceAsync(invoice, x => x.Customer, token);
 
@@ -69,7 +75,10 @@ public class CustomerService : ICustomerService
         if (invoice is null)
             return Errors.Invoice.NotFound;
 
-        await _invoiceRepository.LoadReferenceAsync(invoice, x => x.Customer, token);
+        if (invoice.Customer is null)
+            return Errors.Customer.NotFound;
+
+        await _invoiceRepository.LoadReferenceAsync(invoice, x => x.Customer!, token);
 
         await _customerRepository.DeleteAsync(invoice.Customer, token);
 

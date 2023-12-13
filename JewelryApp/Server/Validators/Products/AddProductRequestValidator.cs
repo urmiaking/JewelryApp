@@ -4,9 +4,9 @@ using JewelryApp.Shared.Requests.Products;
 
 namespace JewelryApp.Api.Validators.Products;
 
-public class AddProductValidator : AbstractValidator<AddProductRequest>
+public class AddProductRequestValidator : AbstractValidator<AddProductRequest>
 {
-    public AddProductValidator()
+    public AddProductRequestValidator()
     {
         RuleFor(x => x.Name).NotEmpty().WithMessage("نام جنس نمی تواند خالی باشد");
         RuleFor(x => x.Barcode).NotEmpty().WithMessage("بارکد نمی تواند خالی باشد");

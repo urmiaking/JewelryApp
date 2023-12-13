@@ -1,4 +1,7 @@
-﻿namespace JewelryApp.Core.DomainModels;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace JewelryApp.Core.DomainModels;
 
 public class Invoice : SoftDeleteModelBase
 {
@@ -15,4 +18,15 @@ public class Invoice : SoftDeleteModelBase
 
     public virtual ICollection<InvoiceItem> InvoiceItems { get; set; } = new List<InvoiceItem>();
     public virtual ICollection<OldGold> OldGolds { get; set; } = new List<OldGold>();
+}
+
+public class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
+{
+    public void Configure(EntityTypeBuilder<Invoice> builder)
+    {
+        builder.HasOne(i => i.Customer)
+            .WithOne()
+            .HasForeignKey<Customer>(c => c.Id)
+            .IsRequired();
+    }
 }

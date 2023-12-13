@@ -3,9 +3,9 @@ using JewelryApp.Shared.Requests.InvoiceItems;
 
 namespace JewelryApp.Api.Validators.InvoiceItems;
 
-public class AddInvoiceItemValidator : AbstractValidator<AddInvoiceItemRequest>
+public class AddInvoiceItemRequestValidator : AbstractValidator<AddInvoiceItemRequest>
 {
-    public AddInvoiceItemValidator()
+    public AddInvoiceItemRequestValidator()
     {
         RuleFor(x => x.TaxOffset).LessThanOrEqualTo(100).WithMessage("مالیات باید کمتر یا مساوی 100 باشد");
         RuleFor(x => x.Profit).LessThanOrEqualTo(100).WithMessage("سود باید کمتر یا مساوی 100 باشد");

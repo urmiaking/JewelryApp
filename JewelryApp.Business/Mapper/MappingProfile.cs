@@ -2,6 +2,7 @@
 using JewelryApp.Application.ExternalModels.Signal;
 using JewelryApp.Core.DomainModels;
 using JewelryApp.Core.Enums;
+using JewelryApp.Shared.Requests.Customer;
 using JewelryApp.Shared.Requests.Products;
 using JewelryApp.Shared.Responses.Invoices;
 using JewelryApp.Shared.Responses.Prices;
@@ -55,6 +56,12 @@ public class MappingProfile : Profile
             .ForMember(x => x.TotalRawPrice, a => a.MapFrom(b => b.InvoiceItems.Sum(x => x.Price)))
             .ForMember(x => x.TotalTax, a => a.MapFrom(b => b.InvoiceItems.Sum(x => x.Tax)))
             .ForMember(x => x.TotalFinalPrice, a => a.MapFrom(b => b.InvoiceItems.Sum(x => x.Tax) + b.InvoiceItems.Sum(x => x.Price)));
+
+        #endregion
+
+        #region MyRegion
+
+        CreateMap<AddCustomerRequest, Customer>();
 
         #endregion
     }

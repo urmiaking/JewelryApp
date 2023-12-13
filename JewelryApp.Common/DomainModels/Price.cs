@@ -1,7 +1,8 @@
 ﻿namespace JewelryApp.Core.DomainModels;
 
-public class Price : SoftDeleteModelBase
+public class Price : IEntity
 {
+    public int Id { get; set; }
     public double Gram17 { get; set; }
     public double Gram18 { get; set; }
     public double Gram24 { get; set; }

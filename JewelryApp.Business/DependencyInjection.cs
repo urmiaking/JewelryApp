@@ -17,6 +17,7 @@ public static class DependencyInjection
     {
         services.AddAutoMapper(typeof(MappingProfile));
 
+        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddHttpClient<IPriceApiService, PriceApiService>();
         services.AddScoped<IPriceService, PriceService>();
         services.AddScoped<IAccountService, AccountService>();
