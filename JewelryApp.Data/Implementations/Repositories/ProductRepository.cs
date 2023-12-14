@@ -19,7 +19,7 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
     public async Task<Product?> GetByNameAsync(string name, CancellationToken token = default)
         => await TableNoTracking
             .OrderByDescending(x => x.CreatedAt)
-            .FirstOrDefaultAsync(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase), token);
+            .FirstOrDefaultAsync(x => x.Name.Equals(name), token);
 
     public async Task<bool> CheckBarcodeExistsAsync(string barcode, CancellationToken token = default) => 
         await TableNoTracking.AnyAsync(x => x.Barcode == barcode, token);

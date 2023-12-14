@@ -17,10 +17,10 @@ public class ProductCategoryRepository : RepositoryBase<ProductCategory>, IProdu
     }
 
     public async Task<ProductCategory?> FindByNameAsync(string name, CancellationToken token = default)
-        => await Table.FirstOrDefaultAsync(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase), token);
+        => await Table.FirstOrDefaultAsync(x => x.Name.Equals(name), token);
 
     public async Task<bool> CheckExistenceAsync(string name, CancellationToken token = default)
-        => await TableNoTracking.AnyAsync(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase), token);
+        => await TableNoTracking.AnyAsync(x => x.Name.Equals(name), token);
 
     public async Task<bool> CheckUsedAsync(int id, CancellationToken token = default)
         => await _productRepository.TableNoTracking.AnyAsync(x => x.ProductCategoryId == id, token);

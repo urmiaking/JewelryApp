@@ -82,8 +82,8 @@ public class ProductService : IProductService
         
         if (!string.IsNullOrEmpty(request.SearchString))
         {
-            products = products.Where(a => a.Barcode.Contains(request.SearchString, StringComparison.OrdinalIgnoreCase) ||
-                                           a.Name.Contains(request.SearchString, StringComparison.OrdinalIgnoreCase));
+            products = products.Where(a => a.Barcode.Contains(request.SearchString) ||
+                                           a.Name.Contains(request.SearchString));
         }
 
         products = request.SortDirection switch

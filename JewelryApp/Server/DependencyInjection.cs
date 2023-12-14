@@ -60,30 +60,13 @@ public static class DependencyInjection
 
         var appDbContext = scope.ServiceProvider.GetService<AppDbContext>();
 
-        var retryCount = 0;
+        appDbContext?.Database.Migrate();
 
-        try
+        var dataInitializers = scope.ServiceProvider.GetServices<IDbInitializer>();
+
+        foreach (var dataInitializer in dataInitializers)
         {
-            appDbContext?.Database.Migrate();
-
-            var dataInitializers = scope.ServiceProvider.GetServices<IDbInitializer>();
-
-            foreach (var dataInitializer in dataInitializers)
-            {
-                dataInitializer.Initialize();
-            }
-        }
-        catch (Exception e)
-        {
-            if (retryCount < AppConstants.RetryCount)
-            {
-                retryCount++;
-                var loggerFactory = scope.ServiceProvider.GetService<ILoggerFactory>();
-                var logger = loggerFactory?.CreateLogger<Program>();
-                logger?.LogError(e.Message);
-                InitializeDatabase(app);
-            }
-            throw;
+            dataInitializer.Initialize();
         }
 
         return app;

@@ -3,9 +3,11 @@ using JewelryApp.Application.ExternalModels.Signal;
 using JewelryApp.Core.DomainModels;
 using JewelryApp.Core.Enums;
 using JewelryApp.Shared.Requests.Customer;
+using JewelryApp.Shared.Requests.ProductCategories;
 using JewelryApp.Shared.Requests.Products;
 using JewelryApp.Shared.Responses.Invoices;
 using JewelryApp.Shared.Responses.Prices;
+using JewelryApp.Shared.Responses.ProductCategories;
 using JewelryApp.Shared.Responses.Products;
 
 namespace JewelryApp.Application.Mapper;
@@ -59,9 +61,19 @@ public class MappingProfile : Profile
 
         #endregion
 
-        #region MyRegion
+        #region Customer
 
         CreateMap<AddCustomerRequest, Customer>();
+
+        #endregion
+
+        #region Product Category
+
+        CreateProjection<ProductCategory, GetProductCategoryResponse>();
+        CreateMap<AddProductCategoryRequest, ProductCategory>();
+        CreateMap<ProductCategory, AddProductCategoryResponse>();
+        CreateMap<UpdateProductCategoryRequest, ProductCategory>();
+        CreateMap<ProductCategory, UpdateProductCategoryResponse>();
 
         #endregion
     }

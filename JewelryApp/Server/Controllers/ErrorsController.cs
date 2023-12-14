@@ -1,12 +1,11 @@
 ﻿using JewelryApp.Api.Common.Errors;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JewelryApp.Api.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class ErrorsController : ControllerBase
+public class ErrorsController : ApiController
 {
     private readonly ILogger<ErrorsController> _logger;
 
@@ -15,7 +14,8 @@ public class ErrorsController : ControllerBase
         _logger = logger;
     }
 
-    [Route("/error")]
+    [HttpGet("/error")]
+    [AllowAnonymous]
     public IActionResult Error()
     {
         var exception = HttpContext.Features.Get<IExceptionHandlerFeature>()?.Error;
