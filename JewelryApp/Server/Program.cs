@@ -4,48 +4,35 @@ using JewelryApp.Application.Hubs;
 using JewelryApp.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
-
-var configuration = builder.Configuration;
-
-builder.Services
-    .AddApi(configuration)
-    .AddApplication(configuration)
-    .AddInfrastructure(configuration);
+{
+    builder.Services
+        .AddApi(builder.Configuration)
+        .AddApplication(builder.Configuration)
+        .AddInfrastructure(builder.Configuration);
+}
 
 var app = builder.Build();
-
-app.InitializeDatabase();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseExceptionHandler("/error");
+    app.InitializeDatabase();
+#if DEBUG
     app.UseWebAssemblyDebugging();
+#endif
+    app.UseHttpsRedirection();
+    app.UseBlazorFrameworkFiles();
+    app.UseStaticFiles();
+
+    app.UseRouting();
+
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    app.MapRazorPages();
+    app.MapControllers().RequireAuthorization();
+
+    app.MapHub<PriceHub>("/signalr-hub");
+
+    app.MapFallbackToFile("index.html");
+
+    app.Run();
 }
-else
-{
-    //app.UseExceptionHandler("/Error");
-    app.UseHsts();
-}
-
-app.UseExceptionHandler("/Error");
-
-app.UseHttpsRedirection();
-
-app.UseBlazorFrameworkFiles();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapRazorPages();
-app.MapControllers().RequireAuthorization();
-
-app.MapHub<PriceHub>("/signalr-hub");
-
-app.MapFallbackToFile("index.html");
-
-app.Run();

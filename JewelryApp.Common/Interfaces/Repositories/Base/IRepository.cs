@@ -14,9 +14,13 @@ public interface IRepository<TEntity> where TEntity : class, IEntity
     Task AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default, bool saveNow = true, bool useAuthentication = true);
     void Attach(TEntity entity);
     void Delete(TEntity entity, bool saveNow = true);
+    void UndoDelete(TEntity entity, bool saveNow = true);
     Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default, bool saveNow = true);
+    Task UndoDeleteAsync(TEntity entity, CancellationToken cancellationToken = default, bool saveNow = true);
     void DeleteRange(IEnumerable<TEntity> entities, bool saveNow = true);
+    void UndoDeleteRange(IEnumerable<TEntity> entities, bool saveNow = true);
     Task DeleteRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default, bool saveNow = true);
+    Task UndoDeleteRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default, bool saveNow = true);
     void Detach(TEntity entity);
     TEntity? GetById(params object[] ids);
     ValueTask<TEntity?> GetByIdAsync(object? id, CancellationToken cancellationToken = default);

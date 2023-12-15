@@ -13,6 +13,6 @@ public partial class Errors
             Error.Validation(code: "Authentication.InvalidTokenError", description: "توکن نامعتبر است. لطفا دوباره وارد شوید.");
 
         public static Error PasswordNotValid =>
-            Error.Validation(code: "Authentication.PasswordNotValidError", description: "رمز عبور جدید باید حداقل 6 رقم باشد.");
+            Error.Conflict(code: "Authentication.PasswordNotValidError", description: "تغییر رمز انجام نشد. لطفا مجددا امتحان کنید");
     }
 }

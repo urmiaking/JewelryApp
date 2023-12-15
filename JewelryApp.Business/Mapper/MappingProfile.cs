@@ -18,10 +18,10 @@ public class MappingProfile : Profile
 	{
         #region Product
 
-        CreateMap<AddProductRequest, Product>().ReverseMap()
-            .ForMember(x => x.CaratType, a => a.MapFrom(b => b.Carat))
-            .ForMember(x => x.CategoryId, a => a.MapFrom(b => b.ProductCategoryId));
-        CreateMap<AddProductResponse, Product>().ReverseMap()
+        CreateMap<AddProductRequest, Product>()
+            .ForMember(x => x.Carat, a => a.MapFrom(b => b.CaratType))
+            .ForMember(x => x.ProductCategoryId, a => a.MapFrom(b => b.CategoryId));
+        CreateMap<Product, AddProductResponse>().ConstructUsing(x => new(x.Id, x.Name, x.Weight, x.Wage, (int)x.WageType, (int)x.ProductType, (int)x.Carat, x.ProductCategoryId, x.Barcode))
             .ForMember(x => x.CaratType, a => a.MapFrom(b => b.Carat))
             .ForMember(x => x.CategoryId, a => a.MapFrom(b => b.ProductCategoryId));
         CreateMap<UpdateProductResponse, Product>().ReverseMap()
@@ -70,6 +70,7 @@ public class MappingProfile : Profile
         #region Product Category
 
         CreateProjection<ProductCategory, GetProductCategoryResponse>();
+        CreateMap<ProductCategory, GetProductCategoryResponse>();
         CreateMap<AddProductCategoryRequest, ProductCategory>();
         CreateMap<ProductCategory, AddProductCategoryResponse>();
         CreateMap<UpdateProductCategoryRequest, ProductCategory>();

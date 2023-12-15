@@ -48,6 +48,7 @@ public static class DependencyInjection
         services.AddScoped<IValidator<UpdateInvoiceRequest>, UpdateInvoiceRequestValidator>();
         services.AddScoped<IValidator<AddProductCategoryRequest>, AddProductCategoryRequestValidator>();
         services.AddScoped<IValidator<UpdateProductCategoryRequest>, UpdateProductCategoryRequestValidator>();
+        services.AddScoped<IValidator<ChangePasswordRequest>, ChangePasswordRequestValidator>();
 
         return services;
     }

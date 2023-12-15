@@ -24,8 +24,12 @@ public class ProductCategoryController : ApiController
         => Ok(await _productCategoryService.GetProductCategoriesAsync(cancellationToken));
 
     [HttpGet(nameof(Get))]
-    public async Task<IActionResult> Get(GetProductCategoryRequest request, CancellationToken cancellationToken)
-        => Ok(await _productCategoryService.GetProductCategoryAsync(request, cancellationToken));
+    public async Task<IActionResult> Get([FromQuery] GetProductCategoryRequest request, CancellationToken cancellationToken)
+    {
+        var response = await _productCategoryService.GetProductCategoryAsync(request, cancellationToken);
+
+        return response.Match(Ok, Problem);
+    }
 
     [HttpPost]
     public async Task<IActionResult> Add(AddProductCategoryRequest request, CancellationToken cancellationToken)

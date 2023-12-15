@@ -11,19 +11,21 @@ namespace JewelryApp.Api.Controllers;
 public class AccountController : ApiController
 {
     private readonly IAccountService _service;
-    private readonly IValidator<AuthenticationRequest> _validator;
+    private readonly IValidator<AuthenticationRequest> _authenticationValidator;
+    private readonly IValidator<ChangePasswordRequest> _changePasswordValidator;
 
-    public AccountController(IAccountService service, IValidator<AuthenticationRequest> validator)
+    public AccountController(IAccountService service, IValidator<AuthenticationRequest> authenticationValidator, IValidator<ChangePasswordRequest> changePasswordValidator)
     {
         _service = service;
-        _validator = validator;
+        _authenticationValidator = authenticationValidator;
+        _changePasswordValidator = changePasswordValidator;
     }
 
     [AllowAnonymous]
     [HttpPost(nameof(Login))]
     public async Task<IActionResult> Login(AuthenticationRequest request)
     {
-        var validationResult = await _validator.ValidateAsync(request);
+        var validationResult = await _authenticationValidator.ValidateAsync(request);
 
         if (!validationResult.IsValid)
         {
@@ -57,17 +59,18 @@ public class AccountController : ApiController
         return response.Match(Ok, Problem);
     }
 
-    [HttpGet(nameof(ChangePassword))]
-    public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
+    [HttpPost(nameof(ChangePassword))]
+    public async Task<IActionResult> ChangePassword(ChangePasswordRequest request, CancellationToken cancellationToken)
     {
-        var response = await _service.ChangePasswordAsync(request);
+        var validationResult = await _changePasswordValidator.ValidateAsync(request, cancellationToken);
 
-        if (response.IsError)
+        if (!validationResult.IsValid)
         {
-            return Problem(
-                statusCode: StatusCodes.Status400BadRequest,
-                title: response.FirstError.Description);
+            validationResult.AddToModelState(ModelState);
+            return ValidationProblem(ModelState);
         }
+
+        var response = await _service.ChangePasswordAsync(request);
 
         return response.Match(Ok, Problem);
     }

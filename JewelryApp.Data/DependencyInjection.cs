@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Text;
 using JewelryApp.Core.Constants;
 using JewelryApp.Core.DomainModels.Identity;
 using JewelryApp.Core.Interfaces;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace JewelryApp.Infrastructure;
@@ -71,13 +73,34 @@ public static class DependencyInjection
         }).AddJwtBearer(x =>
         {
             x.TokenValidationParameters = GetTokenValidationParameters(configuration);
+            x.SaveToken = true;
+            x.Events = new JwtBearerEvents
+            {
+                OnAuthenticationFailed = context =>
+                {
+                    var logger = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger(nameof(JwtBearerEvents));
+                    logger.LogError("Authentication failed.");
+
+                    context.Fail("Authentication failed.");
+                    return Task.CompletedTask;
+                },
+                OnChallenge = context =>
+                {
+                    var logger = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger(nameof(JwtBearerEvents));
+                    logger.LogError("OnChallenge error");
+
+                    if (context.AuthenticateFailure != null)
+                        throw new Exception("Invalid token! Authenticate failure");
+                    throw new Exception("You are unauthorized to access this resource");
+                }
+            };
         });
         services.AddAuthorization();
     }
 
     private static TokenValidationParameters GetTokenValidationParameters(IConfiguration configuration)
     {
-        return new TokenValidationParameters()
+        return new TokenValidationParameters
         {
             ValidIssuer = configuration["JwtSettings:Issuer"],
             ValidAudience = configuration["JwtSettings:Audience"],

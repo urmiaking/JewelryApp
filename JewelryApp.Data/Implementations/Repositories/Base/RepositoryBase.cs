@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Threading;
 using JewelryApp.Core.Constants;
 using JewelryApp.Core.DomainModels;
 using JewelryApp.Core.DomainModels.Identity;
@@ -106,7 +107,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
     {
         Assert.NotNull(entity, nameof(entity));
 
-        if (entity is SoftDeleteModelBase { Deleted: false } softDeleteEntity)
+        if (entity is SoftDeleteModelBase softDeleteEntity)
         {
             softDeleteEntity.Deleted = true;
             Entities.Update(entity);
@@ -120,6 +121,20 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             await DbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
+    public async Task UndoDeleteAsync(TEntity entity, CancellationToken cancellationToken = default, bool saveNow = true)
+    {
+        Assert.NotNull(entity, nameof(entity));
+
+        if (entity is SoftDeleteModelBase softDeleteEntity)
+        {
+            softDeleteEntity.Deleted = false;
+            Entities.Update(entity);
+        }
+
+        if (saveNow)
+            await DbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+    }
+
     public virtual async Task DeleteRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default, bool saveNow = true)
     {
         var entitiesList = entities.ToList();
@@ -127,7 +142,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
 
         foreach (var entity in entitiesList)
         {
-            if (entity is SoftDeleteModelBase { Deleted: false } softDeleteEntity)
+            if (entity is SoftDeleteModelBase softDeleteEntity)
             {
                 softDeleteEntity.Deleted = true;
                 Entities.Update(entity);
@@ -138,10 +153,28 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             }
         }
 
-        //Entities.RemoveRange(entitiesList);
         if (saveNow)
             await DbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
+
+    public async Task UndoDeleteRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default, bool saveNow = true)
+    {
+        var entitiesList = entities.ToList();
+        Assert.NotNull(entitiesList, nameof(entities));
+
+        foreach (var entity in entitiesList)
+        {
+            if (entity is SoftDeleteModelBase softDeleteEntity)
+            {
+                softDeleteEntity.Deleted = false;
+                Entities.Update(entity);
+            }
+        }
+
+        if (saveNow)
+            await DbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+    }
+
     #endregion
 
     #region Sync Methods
@@ -221,8 +254,8 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
     public virtual void Delete(TEntity entity, bool saveNow = true)
     {
         Assert.NotNull(entity, nameof(entity));
-
-        if (entity is SoftDeleteModelBase { Deleted: false } softDeleteEntity)
+            
+        if (entity is SoftDeleteModelBase softDeleteEntity)
         {
             softDeleteEntity.Deleted = true;
             Entities.Update(entity);
@@ -236,13 +269,27 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             DbContext.SaveChanges();
     }
 
+    public void UndoDelete(TEntity entity, bool saveNow = true)
+    {
+        Assert.NotNull(entity, nameof(entity));
+
+        if (entity is SoftDeleteModelBase softDeleteEntity)
+        {
+            softDeleteEntity.Deleted = false;
+            Entities.Update(entity);
+        }
+
+        if (saveNow)
+            DbContext.SaveChanges();
+    }
+
     public virtual void DeleteRange(IEnumerable<TEntity> entities, bool saveNow = true)
     {
         var entitiesList = entities.ToList();
         Assert.NotNull(entitiesList, nameof(entities));
         foreach (var entity in entitiesList)
         {
-            if (entity is SoftDeleteModelBase { Deleted: false } softDeleteEntity)
+            if (entity is SoftDeleteModelBase softDeleteEntity)
             {
                 softDeleteEntity.Deleted = true;
                 Entities.Update(entity);
@@ -254,6 +301,23 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
         }
 
         //Entities.RemoveRange(entitiesList);
+        if (saveNow)
+            DbContext.SaveChanges();
+    }
+
+    public void UndoDeleteRange(IEnumerable<TEntity> entities, bool saveNow = true)
+    {
+        var entitiesList = entities.ToList();
+        Assert.NotNull(entitiesList, nameof(entities));
+        foreach (var entity in entitiesList)
+        {
+            if (entity is SoftDeleteModelBase softDeleteEntity)
+            {
+                softDeleteEntity.Deleted = false;
+                Entities.Update(entity);
+            }
+        }
+
         if (saveNow)
             DbContext.SaveChanges();
     }

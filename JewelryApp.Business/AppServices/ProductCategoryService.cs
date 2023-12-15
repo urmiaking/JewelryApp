@@ -34,7 +34,7 @@ public class ProductCategoryService : IProductCategoryService
         if (productCategory is null)
             return Errors.ProductCategory.NotFound;
 
-        return _mapper.Map<GetProductCategoryResponse>(request);
+        return _mapper.Map<GetProductCategoryResponse>(productCategory);
     }
 
     public async Task<ErrorOr<AddProductCategoryResponse>> AddProductCategoryAsync(AddProductCategoryRequest request, CancellationToken cancellationToken = default)
