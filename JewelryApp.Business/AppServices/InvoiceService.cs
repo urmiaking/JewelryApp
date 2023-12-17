@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using ErrorOr;
 using JewelryApp.Application.Interfaces;
+using JewelryApp.Core.Attributes;
 using JewelryApp.Core.Constants;
 using JewelryApp.Core.DomainModels;
 using JewelryApp.Core.Errors;
@@ -12,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Application.AppServices;
 
+[ScopedService<IInvoiceService>]
 public class InvoiceService : IInvoiceService
 {
     private readonly IInvoiceRepository _invoiceRepository;
@@ -25,11 +27,8 @@ public class InvoiceService : IInvoiceService
 
     public async Task<IEnumerable<GetInvoiceTableResponse>?> GetInvoicesAsync(GetInvoiceTableRequest request, CancellationToken cancellationToken = default)
     {
-        var invoices = await _invoiceRepository.GetAllInvoices(cancellationToken);
+        var invoices = _invoiceRepository.Get();
 
-        if (invoices is null)
-            return null;
-        
         if (!string.IsNullOrEmpty(request.SearchString))
         {
             invoices = invoices.Where(a => a.Customer.FullName.Contains(request.SearchString) || (
@@ -59,7 +58,7 @@ public class InvoiceService : IInvoiceService
         if (request.Id is 0)
             return null;
 
-        var invoice = await _invoiceRepository.TableNoTracking
+        var invoice = await _invoiceRepository.Get(true, true)
             .Include(x => x.Customer)
             .Include(x => x.InvoiceItems)
             .ThenInclude(x => x.Product)
@@ -111,7 +110,7 @@ public class InvoiceService : IInvoiceService
     }
 
     public async Task<int> GetTotalInvoicesCount(CancellationToken cancellationToken)
-        => await _invoiceRepository.GetTotalInvoicesCount(cancellationToken);
+        => await _invoiceRepository.Get().CountAsync(cancellationToken);
 
     private static object? GetPropertyValue(object obj, string propertyName)
         => obj.GetType().GetProperty(propertyName)?.GetValue(obj, null);

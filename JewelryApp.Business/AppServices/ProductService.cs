@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using ErrorOr;
 using JewelryApp.Application.Interfaces;
+using JewelryApp.Core.Attributes;
 using JewelryApp.Core.Constants;
 using JewelryApp.Core.DomainModels;
 using JewelryApp.Core.Errors;
@@ -12,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Application.AppServices;
 
+[ScopedService<IProductService>]
 public class ProductService : IProductService
 {
     private readonly IProductRepository _productRepository;
@@ -75,11 +77,8 @@ public class ProductService : IProductService
 
     public async Task<IEnumerable<GetProductResponse>?> GetProductsAsync(GetProductsRequest request, CancellationToken token = default)
     {
-        var products = await _productRepository.GetAllProductsAsync(token);
+        var products = _productRepository.GetAll(token);
 
-        if (products is null)
-            return null;
-        
         if (!string.IsNullOrEmpty(request.SearchString))
         {
             products = products.Where(a => a.Barcode.Contains(request.SearchString) ||

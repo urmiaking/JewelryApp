@@ -2,6 +2,7 @@
 using ErrorOr;
 using JewelryApp.Application.ExternalModels.Signal;
 using JewelryApp.Application.Interfaces;
+using JewelryApp.Core.Attributes;
 using JewelryApp.Core.DomainModels;
 using JewelryApp.Core.Errors;
 using JewelryApp.Core.Interfaces.Repositories;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace JewelryApp.Application.AppServices;
 
+[ScopedService<IPriceService>]
 public class PriceService : IPriceService
 {
     private readonly IMapper _mapper;

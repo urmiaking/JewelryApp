@@ -1,10 +1,12 @@
 ﻿using JewelryApp.Application.Interfaces;
+using JewelryApp.Core.Attributes;
 using JewelryApp.Core.DomainModels;
 using JewelryApp.Core.Interfaces.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Application.AppServices;
 
+[ScopedService<IRefreshTokenService>]
 public class RefreshTokenService : IRefreshTokenService
 {
     private readonly IRepository<RefreshToken> _repository;
@@ -30,11 +32,11 @@ public class RefreshTokenService : IRefreshTokenService
     }
 
     public async Task<RefreshToken?> FindAsync(Guid id)
-        => await _repository.TableNoTracking.FirstOrDefaultAsync(x => x.Id == id);
+        => await _repository.Get(asNoTracking: false).FirstOrDefaultAsync(x => x.Id == id);
     
     public async Task SetUsedAsync(Guid id)
     {
-        var model = await _repository.Table
+        var model = await _repository.Get(asNoTracking: false)
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (model != null)
@@ -47,7 +49,7 @@ public class RefreshTokenService : IRefreshTokenService
 
     public async Task SetInvalidatedAsync(Guid id)
     {
-        var model = await _repository.Table
+        var model = await _repository.Get(asNoTracking: false)
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (model != null)

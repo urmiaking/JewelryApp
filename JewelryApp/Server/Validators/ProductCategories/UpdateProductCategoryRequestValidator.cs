@@ -1,8 +1,10 @@
 ﻿using FluentValidation;
+using JewelryApp.Core.Attributes;
 using JewelryApp.Shared.Requests.ProductCategories;
 
 namespace JewelryApp.Api.Validators.ProductCategories;
 
+[ScopedService<IValidator<UpdateProductCategoryRequest>>]
 public class UpdateProductCategoryRequestValidator : AbstractValidator<UpdateProductCategoryRequest>
 {
     public UpdateProductCategoryRequestValidator()

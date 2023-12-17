@@ -16,30 +16,20 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration, params Assembly[] assemblies)
     {
         services.AddAutoMapper(typeof(MappingProfile));
-
-        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddHttpClient<IPriceApiService, PriceApiService>();
-        services.AddScoped<IPriceService, PriceService>();
-        services.AddScoped<IAccountService, AccountService>();
-        services.AddScoped<IProductService, ProductService>();
-        services.AddScoped<IInvoiceService, InvoiceService>();
-        services.AddScoped<ICustomerService, CustomerService>();
-        services.AddScoped<IInvoiceItemService, InvoiceItemService>();
-        services.AddScoped<IProductCategoryService, ProductCategoryService>();
-
         services.AddSignalR();
 
-        var cronExpression = configuration.GetSection("CronExpression").Value
-                             ?? throw new ArgumentException("There is no cron expression");
-
-        services.AddCronJob<UpdatePriceJob>(cronExpression);
+        services.AddCronJob<UpdatePriceJob>(configuration);
 
         return services;
     }
 
-    public static IServiceCollection AddCronJob<T>(this IServiceCollection services, string cronExpression)
+    public static IServiceCollection AddCronJob<T>(this IServiceCollection services, IConfiguration configuration)
         where T : class, ICronJob
     {
+        var cronExpression = configuration.GetSection("CronExpression").Value
+                             ?? throw new ArgumentException("There is no cron expression");
+
         var cron = CrontabSchedule.TryParse(cronExpression)
                    ?? throw new ArgumentException("Invalid cron expression", nameof(cronExpression));
 

@@ -1,12 +1,12 @@
-﻿using System.Net;
+﻿using System.Security.Claims;
 using System.Text;
 using JewelryApp.Core.Constants;
 using JewelryApp.Core.DomainModels.Identity;
+using JewelryApp.Core.Exceptions;
 using JewelryApp.Core.Interfaces;
-using JewelryApp.Core.Interfaces.Repositories;
 using JewelryApp.Core.Interfaces.Repositories.Base;
+using JewelryApp.Core.Utilities;
 using JewelryApp.Infrastructure.Implementations;
-using JewelryApp.Infrastructure.Implementations.Repositories;
 using JewelryApp.Infrastructure.Implementations.Repositories.Base;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using static JewelryApp.Core.Errors.Errors;
 
 namespace JewelryApp.Infrastructure;
 
@@ -22,15 +23,13 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddSqlServer<AppDbContext>(configuration.GetConnectionString(AppConstants.ConnectionStringName));
-        services.AddScoped(typeof(IRepository<>), typeof(RepositoryBase<>));
-        services.AddScoped<IPriceRepository, PriceRepository>();
-        services.AddScoped<IProductRepository, ProductRepository>();
-        services.AddScoped<IInvoiceRepository, InvoiceRepository>();
-        services.AddScoped<IInvoiceItemRepository, InvoiceItemRepository>();
-        services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
-        services.AddScoped<IDbInitializer, DbInitializer>();
         services.AddAppIdentity();
         services.AddCustomAuthentication(configuration);
+
+        services.AddScoped(typeof(IRepository<>), typeof(RepositoryBase<>));
+
+        services.AddScoped<IElevatedAccessService, ElevatedAccessService>();
+        
 
         return services;
     }
@@ -90,8 +89,20 @@ public static class DependencyInjection
                     logger.LogError("OnChallenge error");
 
                     if (context.AuthenticateFailure != null)
-                        throw new Exception("Invalid token! Authenticate failure");
-                    throw new Exception("You are unauthorized to access this resource");
+                        throw new UnauthenticatedException("توکن معتبر نیست! لطفا دوباره وارد شوید");
+                    throw new ForbiddenAccessException("شما به این قسمت دسترسی ندارید");
+                },
+                OnTokenValidated = async context =>
+                {
+                    var signInManager = context.HttpContext.RequestServices.GetRequiredService<SignInManager<AppUser>>();
+
+                    var claimsIdentity = context.Principal?.Identity as ClaimsIdentity;
+                    if (claimsIdentity?.Claims.Any() != true)
+                        context.Fail("This token has no claims");
+
+                    var validatedUser = await signInManager.ValidateSecurityStampAsync(context.Principal);
+                    if (validatedUser == null)
+                        context.Fail("Token security stamp is not valid");
                 }
             };
         });

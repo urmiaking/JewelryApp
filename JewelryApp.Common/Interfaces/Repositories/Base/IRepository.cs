@@ -5,9 +5,7 @@ namespace JewelryApp.Core.Interfaces.Repositories.Base;
 
 public interface IRepository<TEntity> where TEntity : class, IEntity
 {
-    IQueryable<TEntity> Table { get; }
-    IQueryable<TEntity> TableNoTracking { get; }
-
+    IQueryable<TEntity> Get(bool asNoTracking = true, bool retrieveDeletedRecords = false, bool useAuthentication = true);
     void Add(TEntity entity, bool saveNow = true, bool useAuthentication = true);
     Task AddAsync(TEntity entity, CancellationToken cancellationToken = default, bool saveNow = true, bool useAuthentication = true);
     void AddRange(IEnumerable<TEntity> entities, bool saveNow = true, bool useAuthentication = true);

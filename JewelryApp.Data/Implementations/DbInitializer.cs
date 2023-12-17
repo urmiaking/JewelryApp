@@ -4,11 +4,11 @@ using JewelryApp.Core.DomainModels.Identity;
 using JewelryApp.Core.Interfaces;
 using JewelryApp.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel;
+using JewelryApp.Core.Attributes;
 
 namespace JewelryApp.Infrastructure.Implementations;
 
+[ScopedService<IDbInitializer>]
 public class DbInitializer : IDbInitializer
 {
     private readonly UserManager<AppUser> _userManager;
@@ -30,7 +30,7 @@ public class DbInitializer : IDbInitializer
 
     private void SeedProductCategories()
     {
-        if (!_productCategoryRepository.TableNoTracking.Any())
+        if (!_productCategoryRepository.Get(useAuthentication: false).Any())
         {
             var initialCategories = new List<ProductCategory>
             {

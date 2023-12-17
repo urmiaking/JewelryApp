@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using ErrorOr;
 using JewelryApp.Application.Interfaces;
+using JewelryApp.Core.Attributes;
 using JewelryApp.Core.DomainModels;
 using JewelryApp.Core.Errors;
 using JewelryApp.Core.Interfaces.Repositories;
@@ -11,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Application.AppServices;
 
+[ScopedService<IInvoiceItemService>]
 public class InvoiceItemService : IInvoiceItemService
 {
     private readonly IInvoiceItemRepository _invoiceItemRepository;

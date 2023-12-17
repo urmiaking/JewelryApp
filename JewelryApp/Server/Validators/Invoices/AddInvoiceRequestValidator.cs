@@ -1,8 +1,10 @@
 ﻿using FluentValidation;
+using JewelryApp.Core.Attributes;
 using JewelryApp.Shared.Requests.Invoices;
 
 namespace JewelryApp.Api.Validators.Invoices;
 
+[ScopedService<IValidator<AddInvoiceRequest>>]
 public class AddInvoiceRequestValidator : AbstractValidator<AddInvoiceRequest>
 {
     public AddInvoiceRequestValidator()

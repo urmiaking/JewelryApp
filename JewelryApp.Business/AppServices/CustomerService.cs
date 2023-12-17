@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ErrorOr;
 using JewelryApp.Application.Interfaces;
+using JewelryApp.Core.Attributes;
 using JewelryApp.Core.DomainModels;
 using JewelryApp.Core.Errors;
 using JewelryApp.Core.Interfaces.Repositories;
@@ -10,6 +11,7 @@ using JewelryApp.Shared.Responses.Customer;
 
 namespace JewelryApp.Application.AppServices;
 
+[ScopedService<ICustomerService>]
 public class CustomerService : ICustomerService
 {
     private readonly IRepository<Customer> _customerRepository;

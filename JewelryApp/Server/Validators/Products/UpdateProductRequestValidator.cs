@@ -1,9 +1,11 @@
 ﻿using FluentValidation;
+using JewelryApp.Core.Attributes;
 using JewelryApp.Core.Enums;
 using JewelryApp.Shared.Requests.Products;
 
 namespace JewelryApp.Api.Validators.Products;
 
+[ScopedService<IValidator<UpdateProductRequest>>]
 public class UpdateProductRequestValidator : AbstractValidator<UpdateProductRequest>
 {
     public UpdateProductRequestValidator()
