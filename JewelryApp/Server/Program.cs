@@ -1,4 +1,5 @@
 using JewelryApp.Api;
+using JewelryApp.Api.Common;
 using JewelryApp.Application;
 using JewelryApp.Application.Hubs;
 using JewelryApp.Infrastructure;

@@ -3,7 +3,9 @@ using System.Security.Claims;
 using System.Text;
 using ErrorOr;
 using JewelryApp.Application.Interfaces;
+using JewelryApp.Core.Attributes;
 using JewelryApp.Core.DomainModels.Identity;
+using JewelryApp.Core.Errors;
 using JewelryApp.Core.Settings;
 using JewelryApp.Shared.Requests.Authentication;
 using JewelryApp.Shared.Responses.Authentication;
@@ -11,10 +13,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Errors = JewelryApp.Core.Errors.Errors;
 
 namespace JewelryApp.Application.AppServices;
 
+[ScopedService<IAccountService>]
 public class AccountService : IAccountService
 {
     private readonly IRefreshTokenService _refreshTokenService;

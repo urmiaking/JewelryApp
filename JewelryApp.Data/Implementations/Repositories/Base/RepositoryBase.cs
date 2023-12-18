@@ -1,11 +1,10 @@
 ﻿using System.Linq.Expressions;
-using System.Threading;
 using JewelryApp.Core.Constants;
 using JewelryApp.Core.DomainModels;
 using JewelryApp.Core.DomainModels.Identity;
+using JewelryApp.Core.Interfaces;
 using JewelryApp.Core.Interfaces.Repositories.Base;
 using JewelryApp.Core.Utilities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,19 +14,45 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
     where TEntity : class, IEntity
 {
     protected readonly AppDbContext DbContext;
-    public DbSet<TEntity> Entities { get; }
-    public virtual IQueryable<TEntity> Table => Entities;
-    public virtual IQueryable<TEntity> TableNoTracking => Entities.AsNoTracking();
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly UserManager<AppUser> _userManager;
+    private DbSet<TEntity> Entities { get; }
 
-    public RepositoryBase(AppDbContext dbContext, IHttpContextAccessor httpContextAccessor, UserManager<AppUser> userManager)
+    private readonly UserManager<AppUser> _userManager;
+    private readonly IElevatedAccessService _elevatedAccessService;
+
+    public RepositoryBase(AppDbContext dbContext, IElevatedAccessService elevatedAccessService, UserManager<AppUser> userManager)
     {
         DbContext = dbContext;
-        _httpContextAccessor = httpContextAccessor;
         _userManager = userManager;
+        _elevatedAccessService = elevatedAccessService;
         Entities = DbContext.Set<TEntity>();
     }
+
+    #region Queryable Table
+
+    public IQueryable<TEntity> Get(bool asNoTracking = true, bool retrieveDeletedRecords = false, bool useAuthentication = true)
+    {
+        var query = asNoTracking ? Entities.AsNoTracking() : Entities;
+
+        var canRetrieveDeletedRecords = retrieveDeletedRecords && (_elevatedAccessService.IsAdminUser() || _elevatedAccessService.IsMainUser());
+
+        if (typeof(TEntity).IsAssignableTo(typeof(SoftDeleteModelBase)))
+        {
+            query = query.Where(x => canRetrieveDeletedRecords || !(x as SoftDeleteModelBase)!.Deleted);
+
+            if (!_elevatedAccessService.IsAdminUser())
+            {
+                if (useAuthentication)
+                {
+                    var userId = _elevatedAccessService.GetUserId();
+                    query = query.Where(x => (x as SoftDeleteModelBase)!.ModifiedUserId == userId);
+                }
+            }
+        }
+
+        return query;
+    }
+
+    #endregion
 
     #region Async Method
     public virtual ValueTask<TEntity?> GetByIdAsync(object? id, CancellationToken cancellationToken = default)
@@ -42,7 +67,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
         if (entity is SoftDeleteModelBase softDeleteModelBase)
         {
             softDeleteModelBase.CreatedAt = DateTime.Now;
-            softDeleteModelBase.ModifiedUserId = useAuthentication ? await GetUserIdAsync() : null;
+            softDeleteModelBase.ModifiedUserId = useAuthentication ? _elevatedAccessService.GetUserId() : null;
         }
 
         await Entities.AddAsync(entity, cancellationToken).ConfigureAwait(false);
@@ -60,7 +85,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             if (entity is SoftDeleteModelBase softDeleteModelBase)
             {
                 softDeleteModelBase.CreatedAt = DateTime.Now;
-                softDeleteModelBase.ModifiedUserId = useAuthentication ? await GetUserIdAsync() : null;
+                softDeleteModelBase.ModifiedUserId = useAuthentication ? _elevatedAccessService.GetUserId() : null;
             }
         }
 
@@ -76,7 +101,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
         if (entity is SoftDeleteModelBase softDeleteModelBase)
         {
             softDeleteModelBase.CreatedAt = DateTime.Now;
-            softDeleteModelBase.ModifiedUserId = useAuthentication ? await GetUserIdAsync() : null;
+            softDeleteModelBase.ModifiedUserId = useAuthentication ? _elevatedAccessService.GetUserId() : null;
         }
 
         Entities.Update(entity);
@@ -94,7 +119,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             if (entity is SoftDeleteModelBase softDeleteModelBase)
             {
                 softDeleteModelBase.CreatedAt = DateTime.Now;
-                softDeleteModelBase.ModifiedUserId = useAuthentication ? await GetUserIdAsync() : null;
+                softDeleteModelBase.ModifiedUserId = useAuthentication ? _elevatedAccessService.GetUserId() : null;
             }
         }
 
@@ -190,7 +215,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
         if (entity is SoftDeleteModelBase softDeleteModelBase)
         {
             softDeleteModelBase.CreatedAt = DateTime.Now;
-            softDeleteModelBase.ModifiedUserId = useAuthentication ? GetUserId() : null;
+            softDeleteModelBase.ModifiedUserId = useAuthentication ? _elevatedAccessService.GetUserId() : null;
         }
 
         Entities.Add(entity);
@@ -208,7 +233,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             if (entity is SoftDeleteModelBase softDeleteModelBase)
             {
                 softDeleteModelBase.CreatedAt = DateTime.Now;
-                softDeleteModelBase.ModifiedUserId = useAuthentication ? GetUserId() : null;
+                softDeleteModelBase.ModifiedUserId = useAuthentication ? _elevatedAccessService.GetUserId() : null;
             }
         }
 
@@ -224,7 +249,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
         if (entity is SoftDeleteModelBase softDeleteModelBase)
         {
             softDeleteModelBase.CreatedAt = DateTime.Now;
-            softDeleteModelBase.ModifiedUserId = useAuthentication ? GetUserId() : null;
+            softDeleteModelBase.ModifiedUserId = useAuthentication ? _elevatedAccessService.GetUserId() : null;
         }
 
         Entities.Update(entity);
@@ -242,7 +267,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             if (entity is SoftDeleteModelBase softDeleteModelBase)
             {
                 softDeleteModelBase.CreatedAt = DateTime.Now;
-                softDeleteModelBase.ModifiedUserId = useAuthentication ? GetUserId() : null;
+                softDeleteModelBase.ModifiedUserId = useAuthentication ? _elevatedAccessService.GetUserId() : null;
             }
         }
 
@@ -376,32 +401,5 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
         if (!reference.IsLoaded)
             reference.Load();
     }
-    #endregion
-
-    #region Common Methods
-
-    protected async Task<Guid?> GetUserIdAsync()
-    {
-        var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
-
-        return user?.Id;
-    }
-
-    protected Guid? GetUserId()
-    {
-        var user = _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User).GetAwaiter().GetResult();
-
-        return user?.Id;
-    }
-
-    protected async Task<bool> IsAdminAsync()
-    {
-        var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
-        if (user is null)
-            return false;
-        
-        return await _userManager.IsInRoleAsync(user, Data.Identity.AdminRole);
-    }
-
     #endregion
 }

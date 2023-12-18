@@ -1,8 +1,10 @@
 ﻿using FluentValidation;
+using JewelryApp.Core.Attributes;
 using JewelryApp.Shared.Requests.Authentication;
 
 namespace JewelryApp.Api.Validators.Authentication;
 
+[ScopedService<IValidator<AuthenticationRequest>>]
 public class AuthenticationRequestValidator : AbstractValidator<AuthenticationRequest>
 {
     public AuthenticationRequestValidator()

@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using ErrorOr;
 using JewelryApp.Application.Interfaces;
+using JewelryApp.Core.Attributes;
 using JewelryApp.Core.DomainModels;
 using JewelryApp.Core.Errors;
 using JewelryApp.Core.Interfaces.Repositories;
@@ -11,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Application.AppServices;
 
+[ScopedService<IProductCategoryService>]
 public class ProductCategoryService : IProductCategoryService
 {
     private readonly IProductCategoryRepository _productCategoryRepository;
@@ -24,7 +26,7 @@ public class ProductCategoryService : IProductCategoryService
 
     public async Task<IEnumerable<GetProductCategoryResponse>> GetProductCategoriesAsync(
         CancellationToken cancellationToken = default)
-        => await _productCategoryRepository.TableNoTracking
+        => await _productCategoryRepository.Get()
             .ProjectTo<GetProductCategoryResponse>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
     
     public async Task<ErrorOr<GetProductCategoryResponse>> GetProductCategoryAsync(GetProductCategoryRequest request, CancellationToken cancellationToken = default)

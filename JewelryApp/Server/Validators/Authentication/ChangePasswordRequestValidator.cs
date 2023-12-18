@@ -1,8 +1,10 @@
 ﻿using FluentValidation;
+using JewelryApp.Core.Attributes;
 using JewelryApp.Shared.Requests.Authentication;
 
 namespace JewelryApp.Api.Validators.Authentication;
 
+[ScopedService<IValidator<ChangePasswordRequest>>]
 public class ChangePasswordRequestValidator : AbstractValidator<ChangePasswordRequest>
 {
     public ChangePasswordRequestValidator()

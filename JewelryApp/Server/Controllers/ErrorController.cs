@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using JewelryApp.Core.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,8 +21,15 @@ public class ErrorController : ApiController
     {
         var exception = HttpContext.Features.Get<IExceptionHandlerFeature>()?.Error;
 
+        var statusCode = exception switch
+        {
+            ForbiddenAccessException => StatusCodes.Status403Forbidden,
+            UnauthenticatedException => StatusCodes.Status401Unauthorized,
+            _ => StatusCodes.Status500InternalServerError
+        };
+
         _logger.LogError(exception, exception?.Message);
 
-        return Problem(statusCode: StatusCodes.Status500InternalServerError, title: exception?.Message);
+        return Problem(statusCode: statusCode, title: exception?.Message);
     }
 }
