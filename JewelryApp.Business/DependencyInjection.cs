@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using FluentValidation;
 using JewelryApp.Application.AppServices;
 using JewelryApp.Application.Interfaces;
 using JewelryApp.Application.Jobs;
