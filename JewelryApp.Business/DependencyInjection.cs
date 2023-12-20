@@ -12,7 +12,7 @@ namespace JewelryApp.Application;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration, params Assembly[] assemblies)
+    public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddAutoMapper(typeof(MappingProfile));
         services.AddHttpClient<IPriceApiService, PriceApiService>();

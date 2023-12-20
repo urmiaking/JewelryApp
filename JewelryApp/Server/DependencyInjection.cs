@@ -1,6 +1,24 @@
-﻿using JewelryApp.Core.Settings;
-using JewelryApp.Core.Attributes;
-using System.Reflection;
+﻿using Microsoft.AspNetCore.Mvc.Infrastructure;
+using JewelryApp.Api.Common.Errors;
+using JewelryApp.Core.Constants;
+using JewelryApp.Core.Interfaces;
+using JewelryApp.Core.Settings;
+using JewelryApp.Core.Utilities;
+using JewelryApp.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using FluentValidation;
+using JewelryApp.Api.Validators.Authentication;
+using JewelryApp.Api.Validators.Products;
+using JewelryApp.Shared.Requests.Authentication;
+using JewelryApp.Shared.Requests.Products;
+using JewelryApp.Shared.Requests.Customer;
+using JewelryApp.Api.Validators.Customers;
+using JewelryApp.Api.Validators.InvoiceItems;
+using JewelryApp.Shared.Requests.InvoiceItems;
+using JewelryApp.Shared.Requests.Invoices;
+using JewelryApp.Api.Validators.Invoices;
+using JewelryApp.Shared.Requests.ProductCategories;
+using JewelryApp.Api.Validators.Products.ProductCategories;
 
 namespace JewelryApp.Api;
 
@@ -14,67 +32,44 @@ public static class DependencyInjection
         services.AddSwaggerGen();
 
         services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+        services.AddSignalR();
         services.AddHttpContextAccessor();
 
-        services.DiscoverServices(AppDomain.CurrentDomain.GetAssemblies());
+        services.AddSingleton<ProblemDetailsFactory, AppProblemDetailsFactory>();
+
+        services.AddScoped<IValidator<AuthenticationRequest>, AuthenticationRequestValidator>();
+        services.AddScoped<IValidator<AddProductRequest>, AddProductRequestValidator>();
+        services.AddScoped<IValidator<UpdateProductRequest>, UpdateProductRequestValidator>();
+        services.AddScoped<IValidator<AddCustomerRequest>, AddCustomerRequestValidator>();
+        services.AddScoped<IValidator<UpdateCustomerRequest>, UpdateCustomerRequestValidator>();
+        services.AddScoped<IValidator<AddInvoiceItemRequest>, AddInvoiceItemRequestValidator>();
+        services.AddScoped<IValidator<UpdateInvoiceItemRequest>, UpdateInvoiceItemRequestValidator>();
+        services.AddScoped<IValidator<AddInvoiceRequest>, AddInvoiceRequestValidator>();
+        services.AddScoped<IValidator<UpdateInvoiceRequest>, UpdateInvoiceRequestValidator>();
+        services.AddScoped<IValidator<AddProductCategoryRequest>, AddProductCategoryRequestValidator>();
+        services.AddScoped<IValidator<UpdateProductCategoryRequest>, UpdateProductCategoryRequestValidator>();
+        services.AddScoped<IValidator<ChangePasswordRequest>, ChangePasswordRequestValidator>();
 
         return services;
     }
 
-    private static void DiscoverServices(this IServiceCollection services, Assembly[] assembly)
+    public static IApplicationBuilder InitializeDatabase(this IApplicationBuilder app)
     {
-        var assembliesToScan = new[]
+        Assert.NotNull(app, nameof(app));
+
+        using var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
+
+        var appDbContext = scope.ServiceProvider.GetService<AppDbContext>();
+
+        appDbContext?.Database.Migrate();
+
+        var dataInitializers = scope.ServiceProvider.GetServices<IDbInitializer>();
+
+        foreach (var dataInitializer in dataInitializers)
         {
-            Assembly.GetExecutingAssembly(), // The current assembly (e.g. API)
-            Assembly.Load("JewelryApp.Infrastructure"), // Your Infrastructure assembly
-            Assembly.Load("JewelryApp.Application") // Your Application assembly
-        };
-
-        services.DiscoverSingletonServices(assembliesToScan);
-        services.DiscoverScopedServices(assembliesToScan);
-    }
-
-    private static void DiscoverSingletonServices(this IServiceCollection services, IEnumerable<Assembly> assemblies)
-    {
-        var typesList = assemblies.Select(assembly => assembly.GetTypes()).ToList();
-
-        foreach (var types in typesList)
-        {
-            foreach (var type in types)
-            {
-                var serviceAttrs = type.GetCustomAttributes()
-                    .Where(x => x.GetType().IsGenericType && x.GetType().GetGenericTypeDefinition() == typeof(SingletonServiceAttribute<>));
-
-                foreach (var serviceAttr in serviceAttrs)
-                {
-                    var implementationType = type;
-                    var serviceType = serviceAttr.GetType().GenericTypeArguments[0];
-
-                    services.AddSingleton(serviceType, implementationType);
-                }
-            }
+            dataInitializer.Initialize();
         }
-    }
 
-    private static void DiscoverScopedServices(this IServiceCollection services, IEnumerable<Assembly> assemblies)
-    {
-        var typesList = assemblies.Select(assembly => assembly.GetTypes()).ToList();
-
-        foreach (var types in typesList)
-        {
-            foreach (var type in types)
-            {
-                var serviceAttrs = type.GetCustomAttributes()
-                    .Where(x => x.GetType().IsGenericType && x.GetType().GetGenericTypeDefinition() == typeof(ScopedServiceAttribute<>));
-
-                foreach (var serviceAttr in serviceAttrs)
-                {
-                    var implementationType = type;
-                    var serviceType = serviceAttr.GetType().GenericTypeArguments[0];
-
-                    services.AddScoped(serviceType, implementationType);
-                }
-            }
-        }
+        return app;
     }
 }
