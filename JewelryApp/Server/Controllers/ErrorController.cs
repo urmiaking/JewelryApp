@@ -27,7 +27,7 @@ public class ErrorController : ApiController
             UnauthenticatedException => StatusCodes.Status401Unauthorized,
             _ => StatusCodes.Status500InternalServerError
         };
-
+        
         _logger.LogError(exception, exception?.Message);
 
         return Problem(statusCode: statusCode, title: exception?.Message);

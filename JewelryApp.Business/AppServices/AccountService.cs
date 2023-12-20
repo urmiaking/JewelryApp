@@ -154,10 +154,7 @@ public class AccountService : IAccountService
         {
             _tokenValidationParameters.ValidateLifetime = false;
             var principal = tokenHandler.ValidateToken(token, _tokenValidationParameters, out var validatedToken);
-            if (!IsJwtWithValidSecurityAlgorithm(validatedToken))
-                return null;
-
-            return principal;
+            return !IsJwtWithValidSecurityAlgorithm(validatedToken) ? null : principal;
         }
         catch (Exception)
         {
@@ -165,7 +162,7 @@ public class AccountService : IAccountService
         }
     }
 
-    private bool IsJwtWithValidSecurityAlgorithm(SecurityToken validatedToken)
+    private static bool IsJwtWithValidSecurityAlgorithm(SecurityToken validatedToken)
     {
         return (validatedToken is JwtSecurityToken jwtSecurityToken) &&
                jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
@@ -182,20 +179,18 @@ public class AccountService : IAccountService
 
     private async Task<IEnumerable<Claim>> GetUserClaimsAsync(AppUser user)
     {
+        var securityStampClaimType = new ClaimsIdentityOptions().SecurityStampClaimType;
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new (securityStampClaimType, user.SecurityStamp ?? string.Empty)
         };
 
         if (!string.IsNullOrEmpty(user.UserName))
             claims.Add(new Claim(ClaimTypes.Name, user.UserName));
 
-        foreach (var userRole in user.UserRoles)
-        {
-            if (!string.IsNullOrEmpty(userRole.Role.Name))
-                claims.Add(new Claim(ClaimTypes.Role, userRole.Role.Name));
-        }
+        claims.AddRange(from userRole in user.UserRoles where !string.IsNullOrEmpty(userRole.Role.Name) select new Claim(ClaimTypes.Role, userRole.Role.Name));
 
         // user claims
         var userClaims = await _userManager.GetClaimsAsync(user);
