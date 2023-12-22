@@ -2,7 +2,7 @@
 using JewelryApp.Core.Attributes;
 using JewelryApp.Shared.Requests.ProductCategories;
 
-namespace JewelryApp.Api.Validators.Products.ProductCategories;
+namespace JewelryApp.Api.Validators.ProductCategories;
 
 [ScopedService<IValidator<AddProductCategoryRequest>>]
 public class AddProductCategoryRequestValidator : AbstractValidator<AddProductCategoryRequest>
