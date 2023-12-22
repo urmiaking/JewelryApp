@@ -6,13 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JewelryApp.Api.Controllers;
 
-public class ProductCategoryController : ApiController
+public class ProductCategoriesController : ApiController
 {
     private readonly IProductCategoryService _productCategoryService;
     private readonly IValidator<AddProductCategoryRequest> _addProductCategoryValidator;
     private readonly IValidator<UpdateProductCategoryRequest> _updateProductCategoryValidator;
 
-    public ProductCategoryController(IProductCategoryService productCategoryService, IValidator<AddProductCategoryRequest> addProductCategoryValidator, IValidator<UpdateProductCategoryRequest> updateProductCategoryValidator)
+    public ProductCategoriesController(IProductCategoryService productCategoryService, IValidator<AddProductCategoryRequest> addProductCategoryValidator, IValidator<UpdateProductCategoryRequest> updateProductCategoryValidator)
     {
         _productCategoryService = productCategoryService;
         _addProductCategoryValidator = addProductCategoryValidator;
@@ -23,10 +23,10 @@ public class ProductCategoryController : ApiController
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         => Ok(await _productCategoryService.GetProductCategoriesAsync(cancellationToken));
 
-    [HttpGet(nameof(Get))]
-    public async Task<IActionResult> Get([FromQuery] GetProductCategoryRequest request, CancellationToken cancellationToken)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
     {
-        var response = await _productCategoryService.GetProductCategoryAsync(request, cancellationToken);
+        var response = await _productCategoryService.GetProductCategoryByIdAsync(id, cancellationToken);
 
         return response.Match(Ok, Problem);
     }
@@ -63,10 +63,10 @@ public class ProductCategoryController : ApiController
         return response.Match(Ok, Problem);
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> Remove(RemoveProductCategoryRequest request, CancellationToken cancellationToken)
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Remove(int id, CancellationToken cancellationToken)
     {
-        var response = await _productCategoryService.RemoveProductCategoryAsync(request, cancellationToken);
+        var response = await _productCategoryService.RemoveProductCategoryAsync(id, cancellationToken);
 
         return response.Match(Ok, Problem);
     }

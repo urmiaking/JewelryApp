@@ -20,15 +20,19 @@ public class ProductsController : ApiController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll(GetProductsRequest request, CancellationToken cancellationToken)
-    {
-        var products = await _productService.GetProductsAsync(request, cancellationToken);
+    public async Task<IActionResult> GetAll(GetProductsRequest request, CancellationToken cancellationToken) 
+        => Ok(await _productService.GetProductsAsync(request, cancellationToken));
 
-        return Ok(products);
-    }
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
+        => Ok(await _productService.GetProductByIdAsync(id, cancellationToken));
+    
+    [HttpGet("barcode/{barcode}")]
+    public async Task<IActionResult> GetByBarcode(string barcode, CancellationToken cancellationToken)
+        =>  Ok(await _productService.GetProductByBarcodeAsync(barcode, cancellationToken));
 
     [HttpPost]
-    public async Task<IActionResult> AddProduct(AddProductRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Add(AddProductRequest request, CancellationToken cancellationToken)
     {
         var validationResult = await _addProductValidator.ValidateAsync(request, cancellationToken);
 
@@ -44,7 +48,7 @@ public class ProductsController : ApiController
     }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateProduct(UpdateProductRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(UpdateProductRequest request, CancellationToken cancellationToken)
     {
         var validationResult = await _updateProductValidator.ValidateAsync(request, cancellationToken);
 
@@ -59,23 +63,15 @@ public class ProductsController : ApiController
         return response.Match(Ok, Problem);
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> RemoveProduct(RemoveProductRequest request, CancellationToken cancellationToken)
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Remove(int id, CancellationToken cancellationToken)
     {
-        var response = await _productService.RemoveProductAsync(request, cancellationToken);
+        var response = await _productService.RemoveProductAsync(id, cancellationToken);
 
         return response.Match(Ok, Problem);
     }
 
-    [HttpGet(nameof(GetTotalProductsCount))]
-    public async Task<IActionResult> GetTotalProductsCount(CancellationToken cancellationToken)
-    {
-        return Ok(await _productService.GetTotalProductsCount(cancellationToken));
-    }
-
-    [HttpGet("{barcodeText}")]
-    public async Task<IActionResult> GetByBarcode(string barcode, CancellationToken cancellationToken)
-    {
-        return Ok(await _productService.GetProductByBarcodeAsync(barcode, cancellationToken));
-    }
+    [HttpGet(nameof(Count))]
+    public async Task<IActionResult> Count(CancellationToken cancellationToken)
+        => Ok(await _productService.GetTotalProductsCount(cancellationToken));
 }

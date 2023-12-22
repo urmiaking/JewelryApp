@@ -1,3 +1,3 @@
 ﻿namespace JewelryApp.Shared.Responses.Products;
 
-public record RemoveProductResponse(int Id);
+public record GetProductsCountResponse(int Count);

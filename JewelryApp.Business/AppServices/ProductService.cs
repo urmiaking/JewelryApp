@@ -29,6 +29,11 @@ public class ProductService : IProductService
     {
         var product = _mapper.Map<Product>(request);
 
+        var barcodeExists = await _productRepository.CheckBarcodeExistsAsync(product.Barcode, token);
+
+        if (barcodeExists)
+            return Errors.Product.BarcodeExists;
+
         await _productRepository.AddAsync(product, token);
 
         var response = _mapper.Map<AddProductResponse>(product);
@@ -38,14 +43,7 @@ public class ProductService : IProductService
 
     public async Task<ErrorOr<UpdateProductResponse>> UpdateProductAsync(UpdateProductRequest request, CancellationToken token = default)
     {
-        var product = await _productRepository.GetByIdAsync(request.Id, token);
-
-        if (product is null)
-        {
-            return Errors.Product.NotFound;
-        }
-
-        product = _mapper.Map<Product>(request);
+        var product = _mapper.Map<Product>(request);
 
         await _productRepository.UpdateAsync(product, token);
 
@@ -54,25 +52,24 @@ public class ProductService : IProductService
         return response;
     }
 
-    public async Task<ErrorOr<RemoveProductResponse>> RemoveProductAsync(RemoveProductRequest request, CancellationToken token = default)
+    public async Task<ErrorOr<RemoveProductResponse>> RemoveProductAsync(int id, CancellationToken token = default)
     {
-        var product = await _productRepository.GetByIdAsync(request.Id, token);
+        var product = await _productRepository.GetByIdAsync(id, token);
 
         if (product is null)
-        {
             return Errors.Product.NotFound;
-        }
+
+        if (product.Deleted)
+            return Errors.Product.Deleted;
 
         var isSold = await _productRepository.CheckProductIsSoldAsync(product.Id, token);
 
         if (isSold)
-        {
             return Errors.Product.Sold;
-        }
 
         await _productRepository.DeleteAsync(product, token);
 
-        return new RemoveProductResponse(true, "جنس مورد نظر با موفقیت حذف شد");
+        return new RemoveProductResponse(product.Id);
     }
 
     public async Task<IEnumerable<GetProductResponse>?> GetProductsAsync(GetProductsRequest request, CancellationToken token = default)
@@ -97,9 +94,13 @@ public class ProductService : IProductService
 
         return await products.ProjectTo<GetProductResponse>(_mapper.ConfigurationProvider).ToListAsync(token);
     }
-    
-    public async Task<int> GetTotalProductsCount(CancellationToken cancellationToken = default)
-        => await _productRepository.GetProductsCountAsync(cancellationToken);
+
+    public async Task<GetProductsCountResponse> GetTotalProductsCount(CancellationToken cancellationToken = default)
+    {
+        var count = await _productRepository.GetProductsCountAsync(cancellationToken);
+
+        return new GetProductsCountResponse(count);
+    }
 
     public async Task<GetProductResponse?> GetProductByBarcodeAsync(string barcode, CancellationToken token = default)
     {
@@ -108,6 +109,20 @@ public class ProductService : IProductService
         if (product is null)
             return null;
 
+        await _productRepository.LoadReferenceAsync(product, x => x.ProductCategory, token);
+        var response = _mapper.Map<Product, GetProductResponse>(product);
+
+        return response;
+    }
+
+    public async Task<GetProductResponse?> GetProductByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var product = await _productRepository.GetByIdAsync(id, cancellationToken);
+
+        if (product is null)
+            return null;
+
+        await _productRepository.LoadReferenceAsync(product, x => x.ProductCategory, cancellationToken);
         var response = _mapper.Map<Product, GetProductResponse>(product);
 
         return response;

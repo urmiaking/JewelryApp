@@ -14,5 +14,8 @@ public partial class Errors
 
         public static Error Used
             => Error.Conflict(code: "ProductCategory.UsedError", description: "دسته بندی مورد نظر توسط اجناسی در حال استفاده می باشد");
+
+        public static Error Deleted
+            => Error.Conflict(code: "ProductCategory.DeletedError", description: "دسته بندی مورد نظر قبلا حذف شده است");
     }
 }

@@ -29,9 +29,9 @@ public class ProductCategoryService : IProductCategoryService
         => await _productCategoryRepository.Get()
             .ProjectTo<GetProductCategoryResponse>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
     
-    public async Task<ErrorOr<GetProductCategoryResponse>> GetProductCategoryAsync(GetProductCategoryRequest request, CancellationToken cancellationToken = default)
+    public async Task<ErrorOr<GetProductCategoryResponse>> GetProductCategoryByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        var productCategory = await _productCategoryRepository.GetByIdAsync(request.Id, cancellationToken);
+        var productCategory = await _productCategoryRepository.GetByIdAsync(id, cancellationToken);
 
         if (productCategory is null)
             return Errors.ProductCategory.NotFound;
@@ -63,12 +63,15 @@ public class ProductCategoryService : IProductCategoryService
         return _mapper.Map<UpdateProductCategoryResponse>(productCategory);
     }
 
-    public async Task<ErrorOr<RemoveProductCategoryResponse>> RemoveProductCategoryAsync(RemoveProductCategoryRequest request, CancellationToken cancellationToken = default)
+    public async Task<ErrorOr<RemoveProductCategoryResponse>> RemoveProductCategoryAsync(int id, CancellationToken cancellationToken = default)
     {
-        var productCategory = await _productCategoryRepository.GetByIdAsync(request.Id, cancellationToken);
+        var productCategory = await _productCategoryRepository.GetByIdAsync(id, cancellationToken);
 
         if (productCategory is null)
             return Errors.ProductCategory.NotFound;
+
+        if (productCategory.Deleted)
+            return Errors.ProductCategory.Deleted;
 
         if (await _productCategoryRepository.CheckUsedAsync(productCategory.Id, cancellationToken))
             return Errors.ProductCategory.Used;

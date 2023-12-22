@@ -27,7 +27,7 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
         await Get().AnyAsync(x => x.Barcode == barcode, token);
         
     public async Task<Product?> GetByBarcodeAsync(string barcode, CancellationToken token = default)
-        => await Get().SingleOrDefaultAsync(x => x.Barcode == barcode, token);
+        => await Get().FirstOrDefaultAsync(x => x.Barcode == barcode, token);
 
     public async Task<bool> CheckProductIsSoldAsync(int productId, CancellationToken token = default)
         => await Get().AnyAsync(x => x.Id == productId && x.SellDateTime.HasValue, token);
