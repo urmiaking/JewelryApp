@@ -42,9 +42,6 @@ public class CustomerService : ICustomerService
         if (invoice is null)
             return Errors.Invoice.NotFound;
 
-        if (invoice.Customer is null)
-            return Errors.Customer.NotFound;
-
         await _invoiceRepository.LoadReferenceAsync(invoice, x => x.Customer, token);
 
         var response = _mapper.Map<GetCustomerResponse>(invoice.Customer);
@@ -54,7 +51,7 @@ public class CustomerService : ICustomerService
 
     public async Task<ErrorOr<GetCustomerResponse>> GetCustomerByPhoneNumberAsync(string phoneNumber, CancellationToken token = default)
     {
-        var customer = await _customerRepository.Get().FirstOrDefaultAsync(x => x.PhoneNumber != null && x.PhoneNumber.Equals(phoneNumber));
+        var customer = await _customerRepository.Get().FirstOrDefaultAsync(x => x.PhoneNumber != null && x.PhoneNumber.Equals(phoneNumber), token);
 
         if (customer is null)
             return Errors.Customer.NotFound;
@@ -71,9 +68,6 @@ public class CustomerService : ICustomerService
         if (invoice is null)
             return Errors.Invoice.NotFound;
 
-        if (invoice.Customer is null)
-            return Errors.Customer.NotFound;
-
         await _invoiceRepository.LoadReferenceAsync(invoice, x => x.Customer, token);
 
         invoice.Customer = _mapper.Map<Customer>(request);
@@ -89,9 +83,6 @@ public class CustomerService : ICustomerService
 
         if (invoice is null)
             return Errors.Invoice.NotFound;
-
-        if (invoice.Customer is null)
-            return Errors.Customer.NotFound;
 
         await _invoiceRepository.LoadReferenceAsync(invoice, x => x.Customer!, token);
 
