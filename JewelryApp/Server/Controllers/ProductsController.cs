@@ -20,16 +20,22 @@ public class ProductsController : ApiController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll(GetProductsRequest request, CancellationToken cancellationToken) 
+    public async Task<IActionResult> GetAll([FromQuery] GetProductsRequest request, CancellationToken cancellationToken) 
         => Ok(await _productService.GetProductsAsync(request, cancellationToken));
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
-        => Ok(await _productService.GetProductByIdAsync(id, cancellationToken));
+    {
+        var response = await _productService.GetProductByIdAsync(id, cancellationToken);
+        return response.Match(Ok, Problem);
+    }
     
     [HttpGet("barcode/{barcode}")]
     public async Task<IActionResult> GetByBarcode(string barcode, CancellationToken cancellationToken)
-        =>  Ok(await _productService.GetProductByBarcodeAsync(barcode, cancellationToken));
+    {
+        var response = await _productService.GetProductByBarcodeAsync(barcode, cancellationToken);
+        return response.Match(Ok, Problem);
+    }
 
     [HttpPost]
     public async Task<IActionResult> Add(AddProductRequest request, CancellationToken cancellationToken)
@@ -43,7 +49,6 @@ public class ProductsController : ApiController
         }
 
         var response = await _productService.AddProductAsync(request, cancellationToken);
-
         return response.Match(Ok, Problem);
     }
 
@@ -59,7 +64,6 @@ public class ProductsController : ApiController
         }
 
         var response = await _productService.UpdateProductAsync(request, cancellationToken);
-
         return response.Match(Ok, Problem);
     }
 
@@ -67,7 +71,6 @@ public class ProductsController : ApiController
     public async Task<IActionResult> Remove(int id, CancellationToken cancellationToken)
     {
         var response = await _productService.RemoveProductAsync(id, cancellationToken);
-
         return response.Match(Ok, Problem);
     }
 

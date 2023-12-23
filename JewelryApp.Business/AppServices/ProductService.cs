@@ -82,12 +82,15 @@ public class ProductService : IProductService
                                            a.Name.Contains(request.SearchString));
         }
 
-        products = request.SortDirection switch
+        if (!string.IsNullOrEmpty(request.SortLabel))
         {
-            SortDirections.Ascending => products.OrderBy(p => GetPropertyValue(p, request.SortLabel)),
-            SortDirections.Descending => products.OrderByDescending(p => GetPropertyValue(p, request.SortLabel)),
-            _ => products
-        };
+            products = request.SortDirection switch
+            {
+                SortDirections.Ascending => products.OrderBy(p => GetPropertyValue(p, request.SortLabel)),
+                SortDirections.Descending => products.OrderByDescending(p => GetPropertyValue(p, request.SortLabel)),
+                _ => products
+            };
+        }
 
         var startIndex = request.Page * request.PageSize;
         products = products.Skip(startIndex).Take(request.PageSize);
@@ -102,12 +105,12 @@ public class ProductService : IProductService
         return new GetProductsCountResponse(count);
     }
 
-    public async Task<GetProductResponse?> GetProductByBarcodeAsync(string barcode, CancellationToken token = default)
+    public async Task<ErrorOr<GetProductResponse>> GetProductByBarcodeAsync(string barcode, CancellationToken token = default)
     {
         var product = await _productRepository.GetByBarcodeAsync(barcode, token);
 
         if (product is null)
-            return null;
+            return Errors.Product.NotFound;
 
         await _productRepository.LoadReferenceAsync(product, x => x.ProductCategory, token);
         var response = _mapper.Map<Product, GetProductResponse>(product);
@@ -115,12 +118,12 @@ public class ProductService : IProductService
         return response;
     }
 
-    public async Task<GetProductResponse?> GetProductByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<ErrorOr<GetProductResponse>> GetProductByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         var product = await _productRepository.GetByIdAsync(id, cancellationToken);
 
         if (product is null)
-            return null;
+            return Errors.Product.NotFound;
 
         await _productRepository.LoadReferenceAsync(product, x => x.ProductCategory, cancellationToken);
         var response = _mapper.Map<Product, GetProductResponse>(product);

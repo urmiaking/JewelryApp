@@ -17,6 +17,7 @@ public class ErrorController : ApiController
     [HttpPost]
     [HttpPut]
     [HttpDelete]
+    [HttpGet]
     [AllowAnonymous]
     [Route("/error")]
     public IActionResult Error()

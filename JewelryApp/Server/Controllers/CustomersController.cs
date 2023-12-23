@@ -19,9 +19,21 @@ public class CustomersController : ApiController
         _customerService = customerService;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Get(GetCustomerRequest request, CancellationToken token)
-        => Ok(await _customerService.GetCustomerByInvoiceIdAsync(request, token));
+    [HttpGet("invoice/{invoiceId:int}")]
+    public async Task<IActionResult> GetByInvoiceId(int invoiceId, CancellationToken token)
+    {
+        var response = await _customerService.GetCustomerByInvoiceIdAsync(invoiceId, token);
+
+        return response.Match(Ok, Problem);
+    }
+
+    [HttpGet("phoneNumber/{phoneNumber}")]
+    public async Task<IActionResult> GetByPhoneNumber(string phoneNumber, CancellationToken token)
+    {
+        var response = await _customerService.GetCustomerByPhoneNumberAsync(phoneNumber, token);
+        
+        return response.Match(Ok, Problem);
+    }
 
     [HttpPost]
     public async Task<IActionResult> Add(AddCustomerRequest request, CancellationToken token)
@@ -57,5 +69,9 @@ public class CustomersController : ApiController
 
     [HttpDelete]
     public async Task<IActionResult> Remove(RemoveCustomerRequest request, CancellationToken token)
-        => Ok(await _customerService.RemoveCustomerAsync(request, token));
+    {
+        var response = await _customerService.RemoveCustomerAsync(request, token);
+
+        return response.Match(Ok, Problem);
+    }
 }

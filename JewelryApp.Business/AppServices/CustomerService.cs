@@ -8,6 +8,7 @@ using JewelryApp.Core.Interfaces.Repositories;
 using JewelryApp.Core.Interfaces.Repositories.Base;
 using JewelryApp.Shared.Requests.Customer;
 using JewelryApp.Shared.Responses.Customer;
+using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Application.AppServices;
 
@@ -34,9 +35,9 @@ public class CustomerService : ICustomerService
         return new AddCustomerResponse(customer.Id);
     }
 
-    public async Task<ErrorOr<GetCustomerResponse>> GetCustomerByInvoiceIdAsync(GetCustomerRequest request, CancellationToken token = default)
+    public async Task<ErrorOr<GetCustomerResponse>> GetCustomerByInvoiceIdAsync(int id, CancellationToken token = default)
     {
-        var invoice = await _invoiceRepository.GetByIdAsync(request.Id, token);
+        var invoice = await _invoiceRepository.GetByIdAsync(id, token);
 
         if (invoice is null)
             return Errors.Invoice.NotFound;
@@ -47,6 +48,18 @@ public class CustomerService : ICustomerService
         await _invoiceRepository.LoadReferenceAsync(invoice, x => x.Customer, token);
 
         var response = _mapper.Map<GetCustomerResponse>(invoice.Customer);
+
+        return response;
+    }
+
+    public async Task<ErrorOr<GetCustomerResponse>> GetCustomerByPhoneNumberAsync(string phoneNumber, CancellationToken token = default)
+    {
+        var customer = await _customerRepository.Get().FirstOrDefaultAsync(x => x.PhoneNumber != null && x.PhoneNumber.Equals(phoneNumber));
+
+        if (customer is null)
+            return Errors.Customer.NotFound;
+
+        var response = _mapper.Map<GetCustomerResponse>(customer);
 
         return response;
     }
