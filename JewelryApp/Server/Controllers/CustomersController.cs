@@ -22,6 +22,14 @@ public class CustomersController : ApiController
         _customerService = customerService;
     }
 
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id, CancellationToken token)
+    {
+        var response = await _customerService.GetCustomerByIdAsync(id, token);
+
+        return response.Match(Ok, Problem);
+    }
+
     [HttpGet("invoice/{invoiceId:int}")]
     public async Task<IActionResult> GetByInvoiceId(int invoiceId, CancellationToken token)
     {
@@ -51,7 +59,7 @@ public class CustomersController : ApiController
 
         var response = await _customerService.AddCustomerAsync(request, token);
 
-        return response.Match(Ok, Problem);
+        return response.Match(x => CreatedAtAction(nameof(GetById), new { id = x.Id }, response.Value), Problem);
     }
 
     [HttpPut]

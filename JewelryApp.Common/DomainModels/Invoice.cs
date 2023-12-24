@@ -5,6 +5,7 @@ namespace JewelryApp.Core.DomainModels;
 
 public class Invoice : SoftDeleteModelBase
 {
+    public int InvoiceNumber { get; set; }
     public double Discount { get; set; }
     public double Debt { get; set; }
     public double AdditionalPrices { get; set; }

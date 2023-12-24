@@ -19,13 +19,17 @@ public class InvoicesController : ApiController
         _updateInvoiceRequest = updateInvoiceRequest;
     }
 
-    [HttpGet(nameof(GetAll))]
-    public async Task<IActionResult> GetAll(GetInvoiceTableRequest request, CancellationToken cancellationToken)
+    [HttpGet]
+    public async Task<IActionResult> GetAll([FromQuery] GetInvoiceListRequest request, CancellationToken cancellationToken)
         => Ok(await _invoiceService.GetInvoicesAsync(request, cancellationToken));
 
-    [HttpGet(nameof(Get))]
-    public async Task<IActionResult> Get(GetInvoiceRequest request, CancellationToken cancellationToken) =>
-        Ok(await _invoiceService.GetInvoiceAsync(request, cancellationToken));
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
+    {
+        var response = await _invoiceService.GetInvoiceByIdAsync(id, cancellationToken);
+
+        return response.Match(Ok, Problem);
+    }
 
     [HttpPost]
     public async Task<IActionResult> Add(AddInvoiceRequest request, CancellationToken cancellationToken)
@@ -38,12 +42,12 @@ public class InvoicesController : ApiController
             return ValidationProblem(ModelState);
         }
 
-        var addResult = await _invoiceService.AddInvoiceAsync(request, cancellationToken);
+        var response = await _invoiceService.AddInvoiceAsync(request, cancellationToken);
 
-        return addResult.Match(Ok, Problem);
+        return response.Match(x => CreatedAtAction(nameof(GetById), new { id = x.Id }, response.Value), Problem);
     }
 
-    [HttpPut(nameof(Update))]
+    [HttpPut]
     public async Task<IActionResult> Update(UpdateInvoiceRequest request, CancellationToken cancellationToken)
     {
         var validationResult = await _updateInvoiceRequest.ValidateAsync(request, cancellationToken);
@@ -54,15 +58,15 @@ public class InvoicesController : ApiController
             return ValidationProblem(ModelState);
         }
 
-        var updateResult = await _invoiceService.UpdateInvoiceAsync(request, cancellationToken);
+        var response = await _invoiceService.UpdateInvoiceAsync(request, cancellationToken);
 
-        return updateResult.Match(Ok, Problem);
+        return response.Match(Ok, Problem);
     }
 
-    [HttpDelete(nameof(Remove))]
-    public async Task<IActionResult> Remove(RemoveInvoiceRequest request, CancellationToken cancellationToken)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Remove(int id, CancellationToken cancellationToken)
     {
-        var result = await _invoiceService.RemoveInvoiceAsync(request, cancellationToken);
+        var result = await _invoiceService.RemoveInvoiceAsync(id, cancellationToken);
 
         return result.Match(Ok, Problem);
     }

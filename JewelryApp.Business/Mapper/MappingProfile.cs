@@ -5,7 +5,6 @@ using JewelryApp.Core.Enums;
 using JewelryApp.Shared.Requests.Customer;
 using JewelryApp.Shared.Requests.ProductCategories;
 using JewelryApp.Shared.Requests.Products;
-using JewelryApp.Shared.Responses.Customer;
 using JewelryApp.Shared.Responses.Invoices;
 using JewelryApp.Shared.Responses.Prices;
 using JewelryApp.Shared.Responses.ProductCategories;
@@ -26,7 +25,7 @@ public class MappingProfile : Profile
         CreateMap<Product, AddProductResponse>()
             .ConstructUsing(x => new AddProductResponse(x.Id, x.Name, x.Weight, x.Wage, (int)x.WageType, (int)x.ProductType, (int)x.Carat, x.ProductCategoryId, x.Barcode))
             .ForMember(x => x.CaratType, a => a.MapFrom(b => b.Carat))
-            .ForMember(x => x.CategoryId, a => a.MapFrom(b => b.ProductCategoryId));
+            .ForMember(x => x.CategoryName, a => a.MapFrom(b => b.ProductCategory.Name));
 
         CreateMap<UpdateProductRequest, Product>()
             .ForMember(x => x.Carat, a => a.MapFrom(b => b.CaratType))
@@ -44,7 +43,7 @@ public class MappingProfile : Profile
             .ForMember(x => x.CategoryName, a => a.MapFrom(b => b.ProductCategory.Name));
 
         CreateMap<Product, GetProductResponse>()
-            .ConstructUsing(x => new GetProductResponse(x.Id, x.Name, x.Weight, x.Wage, x.WageType.ToDisplay(), x.ProductType.ToDisplay(), x.Carat.ToDisplay(), x.ProductCategory.Name, x.Barcode))
+            .ConstructUsing(x => new GetProductResponse(x.Id, x.Name, x.Weight, x.Wage, x.WageType.ToDisplay(), x.ProductType.ToDisplay(), x.Carat.ToDisplay(), x.ProductCategory.Name, x.Barcode, x.Deleted))
             .ForMember(x => x.CaratType, a => a.MapFrom(b => b.Carat.ToDisplay()))
             .ForMember(x => x.ProductType, a => a.MapFrom(b => b.ProductType.ToDisplay()))
             .ForMember(x => x.WageType, a => a.MapFrom(b => b.WageType.ToDisplay()))
@@ -61,7 +60,7 @@ public class MappingProfile : Profile
 
         #region Invoice
 
-        CreateProjection<Invoice, GetInvoiceTableResponse>()
+        CreateProjection<Invoice, GetInvoiceListResponse>()
             .ForMember(i => i.InvoiceItemsCount, a => a.MapFrom(b => b.InvoiceItems.Count))
             .ForMember(i => i.CustomerPhoneNumber, a => a.MapFrom(b => b.Customer.PhoneNumber))
             .ForMember(i => i.CustomerName, a => a.MapFrom(b => b.Customer.FullName));
@@ -76,15 +75,7 @@ public class MappingProfile : Profile
 
         #region Customer
 
-        CreateMap<Customer, GetCustomerResponse>()
-            .ConstructUsing(x => new GetCustomerResponse(x.Id, x.FullName, x.PhoneNumber))
-            .ForMember(x => x.Name, a => a.MapFrom(b => b.FullName));
-
-        CreateMap<AddCustomerRequest, Customer>()
-            .ForMember(x => x.FullName, a => a.MapFrom(b => b.Name));
-
-        CreateMap<UpdateCustomerRequest, Customer>()
-            .ForMember(x => x.FullName, a => a.MapFrom(b => b.Name));
+        CreateMap<AddCustomerRequest, Customer>();
 
         #endregion
 

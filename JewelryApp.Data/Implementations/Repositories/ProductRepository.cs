@@ -18,11 +18,6 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
 
     }
 
-    public async Task<Product?> GetByNameAsync(string name, CancellationToken token = default)
-        => await Get()
-            .OrderByDescending(x => x.CreatedAt)
-            .FirstOrDefaultAsync(x => x.Name.Equals(name), token);
-
     public async Task<bool> CheckBarcodeExistsAsync(string barcode, CancellationToken token = default) => 
         await Get().AnyAsync(x => x.Barcode == barcode, token);
         
@@ -34,7 +29,4 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
 
     public async Task<int> GetProductsCountAsync(CancellationToken token = default)
         => await Get().CountAsync(token);
-
-    public IQueryable<Product> GetAll(CancellationToken token = default)
-        => Get();
 }

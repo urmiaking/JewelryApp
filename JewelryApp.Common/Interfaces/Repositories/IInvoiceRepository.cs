@@ -5,4 +5,5 @@ namespace JewelryApp.Core.Interfaces.Repositories;
 
 public interface IInvoiceRepository : IRepository<Invoice>
 {
+    Task<bool> CheckInvoiceExistsAsync(int invoiceNumber, CancellationToken cancellationToken = default);
 }

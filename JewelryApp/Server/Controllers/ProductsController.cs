@@ -49,7 +49,7 @@ public class ProductsController : ApiController
         }
 
         var response = await _productService.AddProductAsync(request, cancellationToken);
-        return response.Match(Ok, Problem);
+        return response.Match(x => CreatedAtAction(nameof(GetById), new { id = x.Id }, response.Value), Problem);
     }
 
     [HttpPut]

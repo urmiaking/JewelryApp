@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Azure;
 using ErrorOr;
 using JewelryApp.Application.Interfaces;
 using JewelryApp.Core.Attributes;
@@ -47,7 +48,7 @@ public class InvoiceItemService : IInvoiceItemService
 
         await _invoiceItemRepository.AddAsync(invoiceItem, cancellationToken);
 
-        return new AddInvoiceItemResponse(invoiceItem.InvoiceId, invoiceItem.ProductId);
+        return _mapper.Map<AddInvoiceItemResponse>(invoiceItem);
     }
 
     public async Task<ErrorOr<UpdateInvoiceItemResponse>> UpdateInvoiceItemAsync(UpdateInvoiceItemRequest request, CancellationToken cancellationToken = default)

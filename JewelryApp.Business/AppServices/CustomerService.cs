@@ -36,7 +36,7 @@ public class CustomerService : ICustomerService
 
         await _customerRepository.AddAsync(customer, token);
 
-        return new AddCustomerResponse(customer.Id);
+        return _mapper.Map<AddCustomerResponse>(customer);
     }
 
     public async Task<ErrorOr<GetCustomerResponse>> GetCustomerByInvoiceIdAsync(int id, CancellationToken token = default)
@@ -56,6 +56,18 @@ public class CustomerService : ICustomerService
     public async Task<ErrorOr<GetCustomerResponse>> GetCustomerByPhoneNumberAsync(string phoneNumber, CancellationToken token = default)
     {
         var customer = await _customerRepository.Get().FirstOrDefaultAsync(x => x.PhoneNumber.Equals(phoneNumber), token);
+
+        if (customer is null)
+            return Errors.Customer.NotFound;
+
+        var response = _mapper.Map<GetCustomerResponse>(customer);
+
+        return response;
+    }
+
+    public async Task<ErrorOr<GetCustomerResponse>> GetCustomerByIdAsync(int id, CancellationToken token = default)
+    {
+        var customer = await _customerRepository.GetByIdAsync(id, token);
 
         if (customer is null)
             return Errors.Customer.NotFound;

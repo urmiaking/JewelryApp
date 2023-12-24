@@ -74,7 +74,7 @@ public class ProductService : IProductService
 
     public async Task<IEnumerable<GetProductResponse>?> GetProductsAsync(GetProductsRequest request, CancellationToken token = default)
     {
-        var products = _productRepository.GetAll(token);
+        var products = _productRepository.Get(retrieveDeletedRecords: true);
 
         if (!string.IsNullOrEmpty(request.SearchString))
         {

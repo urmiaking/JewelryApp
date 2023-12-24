@@ -25,7 +25,7 @@ public class InvoiceService : IInvoiceService
         _invoiceRepository = invoiceRepository;
     }
 
-    public async Task<IEnumerable<GetInvoiceTableResponse>?> GetInvoicesAsync(GetInvoiceTableRequest request, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<GetInvoiceListResponse>?> GetInvoicesAsync(GetInvoiceListRequest request, CancellationToken cancellationToken = default)
     {
         var invoices = _invoiceRepository.Get();
 
@@ -36,45 +36,45 @@ public class InvoiceService : IInvoiceService
                                                    a.Customer.PhoneNumber.Contains(request.SearchString)));
         }
 
-        invoices = request.SortDirection switch
+        if (!string.IsNullOrEmpty(request.SortLabel))
         {
-            SortDirections.Ascending => invoices.OrderBy(p => GetPropertyValue(p, request.SortLabel)),
-            SortDirections.Descending => invoices.OrderByDescending(p => GetPropertyValue(p, request.SortLabel)),
-            _ => invoices
-        };
+            invoices = request.SortDirection switch
+            {
+                SortDirections.Ascending => invoices.OrderBy(p => GetPropertyValue(p, request.SortLabel)),
+                SortDirections.Descending => invoices.OrderByDescending(p => GetPropertyValue(p, request.SortLabel)),
+                _ => invoices
+            };
+        }
 
         var startIndex = request.Page * request.PageSize;
         invoices = invoices.Skip(startIndex).Take(request.PageSize);
 
-        var response = await invoices
-            .ProjectTo<GetInvoiceTableResponse>(_mapper.ConfigurationProvider)
+        return await invoices
+            .ProjectTo<GetInvoiceListResponse>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
-
-        return response;
     }
 
-    public async Task<GetInvoiceResponse?> GetInvoiceAsync(GetInvoiceRequest request, CancellationToken cancellationToken = default)
+    public async Task<ErrorOr<GetInvoiceResponse>> GetInvoiceByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        if (request.Id is 0)
-            return null;
-
-        var invoice = await _invoiceRepository.Get(true, true)
-            .Include(x => x.Customer)
-            .Include(x => x.InvoiceItems)
-            .ThenInclude(x => x.Product)
-            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        var invoice = await _invoiceRepository.GetByIdAsync(id, cancellationToken);
 
         if (invoice is null)
-            return null;
+            return Errors.Invoice.NotFound;
 
-        var invoiceDto = _mapper.Map<Invoice, GetInvoiceResponse>(invoice);
+        await _invoiceRepository.LoadReferenceAsync(invoice, x => x.Customer, cancellationToken);
+        var response = _mapper.Map<GetInvoiceResponse>(invoice);
 
-        return invoiceDto;
+        return response;
     }
 
     public async Task<ErrorOr<AddInvoiceResponse>> AddInvoiceAsync(AddInvoiceRequest request, CancellationToken cancellationToken = default)
     {
         var invoice = _mapper.Map<Invoice>(request);
+
+        var invoiceExists = await _invoiceRepository.CheckInvoiceExistsAsync(request.InvoiceNumber, cancellationToken);
+
+        if (invoiceExists)
+            return Errors.Invoice.Exists;
 
         await _invoiceRepository.AddAsync(invoice, cancellationToken);
 
@@ -97,9 +97,9 @@ public class InvoiceService : IInvoiceService
         return new UpdateInvoiceResponse(invoice.Id);
     }
 
-    public async Task<ErrorOr<RemoveInvoiceResponse>> RemoveInvoiceAsync(RemoveInvoiceRequest request, CancellationToken cancellationToken = default)
+    public async Task<ErrorOr<RemoveInvoiceResponse>> RemoveInvoiceAsync(int id, CancellationToken cancellationToken = default)
     {
-        var invoice = await _invoiceRepository.GetByIdAsync(request.Id, cancellationToken);
+        var invoice = await _invoiceRepository.GetByIdAsync(id, cancellationToken);
 
         if (invoice is null)
             return Errors.Invoice.NotFound;
