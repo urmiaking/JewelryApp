@@ -5,6 +5,7 @@ using JewelryApp.Core.Enums;
 using JewelryApp.Shared.Requests.Customer;
 using JewelryApp.Shared.Requests.ProductCategories;
 using JewelryApp.Shared.Requests.Products;
+using JewelryApp.Shared.Responses.Customer;
 using JewelryApp.Shared.Responses.Invoices;
 using JewelryApp.Shared.Responses.Prices;
 using JewelryApp.Shared.Responses.ProductCategories;
@@ -75,7 +76,15 @@ public class MappingProfile : Profile
 
         #region Customer
 
-        CreateMap<AddCustomerRequest, Customer>();
+        CreateMap<Customer, GetCustomerResponse>()
+            .ConstructUsing(x => new GetCustomerResponse(x.Id, x.FullName, x.PhoneNumber))
+            .ForMember(x => x.Name, a => a.MapFrom(b => b.FullName));
+
+        CreateMap<AddCustomerRequest, Customer>()
+            .ForMember(x => x.FullName, a => a.MapFrom(b => b.Name));
+
+        CreateMap<UpdateCustomerRequest, Customer>()
+            .ForMember(x => x.FullName, a => a.MapFrom(b => b.Name));
 
         #endregion
 

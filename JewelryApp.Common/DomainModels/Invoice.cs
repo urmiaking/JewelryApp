@@ -24,9 +24,8 @@ public class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
 {
     public void Configure(EntityTypeBuilder<Invoice> builder)
     {
-        builder.HasOne(i => i.Customer)
-            .WithOne()
-            .HasForeignKey<Customer>(c => c.Id)
-            .IsRequired();
+        builder
+           .HasOne(a => a.Customer)
+           .WithMany(a => a.Invoices);
     }
 }

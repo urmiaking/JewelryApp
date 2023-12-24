@@ -12,7 +12,10 @@ public class CustomersController : ApiController
     private readonly IValidator<UpdateCustomerRequest> _updateCustomerValidator;
     private readonly ICustomerService _customerService;
 
-    public CustomersController(IValidator<AddCustomerRequest> addCustomerValidator, IValidator<UpdateCustomerRequest> updateCustomerValidator, ICustomerService customerService)
+    public CustomersController(
+        IValidator<AddCustomerRequest> addCustomerValidator,
+        IValidator<UpdateCustomerRequest> updateCustomerValidator,
+        ICustomerService customerService)
     {
         _addCustomerValidator = addCustomerValidator;
         _updateCustomerValidator = updateCustomerValidator;
@@ -67,10 +70,10 @@ public class CustomersController : ApiController
         return response.Match(Ok, Problem);
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> Remove(RemoveCustomerRequest request, CancellationToken token)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Remove(int id, CancellationToken token)
     {
-        var response = await _customerService.RemoveCustomerAsync(request, token);
+        var response = await _customerService.RemoveCustomerAsync(id, token);
 
         return response.Match(Ok, Problem);
     }

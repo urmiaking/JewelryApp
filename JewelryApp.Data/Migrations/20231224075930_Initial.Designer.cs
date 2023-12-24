@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JewelryApp.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231213184931_Initial")]
+    [Migration("20231224075930_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -28,7 +28,10 @@ namespace JewelryApp.Infrastructure.Migrations
             modelBuilder.Entity("JewelryApp.Core.DomainModels.Customer", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -44,6 +47,7 @@ namespace JewelryApp.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -295,6 +299,8 @@ namespace JewelryApp.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
 
                     b.HasIndex("ModifiedUserId");
 
@@ -557,12 +563,6 @@ namespace JewelryApp.Infrastructure.Migrations
 
             modelBuilder.Entity("JewelryApp.Core.DomainModels.Customer", b =>
                 {
-                    b.HasOne("JewelryApp.Core.DomainModels.Invoice", null)
-                        .WithOne("Customer")
-                        .HasForeignKey("JewelryApp.Core.DomainModels.Customer", "Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("JewelryApp.Core.DomainModels.Identity.AppUser", "ModifiedUser")
                         .WithMany()
                         .HasForeignKey("ModifiedUserId");
@@ -635,9 +635,17 @@ namespace JewelryApp.Infrastructure.Migrations
 
             modelBuilder.Entity("JewelryApp.Core.DomainModels.Invoice", b =>
                 {
+                    b.HasOne("JewelryApp.Core.DomainModels.Customer", "Customer")
+                        .WithMany("Invoices")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("JewelryApp.Core.DomainModels.Identity.AppUser", "ModifiedUser")
                         .WithMany()
                         .HasForeignKey("ModifiedUserId");
+
+                    b.Navigation("Customer");
 
                     b.Navigation("ModifiedUser");
                 });
@@ -727,6 +735,11 @@ namespace JewelryApp.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("JewelryApp.Core.DomainModels.Customer", b =>
+                {
+                    b.Navigation("Invoices");
+                });
+
             modelBuilder.Entity("JewelryApp.Core.DomainModels.Identity.AppRole", b =>
                 {
                     b.Navigation("Claims");
@@ -747,9 +760,6 @@ namespace JewelryApp.Infrastructure.Migrations
 
             modelBuilder.Entity("JewelryApp.Core.DomainModels.Invoice", b =>
                 {
-                    b.Navigation("Customer")
-                        .IsRequired();
-
                     b.Navigation("InvoiceItems");
 
                     b.Navigation("OldGolds");

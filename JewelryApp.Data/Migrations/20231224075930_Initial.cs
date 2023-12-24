@@ -92,27 +92,22 @@ namespace JewelryApp.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Invoice",
+                name: "Customer",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Discount = table.Column<double>(type: "float", nullable: false),
-                    Debt = table.Column<double>(type: "float", nullable: false),
-                    AdditionalPrices = table.Column<double>(type: "float", nullable: false),
-                    Difference = table.Column<double>(type: "float", nullable: false),
-                    InvoiceDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DebtDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CustomerId = table.Column<int>(type: "int", nullable: false),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Invoice", x => x.Id);
+                    table.PrimaryKey("PK_Customer", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Invoice_Users_ModifiedUserId",
+                        name: "FK_Customer_Users_ModifiedUserId",
                         column: x => x.ModifiedUserId,
                         principalTable: "Users",
                         principalColumn: "Id");
@@ -255,58 +250,33 @@ namespace JewelryApp.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Customer",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModifiedUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Deleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Customer", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Customer_Invoice_Id",
-                        column: x => x.Id,
-                        principalTable: "Invoice",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Customer_Users_ModifiedUserId",
-                        column: x => x.ModifiedUserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "OldGold",
+                name: "Invoice",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Weight = table.Column<double>(type: "float", nullable: false),
-                    BuyDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    InvoiceId = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<double>(type: "float", nullable: false),
+                    Discount = table.Column<double>(type: "float", nullable: false),
+                    Debt = table.Column<double>(type: "float", nullable: false),
+                    AdditionalPrices = table.Column<double>(type: "float", nullable: false),
+                    Difference = table.Column<double>(type: "float", nullable: false),
+                    InvoiceDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DebtDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CustomerId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OldGold", x => x.Id);
+                    table.PrimaryKey("PK_Invoice", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_OldGold_Invoice_InvoiceId",
-                        column: x => x.InvoiceId,
-                        principalTable: "Invoice",
+                        name: "FK_Invoice_Customer_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customer",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_OldGold_Users_ModifiedUserId",
+                        name: "FK_Invoice_Users_ModifiedUserId",
                         column: x => x.ModifiedUserId,
                         principalTable: "Users",
                         principalColumn: "Id");
@@ -342,6 +312,37 @@ namespace JewelryApp.Infrastructure.Migrations
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Product_Users_ModifiedUserId",
+                        column: x => x.ModifiedUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OldGold",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Weight = table.Column<double>(type: "float", nullable: false),
+                    BuyDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    InvoiceId = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OldGold", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OldGold_Invoice_InvoiceId",
+                        column: x => x.InvoiceId,
+                        principalTable: "Invoice",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_OldGold_Users_ModifiedUserId",
                         column: x => x.ModifiedUserId,
                         principalTable: "Users",
                         principalColumn: "Id");
@@ -392,6 +393,11 @@ namespace JewelryApp.Infrastructure.Migrations
                 name: "IX_Customer_ModifiedUserId",
                 table: "Customer",
                 column: "ModifiedUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invoice_CustomerId",
+                table: "Invoice",
+                column: "CustomerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Invoice_ModifiedUserId",
@@ -492,9 +498,6 @@ namespace JewelryApp.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Customer");
-
-            migrationBuilder.DropTable(
                 name: "InvoiceItem");
 
             migrationBuilder.DropTable(
@@ -532,6 +535,9 @@ namespace JewelryApp.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "ProductCategory");
+
+            migrationBuilder.DropTable(
+                name: "Customer");
 
             migrationBuilder.DropTable(
                 name: "Users");

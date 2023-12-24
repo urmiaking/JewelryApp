@@ -1,3 +1,3 @@
 ﻿namespace JewelryApp.Shared.Requests.Customer;
 
-public record UpdateCustomerRequest (int InvoiceId, string Name, string PhoneNumber);
+public record UpdateCustomerRequest (int Id, string Name, string PhoneNumber);
