@@ -6,8 +6,9 @@ namespace JewelryApp.Application.Interfaces;
 
 public interface IInvoiceItemService
 {
-    Task<IEnumerable<GetInvoiceItemResponse>> GetInvoiceItemsAsync(GetInvoiceItemsRequest request, CancellationToken  cancellationToken = default);
+    Task<ErrorOr<GetInvoiceItemResponse>> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<ErrorOr<IEnumerable<GetInvoiceItemResponse>>> GetInvoiceItemsByInvoiceIdAsync(int invoiceId, CancellationToken  cancellationToken = default);
     Task<ErrorOr<AddInvoiceItemResponse>> AddInvoiceItemAsync(AddInvoiceItemRequest request, CancellationToken cancellationToken = default);
     Task<ErrorOr<UpdateInvoiceItemResponse>> UpdateInvoiceItemAsync(UpdateInvoiceItemRequest request, CancellationToken cancellationToken = default);
-    Task<ErrorOr<RemoveInvoiceItemResponse>> RemoveInvoiceItemAsync(RemoveInvoiceItemRequest  request, CancellationToken cancellationToken = default);
+    Task<ErrorOr<RemoveInvoiceItemResponse>> RemoveInvoiceItemAsync(int id, CancellationToken cancellationToken = default);
 }

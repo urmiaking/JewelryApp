@@ -16,19 +16,36 @@ namespace JewelryApp.Application.AppServices;
 public class InvoiceItemService : IInvoiceItemService
 {
     private readonly IInvoiceItemRepository _invoiceItemRepository;
+    private readonly IProductRepository _productRepository;
     private readonly IInvoiceRepository _invoiceRepository;
     private readonly IMapper _mapper;
 
-    public InvoiceItemService(IInvoiceItemRepository invoiceItemRepository, IMapper mapper, IInvoiceRepository invoiceRepository)
+    public InvoiceItemService(IInvoiceItemRepository invoiceItemRepository, IMapper mapper, IInvoiceRepository invoiceRepository, IProductRepository productRepository)
     {
         _invoiceItemRepository = invoiceItemRepository;
         _mapper = mapper;
         _invoiceRepository = invoiceRepository;
+        _productRepository = productRepository;
     }
 
-    public async Task<IEnumerable<GetInvoiceItemResponse>> GetInvoiceItemsAsync(GetInvoiceItemsRequest request, CancellationToken cancellationToken = default)
+    public async Task<ErrorOr<GetInvoiceItemResponse>> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        var invoiceItems = _invoiceItemRepository.GetInvoiceItemsByInvoiceId(request.InvoiceId);
+        var invoiceItem = await _invoiceItemRepository.GetByIdAsync(id, cancellationToken);
+
+        if (invoiceItem is null)
+            return Errors.InvoiceItem.NotFound;
+
+        return _mapper.Map<GetInvoiceItemResponse>(invoiceItem);
+    }
+
+    public async Task<ErrorOr<IEnumerable<GetInvoiceItemResponse>>> GetInvoiceItemsByInvoiceIdAsync(int invoiceId, CancellationToken cancellationToken = default)
+    {
+        var invoice = await _invoiceRepository.GetByIdAsync(invoiceId, cancellationToken);
+
+        if (invoice is null)
+            return Errors.Invoice.NotFound;
+        
+        var invoiceItems = _invoiceItemRepository.GetInvoiceItemsByInvoiceId(invoiceId);
 
         var response = await invoiceItems.ProjectTo<GetInvoiceItemResponse>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
@@ -42,6 +59,16 @@ public class InvoiceItemService : IInvoiceItemService
 
         if (invoice is null)
             return Errors.Invoice.NotFound;
+
+        var product = await _productRepository.GetByIdAsync(request.ProductId, cancellationToken);
+
+        if (product is null)
+            return Errors.Product.NotFound;
+
+        var exists = await _invoiceItemRepository.CheckInvoiceItemExistsAsync(request.InvoiceId, request.ProductId, cancellationToken);
+
+        if (exists)
+            return Errors.InvoiceItem.Exists;
 
         var invoiceItem = _mapper.Map<InvoiceItem>(request);
 
@@ -66,23 +93,21 @@ public class InvoiceItemService : IInvoiceItemService
 
         await _invoiceItemRepository.UpdateAsync(invoiceItem, cancellationToken);
 
-        return new UpdateInvoiceItemResponse(invoiceItem.Id, invoiceItem.InvoiceId, invoiceItem.ProductId);
+        return _mapper.Map<UpdateInvoiceItemResponse>(invoiceItem);
     }
 
-    public async Task<ErrorOr<RemoveInvoiceItemResponse>> RemoveInvoiceItemAsync(RemoveInvoiceItemRequest request, CancellationToken cancellationToken = default)
+    public async Task<ErrorOr<RemoveInvoiceItemResponse>> RemoveInvoiceItemAsync(int id, CancellationToken cancellationToken = default)
     {
-        var invoice = await _invoiceRepository.GetByIdAsync(request.InvoiceId, cancellationToken);
-
-        if (invoice is null)
-            return Errors.Invoice.NotFound;
-
-        var invoiceItem = await _invoiceItemRepository.GetByIdAsync(request.Id, cancellationToken);
+        var invoiceItem = await _invoiceItemRepository.GetByIdAsync(id, cancellationToken);
 
         if (invoiceItem is null)
             return Errors.InvoiceItem.NotFound;
 
+        if (invoiceItem.Deleted)
+            return Errors.InvoiceItem.Deleted;
+        
         await _invoiceItemRepository.DeleteAsync(invoiceItem, cancellationToken);
 
-        return new RemoveInvoiceItemResponse(invoiceItem.Id, invoiceItem.InvoiceId, invoiceItem.ProductId);
+        return new RemoveInvoiceItemResponse(invoiceItem.Id);
     }
 }

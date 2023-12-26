@@ -26,7 +26,7 @@ public class Invoice : SoftDeleteModelBase
         var oldGoldsPrice = OldGolds.Sum(x => x.Price);
         var tax = InvoiceItems.Sum(x => x.Tax);
 
-        // TODO: figure out differnece
+        // TODO: figure out difference
         return itemsPrice - oldGoldsPrice - Discount + AdditionalPrices - Debt + tax;
     }
 }

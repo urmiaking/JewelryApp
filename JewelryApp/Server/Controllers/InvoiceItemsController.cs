@@ -20,9 +20,21 @@ public class InvoiceItemsController : ApiController
         _invoiceItemService = invoiceItemService;
     }
 
-    [HttpGet(nameof(GetInvoiceItems))]
-    public async Task<IActionResult> GetInvoiceItems(GetInvoiceItemsRequest request, CancellationToken token)
-        => Ok(await _invoiceItemService.GetInvoiceItemsAsync(request, token));
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id, CancellationToken token)
+    {
+        var response = await _invoiceItemService.GetByIdAsync(id, token);
+
+        return response.Match(Ok, Problem);
+    }
+
+    [HttpGet("invoice/{invoiceId:int}")]
+    public async Task<IActionResult> GetInvoiceItems(int invoiceId, CancellationToken token)
+    {
+        var response = await _invoiceItemService.GetInvoiceItemsByInvoiceIdAsync(invoiceId, token);
+
+        return response.Match(Ok, Problem);
+    }
 
     [HttpPost]
     public async Task<IActionResult> Add(AddInvoiceItemRequest request, CancellationToken token)
@@ -37,7 +49,7 @@ public class InvoiceItemsController : ApiController
 
         var response = await _invoiceItemService.AddInvoiceItemAsync(request, token);
 
-        return response.Match(Ok, Problem);
+        return response.Match(x => CreatedAtAction(nameof(GetById), new { id = x.Id }, response.Value), Problem);
     }
 
     [HttpPut]
@@ -56,7 +68,11 @@ public class InvoiceItemsController : ApiController
         return response.Match(Ok, Problem);
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> Remove(RemoveInvoiceItemRequest request, CancellationToken token)
-        => Ok(await _invoiceItemService.RemoveInvoiceItemAsync(request, token));  
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Remove(int id, CancellationToken token)
+    {
+        var response = await _invoiceItemService.RemoveInvoiceItemAsync(id, token);
+
+        return response.Match(Ok, Problem);
+    } 
 }

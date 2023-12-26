@@ -6,4 +6,5 @@ namespace JewelryApp.Core.Interfaces.Repositories;
 public interface IInvoiceItemRepository : IRepository<InvoiceItem>
 {
     IQueryable<InvoiceItem> GetInvoiceItemsByInvoiceId(int invoiceId);
+    Task<bool> CheckInvoiceItemExistsAsync(int invoiceId, int productId, CancellationToken cancellationToken = default);
 }

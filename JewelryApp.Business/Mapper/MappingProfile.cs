@@ -3,10 +3,12 @@ using JewelryApp.Application.ExternalModels.Signal;
 using JewelryApp.Core.DomainModels;
 using JewelryApp.Core.Enums;
 using JewelryApp.Shared.Requests.Customer;
+using JewelryApp.Shared.Requests.InvoiceItems;
 using JewelryApp.Shared.Requests.Invoices;
 using JewelryApp.Shared.Requests.ProductCategories;
 using JewelryApp.Shared.Requests.Products;
 using JewelryApp.Shared.Responses.Customer;
+using JewelryApp.Shared.Responses.InvoiceItems;
 using JewelryApp.Shared.Responses.Invoices;
 using JewelryApp.Shared.Responses.Prices;
 using JewelryApp.Shared.Responses.ProductCategories;
@@ -74,6 +76,38 @@ public class MappingProfile : Profile
 
         CreateMap<Invoice, UpdateInvoiceResponse>()
             .ConstructUsing(x => new UpdateInvoiceResponse(x.Id, x.InvoiceNumber, x.CustomerId, x.InvoiceDate, x.Discount, x.AdditionalPrices, x.Difference, x.Debt, x.DebtDate));
+
+        #endregion
+
+        #region InvoiceItem
+
+        CreateMap<InvoiceItem, GetInvoiceItemResponse>()
+            .ConstructUsing(x => new GetInvoiceItemResponse(x.ProductId, x.InvoiceId, x.Product.Name, x.Product.Weight,
+                x.Product.ProductCategoryId, x.Product.Wage,
+                (int)x.Product.WageType, (int)x.Product.Carat, x.TaxOffset, x.Profit, x.Quantity, x.Tax,
+                x.CalculateRawPrice()));
+
+        CreateProjection<InvoiceItem, GetInvoiceItemResponse>()
+            .ConstructUsing(x => new GetInvoiceItemResponse(x.ProductId, x.InvoiceId, x.Product.Name, x.Product.Weight,
+                x.Product.ProductCategoryId, x.Product.Wage,
+                (int)x.Product.WageType, (int)x.Product.Carat, x.TaxOffset, x.Profit, x.Quantity, x.Tax,
+                x.CalculateRawPrice()));
+
+        CreateMap<AddInvoiceItemRequest, InvoiceItem>();
+
+        CreateMap<InvoiceItem, AddInvoiceItemResponse>()
+            .ConstructUsing(x => new AddInvoiceItemResponse(x.Id,x.ProductId, x.InvoiceId, x.Product.Name, x.Product.Weight,
+                x.Product.ProductCategoryId, x.Product.Wage,
+                (int)x.Product.WageType, (int)x.Product.Carat, x.TaxOffset, x.Profit, x.Quantity, x.Tax,
+                x.CalculateRawPrice()));
+
+        CreateMap<UpdateInvoiceItemRequest, InvoiceItem>();
+
+        CreateMap<InvoiceItem, UpdateInvoiceItemResponse>()
+            .ConstructUsing(x => new UpdateInvoiceItemResponse(x.Id, x.ProductId, x.InvoiceId, x.Quantity, x.Profit, x.GramPrice, 
+                x.DollarPrice, x.TaxOffset, x.Tax, x.Price));
+
+
 
         #endregion
 
