@@ -25,18 +25,16 @@ public class MappingProfile : Profile
             .ForMember(x => x.ProductCategoryId, a => a.MapFrom(b => b.CategoryId));
 
         CreateMap<Product, AddProductResponse>()
-            .ConstructUsing(x => new AddProductResponse(x.Id, x.Name, x.Weight, x.Wage, (int)x.WageType, (int)x.ProductType, (int)x.Carat, x.ProductCategoryId, x.Barcode))
-            .ForMember(x => x.CaratType, a => a.MapFrom(b => b.Carat))
-            .ForMember(x => x.CategoryName, a => a.MapFrom(b => b.ProductCategory.Name));
+            .ConstructUsing(x => new AddProductResponse(x.Id, x.Name, x.Weight, x.Wage, (int)x.WageType,
+                (int)x.ProductType, (int)x.Carat, x.ProductCategoryId, x.Barcode));
 
         CreateMap<UpdateProductRequest, Product>()
             .ForMember(x => x.Carat, a => a.MapFrom(b => b.CaratType))
             .ForMember(x => x.ProductCategoryId, a => a.MapFrom(b => b.CategoryId));
 
         CreateMap<Product, UpdateProductResponse>()
-            .ConstructUsing(x => new UpdateProductResponse(x.Id, x.Name, x.Weight, x.Wage, (int)x.WageType, (int)x.ProductType, (int)x.Carat, x.ProductCategoryId, x.Barcode))
-            .ForMember(x => x.CaratType, a => a.MapFrom(b => b.Carat))
-            .ForMember(x => x.CategoryId, a => a.MapFrom(b => b.ProductCategoryId)); ;
+            .ConstructUsing(x => new UpdateProductResponse(x.Id, x.Name, x.Weight, x.Wage, (int)x.WageType,
+                (int)x.ProductType, (int)x.Carat, x.ProductCategoryId, x.Barcode));
 
         CreateProjection<Product, GetProductResponse>()
             .ForMember(x => x.CaratType, a => a.MapFrom(b => b.Carat.ToDisplay()))
@@ -45,11 +43,8 @@ public class MappingProfile : Profile
             .ForMember(x => x.CategoryName, a => a.MapFrom(b => b.ProductCategory.Name));
 
         CreateMap<Product, GetProductResponse>()
-            .ConstructUsing(x => new GetProductResponse(x.Id, x.Name, x.Weight, x.Wage, x.WageType.ToDisplay(), x.ProductType.ToDisplay(), x.Carat.ToDisplay(), x.ProductCategory.Name, x.Barcode, x.Deleted))
-            .ForMember(x => x.CaratType, a => a.MapFrom(b => b.Carat.ToDisplay()))
-            .ForMember(x => x.ProductType, a => a.MapFrom(b => b.ProductType.ToDisplay()))
-            .ForMember(x => x.WageType, a => a.MapFrom(b => b.WageType.ToDisplay()))
-            .ForMember(x => x.CategoryName, a => a.MapFrom(b => b.ProductCategory.Name));
+            .ConstructUsing(x => new GetProductResponse(x.Id, x.Name, x.Weight, x.Wage, x.WageType.ToDisplay(),
+                x.ProductType.ToDisplay(), x.Carat.ToDisplay(), x.ProductCategory.Name, x.Barcode, x.Deleted));
 
         #endregion
 
@@ -63,23 +58,22 @@ public class MappingProfile : Profile
         #region Invoice
 
         CreateProjection<Invoice, GetInvoiceListResponse>()
-            .ConstructUsing(x => new GetInvoiceListResponse(x.Id, x.InvoiceNumber, x.Customer.FullName, x.Customer.PhoneNumber,
-                x.CalculateTotalPrice(), x.InvoiceItems.Count, x.InvoiceDate, x.Deleted))
-            .ForMember(i => i.InvoiceItemsCount, a => a.MapFrom(b => b.InvoiceItems.Count))
-            .ForMember(i => i.CustomerPhoneNumber, a => a.MapFrom(b => b.Customer.PhoneNumber))
-            .ForMember(i => i.CustomerName, a => a.MapFrom(b => b.Customer.FullName))
-            .ForMember(i => i.TotalCost, a => a.MapFrom(b => b.CalculateTotalPrice()))
-            .ForMember(i => i.InvoiceItemsCount, a => a.MapFrom(b => b.InvoiceItems.Count(x => !x.Deleted)));
-
+            .ConstructUsing(x => new GetInvoiceListResponse(x.Id, x.InvoiceNumber, x.Customer.FullName,
+                x.Customer.PhoneNumber,
+                x.CalculateTotalPrice(), x.InvoiceItems.Count, x.InvoiceDate, x.Deleted));
         CreateMap<Invoice, GetInvoiceResponse>()
-            .ForMember(x => x.CustomerId, a => a.MapFrom(b => b.Customer.Id))
-            .ForMember(x => x.TotalRawPrice, a => a.MapFrom(b => b.InvoiceItems.Sum(x => x.Price)))
-            .ForMember(x => x.TotalTax, a => a.MapFrom(b => b.InvoiceItems.Sum(x => x.Tax)))
-            .ForMember(x => x.TotalFinalPrice, a => a.MapFrom(b => b.CalculateTotalPrice()));
+            .ConstructUsing(x => new GetInvoiceResponse(x.Id, x.InvoiceNumber, x.CustomerId, x.InvoiceDate, x.Discount,
+                x.AdditionalPrices, x.Difference, x.Debt, x.DebtDate, x.InvoiceItems.Sum(a => a.Price),
+                x.InvoiceItems.Sum(a => a.Tax), x.CalculateTotalPrice()));
 
         CreateMap<AddInvoiceRequest, Invoice>();
 
         CreateMap<Invoice, AddInvoiceResponse>();
+
+        CreateMap<UpdateInvoiceRequest, Invoice>();
+
+        CreateMap<Invoice, UpdateInvoiceResponse>()
+            .ConstructUsing(x => new UpdateInvoiceResponse(x.Id, x.InvoiceNumber, x.CustomerId, x.InvoiceDate, x.Discount, x.AdditionalPrices, x.Difference, x.Debt, x.DebtDate));
 
         #endregion
 
@@ -89,8 +83,7 @@ public class MappingProfile : Profile
             .ForMember(x => x.FullName, a => a.MapFrom(b => b.Name));
 
         CreateMap<Customer, AddCustomerResponse>()
-            .ConstructUsing(x => new AddCustomerResponse(x.Id, x.FullName, x.PhoneNumber))
-            .ForMember(x => x.Name, a => a.MapFrom(b => b.FullName));
+            .ConstructUsing(x => new AddCustomerResponse(x.Id, x.FullName, x.PhoneNumber));
 
         #endregion
 

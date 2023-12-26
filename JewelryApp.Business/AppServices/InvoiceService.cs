@@ -92,7 +92,8 @@ public class InvoiceService : IInvoiceService
 
     public async Task<ErrorOr<UpdateInvoiceResponse>> UpdateInvoiceAsync(UpdateInvoiceRequest request, CancellationToken cancellationToken = default)
     {
-        var invoice = await _invoiceRepository.GetByIdAsync(request.Id, cancellationToken);
+        var invoice = await _invoiceRepository.Get(retrieveDeletedRecords: true)
+            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
         if (invoice is null)
             return Errors.Invoice.NotFound;
@@ -101,7 +102,7 @@ public class InvoiceService : IInvoiceService
 
         await _invoiceRepository.UpdateAsync(invoice, cancellationToken);
 
-        return new UpdateInvoiceResponse(invoice.Id);
+        return _mapper.Map<UpdateInvoiceResponse>(invoice);
     }
 
     public async Task<ErrorOr<RemoveInvoiceResponse>> RemoveInvoiceAsync(int id, CancellationToken cancellationToken = default)
@@ -111,6 +112,9 @@ public class InvoiceService : IInvoiceService
         if (invoice is null)
             return Errors.Invoice.NotFound;
 
+        if (invoice.Deleted)
+            return Errors.Invoice.Deleted;
+        
         await _invoiceRepository.DeleteAsync(invoice, cancellationToken);
 
         return new RemoveInvoiceResponse(invoice.Id);

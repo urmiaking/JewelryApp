@@ -11,5 +11,8 @@ public partial class Errors
 
         public static Error Exists =>
             Error.Conflict(code: "Invoice.ExistsError", description: "شماره فاکتور وارد شده از قبل وجود دارد");
+
+        public static Error Deleted =>
+            Error.Conflict(code: "Invoice.DeletedError", description: "فاکتور مورد نظر از قبل حذف شده است");
     }
 }

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Azure;
 using ErrorOr;
 using JewelryApp.Application.Interfaces;
 using JewelryApp.Core.Attributes;
