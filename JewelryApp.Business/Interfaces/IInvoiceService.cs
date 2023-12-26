@@ -11,5 +11,5 @@ public interface IInvoiceService
     Task<ErrorOr<AddInvoiceResponse>> AddInvoiceAsync(AddInvoiceRequest request, CancellationToken cancellationToken = default);
     Task<ErrorOr<UpdateInvoiceResponse>> UpdateInvoiceAsync(UpdateInvoiceRequest request, CancellationToken cancellationToken = default);
     Task<ErrorOr<RemoveInvoiceResponse>> RemoveInvoiceAsync(int id, CancellationToken cancellationToken = default);
-    Task<int> GetTotalInvoicesCount(CancellationToken cancellationToken);
+    Task<GetInvoicesCountResponse> GetTotalInvoicesCount(CancellationToken cancellationToken);
 }

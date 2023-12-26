@@ -255,6 +255,7 @@ namespace JewelryApp.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    InvoiceNumber = table.Column<int>(type: "int", nullable: false),
                     Discount = table.Column<double>(type: "float", nullable: false),
                     Debt = table.Column<double>(type: "float", nullable: false),
                     AdditionalPrices = table.Column<double>(type: "float", nullable: false),

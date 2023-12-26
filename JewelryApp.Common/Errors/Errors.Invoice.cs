@@ -10,6 +10,6 @@ public partial class Errors
             Error.NotFound(code: "Invoice.NotFoundError", description: "فاکتور یافت نشد");
 
         public static Error Exists =>
-            Error.NotFound(code: "Invoice.ExistsError", description: "شماره فاکتور وارد شده از قبل وجود دارد");
+            Error.Conflict(code: "Invoice.ExistsError", description: "شماره فاکتور وارد شده از قبل وجود دارد");
     }
 }

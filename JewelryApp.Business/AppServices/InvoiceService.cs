@@ -17,12 +17,14 @@ namespace JewelryApp.Application.AppServices;
 public class InvoiceService : IInvoiceService
 {
     private readonly IInvoiceRepository _invoiceRepository;
+    private readonly ICustomerRepository _customerRepository;
     private readonly IMapper _mapper;
 
-    public InvoiceService(IMapper mapper, IInvoiceRepository invoiceRepository)
+    public InvoiceService(IMapper mapper,  IInvoiceRepository invoiceRepository, ICustomerRepository customerRepository)
     {
         _mapper = mapper;
         _invoiceRepository = invoiceRepository;
+        _customerRepository = customerRepository;
     }
 
     public async Task<IEnumerable<GetInvoiceListResponse>?> GetInvoicesAsync(GetInvoiceListRequest request, CancellationToken cancellationToken = default)
@@ -76,6 +78,11 @@ public class InvoiceService : IInvoiceService
         if (invoiceExists)
             return Errors.Invoice.Exists;
 
+        var customer = await _customerRepository.GetByIdAsync(request.CustomerId, cancellationToken);
+
+        if (customer is null)
+            return Errors.Customer.NotFound;      
+
         await _invoiceRepository.AddAsync(invoice, cancellationToken);
 
         var response = _mapper.Map<AddInvoiceResponse>(invoice);
@@ -109,8 +116,12 @@ public class InvoiceService : IInvoiceService
         return new RemoveInvoiceResponse(invoice.Id);
     }
 
-    public async Task<int> GetTotalInvoicesCount(CancellationToken cancellationToken)
-        => await _invoiceRepository.Get().CountAsync(cancellationToken);
+    public async Task<GetInvoicesCountResponse> GetTotalInvoicesCount(CancellationToken cancellationToken)
+    { 
+        var count = await _invoiceRepository.Get().CountAsync(cancellationToken);
+
+        return new GetInvoicesCountResponse(count);
+    }
 
     private static object? GetPropertyValue(object obj, string propertyName)
         => obj.GetType().GetProperty(propertyName)?.GetValue(obj, null);

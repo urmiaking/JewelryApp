@@ -71,8 +71,8 @@ public class InvoicesController : ApiController
         return result.Match(Ok, Problem);
     }
 
-    [HttpGet(nameof(GetTotalInvoicesCount))]
-    public async Task<IActionResult> GetTotalInvoicesCount(CancellationToken cancellationToken)
+    [HttpGet(nameof(Count))]
+    public async Task<IActionResult> Count(CancellationToken cancellationToken)
         => Ok(await _invoiceService.GetTotalInvoicesCount(cancellationToken));
 }
 

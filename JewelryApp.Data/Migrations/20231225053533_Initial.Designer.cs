@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JewelryApp.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231224075930_Initial")]
+    [Migration("20231225053533_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -294,6 +294,9 @@ namespace JewelryApp.Infrastructure.Migrations
 
                     b.Property<DateTime>("InvoiceDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("InvoiceNumber")
+                        .HasColumnType("int");
 
                     b.Property<Guid?>("ModifiedUserId")
                         .HasColumnType("uniqueidentifier");

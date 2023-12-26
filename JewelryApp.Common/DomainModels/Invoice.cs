@@ -19,6 +19,16 @@ public class Invoice : SoftDeleteModelBase
 
     public virtual ICollection<InvoiceItem> InvoiceItems { get; set; } = new List<InvoiceItem>();
     public virtual ICollection<OldGold> OldGolds { get; set; } = new List<OldGold>();
+
+    public double CalculateTotalPrice()
+    {
+        var itemsPrice = InvoiceItems.Sum(x => x.Price);
+        var oldGoldsPrice = OldGolds.Sum(x => x.Price);
+        var tax = InvoiceItems.Sum(x => x.Tax);
+
+        // TODO: figure out differnece
+        return itemsPrice - oldGoldsPrice - Discount + AdditionalPrices - Debt + tax;
+    }
 }
 
 public class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>

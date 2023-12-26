@@ -3,8 +3,10 @@ using JewelryApp.Application.ExternalModels.Signal;
 using JewelryApp.Core.DomainModels;
 using JewelryApp.Core.Enums;
 using JewelryApp.Shared.Requests.Customer;
+using JewelryApp.Shared.Requests.Invoices;
 using JewelryApp.Shared.Requests.ProductCategories;
 using JewelryApp.Shared.Requests.Products;
+using JewelryApp.Shared.Responses.Customer;
 using JewelryApp.Shared.Responses.Invoices;
 using JewelryApp.Shared.Responses.Prices;
 using JewelryApp.Shared.Responses.ProductCategories;
@@ -61,21 +63,34 @@ public class MappingProfile : Profile
         #region Invoice
 
         CreateProjection<Invoice, GetInvoiceListResponse>()
+            .ConstructUsing(x => new GetInvoiceListResponse(x.Id, x.InvoiceNumber, x.Customer.FullName, x.Customer.PhoneNumber,
+                x.CalculateTotalPrice(), x.InvoiceItems.Count, x.InvoiceDate, x.Deleted))
             .ForMember(i => i.InvoiceItemsCount, a => a.MapFrom(b => b.InvoiceItems.Count))
             .ForMember(i => i.CustomerPhoneNumber, a => a.MapFrom(b => b.Customer.PhoneNumber))
-            .ForMember(i => i.CustomerName, a => a.MapFrom(b => b.Customer.FullName));
+            .ForMember(i => i.CustomerName, a => a.MapFrom(b => b.Customer.FullName))
+            .ForMember(i => i.TotalCost, a => a.MapFrom(b => b.CalculateTotalPrice()))
+            .ForMember(i => i.InvoiceItemsCount, a => a.MapFrom(b => b.InvoiceItems.Count(x => !x.Deleted)));
 
-        CreateMap<GetInvoiceResponse, Invoice>().ReverseMap()
+        CreateMap<Invoice, GetInvoiceResponse>()
             .ForMember(x => x.CustomerId, a => a.MapFrom(b => b.Customer.Id))
             .ForMember(x => x.TotalRawPrice, a => a.MapFrom(b => b.InvoiceItems.Sum(x => x.Price)))
             .ForMember(x => x.TotalTax, a => a.MapFrom(b => b.InvoiceItems.Sum(x => x.Tax)))
-            .ForMember(x => x.TotalFinalPrice, a => a.MapFrom(b => b.InvoiceItems.Sum(x => x.Tax) + b.InvoiceItems.Sum(x => x.Price)));
+            .ForMember(x => x.TotalFinalPrice, a => a.MapFrom(b => b.CalculateTotalPrice()));
+
+        CreateMap<AddInvoiceRequest, Invoice>();
+
+        CreateMap<Invoice, AddInvoiceResponse>();
 
         #endregion
 
         #region Customer
 
-        CreateMap<AddCustomerRequest, Customer>();
+        CreateMap<AddCustomerRequest, Customer>()
+            .ForMember(x => x.FullName, a => a.MapFrom(b => b.Name));
+
+        CreateMap<Customer, AddCustomerResponse>()
+            .ConstructUsing(x => new AddCustomerResponse(x.Id, x.FullName, x.PhoneNumber))
+            .ForMember(x => x.Name, a => a.MapFrom(b => b.FullName));
 
         #endregion
 

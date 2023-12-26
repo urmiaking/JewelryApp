@@ -292,6 +292,9 @@ namespace JewelryApp.Infrastructure.Migrations
                     b.Property<DateTime>("InvoiceDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("InvoiceNumber")
+                        .HasColumnType("int");
+
                     b.Property<Guid?>("ModifiedUserId")
                         .HasColumnType("uniqueidentifier");
 
