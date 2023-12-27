@@ -47,6 +47,12 @@ public class InvoiceItemService : IInvoiceItemService
         
         var invoiceItems = _invoiceItemRepository.GetInvoiceItemsByInvoiceId(invoiceId);
 
+        //foreach ( var item in await invoiceItems.ToListAsync())
+        //{
+        //    await _invoiceItemRepository.LoadReferenceAsync(item, a => a.Product);
+        //    await _invoiceItemRepository.LoadReferenceAsync(item, a => a.Invoice);
+        //}
+
         var response = await invoiceItems.ProjectTo<GetInvoiceItemResponse>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
 

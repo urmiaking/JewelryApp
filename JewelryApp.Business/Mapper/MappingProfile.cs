@@ -90,8 +90,7 @@ public class MappingProfile : Profile
         CreateProjection<InvoiceItem, GetInvoiceItemResponse>()
             .ConstructUsing(x => new GetInvoiceItemResponse(x.ProductId, x.InvoiceId, x.Product.Name, x.Product.Weight,
                 x.Product.ProductCategoryId, x.Product.Wage,
-                (int)x.Product.WageType, (int)x.Product.Carat, x.TaxOffset, x.Profit, x.Quantity, x.Tax,
-                x.CalculateRawPrice()));
+                (int)x.Product.WageType, (int)x.Product.Carat, x.TaxOffset, x.Profit, x.Quantity, x.Tax, 0));
 
         CreateMap<AddInvoiceItemRequest, InvoiceItem>();
 
@@ -106,8 +105,6 @@ public class MappingProfile : Profile
         CreateMap<InvoiceItem, UpdateInvoiceItemResponse>()
             .ConstructUsing(x => new UpdateInvoiceItemResponse(x.Id, x.ProductId, x.InvoiceId, x.Quantity, x.Profit, x.GramPrice, 
                 x.DollarPrice, x.TaxOffset, x.Tax, x.Price));
-
-
 
         #endregion
 
