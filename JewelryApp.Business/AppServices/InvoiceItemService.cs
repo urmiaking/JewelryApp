@@ -90,10 +90,16 @@ public class InvoiceItemService : IInvoiceItemService
         if (invoice is null)
             return Errors.Invoice.NotFound;
 
-        var invoiceItem = await _invoiceItemRepository.GetByIdAsync(request.Id, cancellationToken);
+        var invoiceItem = await _invoiceItemRepository.Get()
+            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
         if (invoiceItem is null)
             return Errors.InvoiceItem.NotFound;
+
+        var product = await _productRepository.GetByIdAsync(request.ProductId, cancellationToken);
+
+        if (product is null)
+            return Errors.Product.NotFound;
 
         invoiceItem = _mapper.Map<InvoiceItem>(request);
 
