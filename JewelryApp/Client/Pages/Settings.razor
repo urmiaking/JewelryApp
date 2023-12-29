@@ -18,7 +18,7 @@
                              <MudTextField Label="رمز عبور جدید" HelperText="رمز عبور جدید خود را وارد کنید" InputType="InputType.Password"
                              @bind-Value="PasswordModel.NewPassword" For="@(() => PasswordModel.NewPassword)" />
                              <MudTextField Label="تکرار رمز عبور جدید" HelperText="تکرار رمز عبور جدید خود را وارد کنید" InputType="InputType.Password"
-                             @bind-Value="PasswordModel.ConfirmPassword" For="@(() => PasswordModel.ConfirmPassword)" />
+                                           @bind-Value="PasswordModel.ConfirmNewPassword" For="@(() => PasswordModel.ConfirmNewPassword)" />
                          </MudCardContent>
                          <MudCardActions>
                              <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">ذخیره</MudButton>

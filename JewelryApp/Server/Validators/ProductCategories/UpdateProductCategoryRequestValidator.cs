@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using JewelryApp.Core.Attributes;
+using JewelryApp.Shared.Attributes;
 using JewelryApp.Shared.Requests.ProductCategories;
 
 namespace JewelryApp.Api.Validators.ProductCategories;

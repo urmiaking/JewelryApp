@@ -4,7 +4,7 @@ using JewelryApp.Core.DomainModels.Identity;
 using JewelryApp.Core.Interfaces;
 using JewelryApp.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Identity;
-using JewelryApp.Core.Attributes;
+using JewelryApp.Shared.Attributes;
 
 namespace JewelryApp.Infrastructure.Implementations;
 

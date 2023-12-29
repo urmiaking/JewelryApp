@@ -1,10 +1,10 @@
-﻿using JewelryApp.Core.Attributes;
-using JewelryApp.Core.Constants;
+﻿using JewelryApp.Core.Constants;
 using JewelryApp.Core.DomainModels.Identity;
 using JewelryApp.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using JewelryApp.Shared.Attributes;
 
 namespace JewelryApp.Infrastructure.Implementations;
 

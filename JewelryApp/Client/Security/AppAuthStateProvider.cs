@@ -1,15 +1,11 @@
 ﻿using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
+using JewelryApp.Shared.Attributes;
 
 namespace JewelryApp.Client.Security;
 
+[ScopedService<AuthenticationStateProvider>]
 public class AppAuthStateProvider : AuthenticationStateProvider
 {
     private readonly ILocalStorageService _localStorage;

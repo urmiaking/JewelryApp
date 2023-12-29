@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
 using ErrorOr;
-using JewelryApp.Core.Attributes;
 using JewelryApp.Core.Constants;
+using JewelryApp.Shared.Attributes;
 
 namespace JewelryApp.Api.Common.Errors;
 

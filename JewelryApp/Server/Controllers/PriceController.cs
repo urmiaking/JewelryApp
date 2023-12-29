@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using JewelryApp.Application.Interfaces;
-using Errors = JewelryApp.Core.Errors.Errors;
+using JewelryApp.Shared.Abstractions;
+using Errors = JewelryApp.Shared.Errors.Errors;
 
 namespace JewelryApp.Api.Controllers;
 

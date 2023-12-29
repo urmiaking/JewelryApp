@@ -14,7 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using static JewelryApp.Core.Errors.Errors;
+using static JewelryApp.Shared.Errors.Errors;
 
 namespace JewelryApp.Infrastructure;
 

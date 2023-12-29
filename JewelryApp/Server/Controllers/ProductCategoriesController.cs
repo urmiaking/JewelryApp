@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using JewelryApp.Api.Common.Extensions;
 using JewelryApp.Application.Interfaces;
+using JewelryApp.Shared.Abstractions;
 using JewelryApp.Shared.Requests.ProductCategories;
 using Microsoft.AspNetCore.Mvc;
 

@@ -7,6 +7,8 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor;
 using MudBlazor.Services;
+using System.Reflection;
+using JewelryApp.Shared.Extensions;
 
 namespace JewelryApp.Client;
 
@@ -14,6 +16,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddClient(this IServiceCollection services, IWebAssemblyHostEnvironment hostEnvironment)
     {
+        services.DiscoverServices();
         services.AddMudServices(opt =>
         {
             opt.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
@@ -22,9 +25,6 @@ public static class DependencyInjection
 
         services.AddScoped<AppAuthorizationMessageHandler>();
         services.AddAuthorizationCore();
-
-        services.AddScoped<IAccessTokenProvider, AppAccessTokenProvider>();
-        services.AddScoped<AuthenticationStateProvider, AppAuthStateProvider>();
 
         services.AddHttpClient("AuthorizedClient", client =>
         {
@@ -44,5 +44,18 @@ public static class DependencyInjection
         services.AddScoped<SignalRService>();
 
         return services;
+    }
+
+    private static void DiscoverServices(this IServiceCollection services)
+    {
+        var assembliesToScan = new[]
+        {
+            Assembly.GetExecutingAssembly(),
+            Assembly.Load("JewelryApp.Client.Services"),
+            Assembly.Load("JewelryApp.Client")
+        };
+
+        services.DiscoverSingletonServices(assembliesToScan);
+        services.DiscoverScopedServices(assembliesToScan);
     }
 }

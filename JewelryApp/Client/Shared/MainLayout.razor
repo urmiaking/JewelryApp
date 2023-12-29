@@ -1,7 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
 <MudRTLProvider RightToLeft="true">
-    <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="_darkMode" Theme="customTheme" />
+    <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="_darkMode" Theme="_customTheme" />
     <MudDialogProvider />
     <MudSnackbarProvider />
 
@@ -20,12 +20,12 @@
 </MudRTLProvider>
 
 @code {
-    bool _drawerOpen = false;
-    bool _darkMode = false;
+    bool _drawerOpen;
+    bool _darkMode;
     private MudThemeProvider? _mudThemeProvider;
-    private MudTheme? customTheme = new()
+    private readonly MudTheme? _customTheme = new()
         {
-            Palette = new PaletteLight()
+            Palette = new PaletteLight
             {
                 Primary = Colors.Blue.Default,
                 Secondary = Colors.Green.Accent4,
@@ -36,27 +36,17 @@
                 Primary = Colors.Blue.Lighten1
             },
 
-            LayoutProperties = new LayoutProperties()
+            LayoutProperties = new LayoutProperties
             {
                 DrawerWidthLeft = "260px",
                 DrawerWidthRight = "260px"
             },
-            Typography = new Typography()
+            Typography = new Typography
             {
-                Default = new Default()
+                Default = new Default
                 {
                     FontFamily = new[] { "IRANSans", "Poppins", "Helvetica", "Arial", "sans-serif" }
                 }
             }
         };
-
-    void DrawerToggle()
-    {
-        _drawerOpen = !_drawerOpen;
-    }
-
-    void DarkModeToggle()
-    {
-        _darkMode = !_darkMode;
-    }
 }

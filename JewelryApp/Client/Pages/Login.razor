@@ -2,7 +2,7 @@
 @layout LoginLayout
 @inherits UserComponentBase
 
-<EditForm Model="@_model" OnValidSubmit="OnValidSubmit">
+<EditForm Model="@_viewModel" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
     <div class="center-grid">
         <MudItem xs="12" sm="7">
@@ -14,10 +14,10 @@
                     </div>
                     <MudCardContent>
                         <MudTextField Label="نام کاربری"
-                                      @bind-Value="_model.UserName" For="@(() => _model.UserName)" />
+                                      @bind-Value="_viewModel.UserName" For="@(() => _viewModel.UserName)" />
 
                         <MudTextField Label="رمز عبور" Class="mt-3"
-                                      @bind-Value="_model.Password" For="@(() => _model.Password)" InputType="InputType.Password" />
+                                      @bind-Value="_viewModel.Password" For="@(() => _viewModel.Password)" InputType="InputType.Password" />
                     </MudCardContent>
                     <MudCardActions Class="m-4">
                         <MudButton EndIcon="@Icons.Material.Filled.Login" ButtonType="ButtonType.Submit" Variant="Variant.Filled"

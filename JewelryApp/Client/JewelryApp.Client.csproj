@@ -31,7 +31,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\JewelryApp.Shared\JewelryApp.Shared.csproj" />
+	  <ProjectReference Include="..\..\JewelryApp.Client.Services\JewelryApp.Client.Services.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -2,12 +2,13 @@
 using ErrorOr;
 using JewelryApp.Application.ExternalModels.Signal;
 using JewelryApp.Application.Interfaces;
-using JewelryApp.Core.Attributes;
 using JewelryApp.Core.DomainModels;
-using JewelryApp.Core.Errors;
 using JewelryApp.Core.Interfaces.Repositories;
+using JewelryApp.Shared.Abstractions;
+using JewelryApp.Shared.Attributes;
 using JewelryApp.Shared.Responses.Prices;
 using Microsoft.Extensions.Logging;
+using Errors = JewelryApp.Shared.Errors.Errors;
 
 namespace JewelryApp.Application.AppServices;
 

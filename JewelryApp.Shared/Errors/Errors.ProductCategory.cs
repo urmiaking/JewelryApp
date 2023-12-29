@@ -1,6 +1,6 @@
 ﻿using ErrorOr;
 
-namespace JewelryApp.Core.Errors;
+namespace JewelryApp.Shared.Errors;
 
 public partial class Errors
 {

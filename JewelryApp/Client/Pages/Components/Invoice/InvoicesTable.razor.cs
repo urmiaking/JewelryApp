@@ -1,6 +1,7 @@
 ﻿using JewelryApp.Client.Shared;
-using JewelryApp.Data.Models;
-using JewelryApp.Models.Dtos.Invoice;
+using JewelryApp.Client.ViewModels;
+using JewelryApp.Shared.Abstractions;
+using JewelryApp.Shared.Requests.Invoices;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -8,26 +9,25 @@ namespace JewelryApp.Client.Pages.Components.Invoice;
 
 public partial class InvoicesTable
 {
-    [Inject] 
-    public IDialogService Dialog { get; set; } = default!;
+    [Inject] public IDialogService Dialog { get; set; } = default!;
+    [Inject] public IInvoiceService InvoiceService { get; set; } = default!;
 
-    [Parameter]
-    public string? Class { get; set; }
+    [Parameter] public string? Class { get; set; }
 
-    private List<InvoiceTableItemDto> _invoices = new();
+    private List<InvoicesListVm> _invoicesList = new();
 
-    private DialogOptions _dialogOptions = new() { CloseButton = true, FullWidth = true, FullScreen = false };
+    private readonly DialogOptions _dialogOptions = new() { CloseButton = true, FullWidth = true, FullScreen = false };
 
-    private MudTable<InvoiceTableItemDto> _table = new();
+    private MudTable<InvoicesListVm> _table = new();
 
     private int _totalItems;
     private string? _searchString;
 
-    private async Task<TableData<InvoiceTableItemDto>> ServerReload(TableState state)
+    private async Task<TableData<InvoicesListVm>> ServerReload(TableState state)
     {
         await LoadData(state);
 
-        return new TableData<InvoiceTableItemDto> { TotalItems = _totalItems, Items = _invoices };
+        return new TableData<InvoicesListVm> { TotalItems = _totalItems, Items = _invoicesList };
     }
 
     private void OnSearch(string text)
@@ -38,27 +38,26 @@ public partial class InvoicesTable
 
     private async Task LoadData(TableState state)
     {
-        _invoices = await GetAsync<List<InvoiceTableItemDto>>(
-            $"/api/Invoices?page={state.Page}&pageSize={state.PageSize}&sortDirection={state.SortDirection}&sortLabel={state.SortLabel}&searchString={_searchString}") 
-                    ?? new List<InvoiceTableItemDto>();
+        var request = new GetInvoiceListRequest(state.Page, state.PageSize, state.SortDirection.ToDescriptionString(), state.SortLabel, _searchString);
 
-        _totalItems = await GetAsync<int>("/api/Invoices/GetTotalInvoicesCount");
+        var invoices = await InvoiceService.GetInvoicesAsync(request, CancellationTokenSource.Token);
+
+        _invoicesList = Mapper.Map<List<InvoicesListVm>>(invoices);
+
+        var itemCountResponse = await InvoiceService.GetTotalInvoicesCount(CancellationTokenSource.Token);
+
+        _totalItems = itemCountResponse.Count;
 
         StateHasChanged();
     }
 
     private async Task CommitItemAsync(object element)
     {
-        if (element is InvoiceTableItemDto invoiceItemDto)
+        if (element is InvoicesListVm invoiceItemDto)
         {
-            var invoiceHeader = new InvoiceHeaderDto
-            {
-                InvoiceId = invoiceItemDto.InvoiceId,
-                CustomerName = invoiceItemDto.CustomerName,
-                CustomerPhone = invoiceItemDto.CustomerPhone
-            };
+            var request = Mapper.Map<UpdateInvoiceRequest>(invoiceItemDto);
 
-            await PostAsync("/api/Invoices/UpdateInvoiceHeader", invoiceHeader);
+            await InvoiceService.UpdateInvoiceAsync(request, CancellationTokenSource.Token);
         }
     }
 

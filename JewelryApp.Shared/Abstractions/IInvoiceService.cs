@@ -2,7 +2,7 @@
 using JewelryApp.Shared.Requests.Invoices;
 using JewelryApp.Shared.Responses.Invoices;
 
-namespace JewelryApp.Application.Interfaces;
+namespace JewelryApp.Shared.Abstractions;
 
 public interface IInvoiceService
 {

@@ -3,40 +3,44 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using System.Net.Http.Json;
-using System.Text.Json;
+using JewelryApp.Client.ViewModels;
+using JewelryApp.Shared.Abstractions;
+using JewelryApp.Shared.Requests.Authentication;
 
 namespace JewelryApp.Client.Pages;
 
 public partial class Login
 {
-    private readonly LoginDto _model = new ();
+    private readonly LoginVm _viewModel = new ();
 
     [Inject] private AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
+    [Inject] private IAccountService AccountService { get; set; } = default!;
 
     private async Task OnValidSubmit(EditContext context)
     {
-        var httpResponse = await UnauthorizedHttpClient.PostAsJsonAsync("login", _model);
+        var request = Mapper.Map<AuthenticationRequest>(_viewModel);
 
-        if (httpResponse.IsSuccessStatusCode)
+        var response = await AccountService.AuthenticateAsync(request, CancellationTokenSource.Token);
+
+        if (response.IsError)
+        {
+            foreach (var responseError in response.Errors)
+            {
+                SnackBar.Add(responseError.Description);
+            }
+        }
+        else
         {
             SnackBar.Add("خوش آمدید!", Severity.Info);
 
-            var responseContent = await httpResponse.Content.ReadAsStringAsync();
-            var userToken = JsonSerializer.Deserialize<UserTokenDto>(responseContent, new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            });
+            var userToken = response.Value;
+
             if (userToken != null && AuthStateProvider is AppAuthStateProvider authStateProvider)
             {
                 await authStateProvider.LoginAsync(userToken.Token, userToken.RefreshToken);
 
                 NavigationManager.NavigateTo("/");
             }
-        }
-        else
-        {
-            SnackBar.Add("نام کاربری یا رمز عبور اشتباه است!", Severity.Error);
         }
     }
 }

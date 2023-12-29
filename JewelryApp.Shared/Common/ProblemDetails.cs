@@ -2,7 +2,7 @@
 
 namespace JewelryApp.Shared.Common;
 
-public class ValidationProblemDetails
+public class ProblemDetails
 {
     /// <summary>
     /// A URI reference [RFC3986] that identifies the problem type. This specification encourages that, when

@@ -1,36 +1,38 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using JewelryApp.Client.Shared;
-using JewelryApp.Models.Dtos.Product;
-using JewelryApp.Models.Dtos.Common;
+using JewelryApp.Client.ViewModels;
+using JewelryApp.Shared.Abstractions;
+using JewelryApp.Shared.Common;
+using JewelryApp.Shared.Requests.Products;
 
 namespace JewelryApp.Client.Pages.Components.Product;
 
 public partial class ProductList
 {
-    [Inject] 
-    public IDialogService Dialog { get; set; } = default!;
+    [Inject] public IDialogService Dialog { get; set; } = default!;
+    [Inject] public IProductService ProductService { get; set; } = default!;
 
     [Parameter] 
     public string? Class { get; set; }
 
-    private List<ProductTableItemDto> _products = new ();
+    private List<ProductListVm> _products = new ();
 
-    private HashSet<ProductTableItemDto> _selectedItems = new();
+    private HashSet<ProductListVm> _selectedItems = new();
 
     private DialogOptions _dialogOptions = new() { CloseButton = true, FullWidth = true, FullScreen = false };
 
-    private MudTable<ProductTableItemDto> _table = new();
+    private MudTable<ProductListVm> _table = new();
 
     private int _totalItems;
 
     private string? _searchString;
 
-    private async Task<TableData<ProductTableItemDto>> ServerReload(TableState state)
+    private async Task<TableData<ProductListVm>> ServerReload(TableState state)
     {
         await LoadData(state);
 
-        return new TableData<ProductTableItemDto> { TotalItems = _totalItems, Items = _products };
+        return new TableData<ProductListVm> { TotalItems = _totalItems, Items = _products };
     }
 
     private void OnSearch(string? text)
@@ -47,7 +49,7 @@ public partial class ProductList
 
         if (!result.Canceled)
         {
-            if (result.Data is ValidationProblemDetails validationProblems)
+            if (result.Data is ProblemDetails validationProblems)
             {
                 if (validationProblems.Errors.Count > 0)
                 {
@@ -66,20 +68,25 @@ public partial class ProductList
 
     private async Task LoadData(TableState state)
     {
-        _products = await GetAsync<List<ProductTableItemDto>>(
-                        $"/api/Products?page={state.Page}&pageSize={state.PageSize}&sortDirection={state.SortDirection}&sortLabel={state.SortLabel}&searchString={_searchString}")
-                    ?? new List<ProductTableItemDto>();
+        var request = new GetProductsRequest(state.Page, state.PageSize, state.SortDirection.ToDescriptionString(),
+            state.SortLabel, _searchString);
 
-        _totalItems = await GetAsync<int>("/api/Products/GetTotalProductsCount");
+        var products = await ProductService.GetProductsAsync(request, CancellationTokenSource.Token);
+
+        _products = Mapper.Map<List<ProductListVm>>(products);
+
+        var itemCountResponse = await ProductService.GetTotalProductsCount(CancellationTokenSource.Token);
+
+        _totalItems = itemCountResponse.Count;
 
         StateHasChanged();
     }
 
     private async Task CommitItemAsync(object item)
     {
-        var product = item as ProductTableItemDto;
+        var product = item as ProductListVm;
 
-        var productDto = new ProductDto
+        var productDto = new UpdateProductRequest() // Problem with ProductType
         {
             Id = product!.Id,
             Name = product.Name,

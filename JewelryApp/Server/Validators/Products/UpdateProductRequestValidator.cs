@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using JewelryApp.Core.Attributes;
 using JewelryApp.Core.Enums;
+using JewelryApp.Shared.Attributes;
 using JewelryApp.Shared.Requests.Products;
 
 namespace JewelryApp.Api.Validators.Products;

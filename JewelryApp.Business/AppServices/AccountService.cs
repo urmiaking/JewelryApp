@@ -3,16 +3,17 @@ using System.Security.Claims;
 using System.Text;
 using ErrorOr;
 using JewelryApp.Application.Interfaces;
-using JewelryApp.Core.Attributes;
 using JewelryApp.Core.DomainModels.Identity;
-using JewelryApp.Core.Errors;
 using JewelryApp.Core.Settings;
+using JewelryApp.Shared.Abstractions;
+using JewelryApp.Shared.Attributes;
 using JewelryApp.Shared.Requests.Authentication;
 using JewelryApp.Shared.Responses.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Errors = JewelryApp.Shared.Errors.Errors;
 
 namespace JewelryApp.Application.AppServices;
 
@@ -42,9 +43,9 @@ public class AccountService : IAccountService
         _signinManager = signinManager;
     }
 
-    public async Task<ErrorOr<AuthenticationResponse?>> AuthenticateAsync(AuthenticationRequest request)
+    public async Task<ErrorOr<AuthenticationResponse?>> AuthenticateAsync(AuthenticationRequest request, CancellationToken token = default)
     {
-        var signinResult = await _signinManager.PasswordSignInAsync(request.UserName, request.Password, false, false);
+        var signinResult = await _signinManager.PasswordSignInAsync(request.UserName, request.Password, true, true);
 
         if (signinResult.Succeeded)
             return await GenerateTokenForUserAsync(request.UserName);
@@ -52,7 +53,7 @@ public class AccountService : IAccountService
         return Errors.Authentication.InvalidCredentials;
     }
 
-    public async Task<ErrorOr<AuthenticationResponse?>> RefreshAsync(RefreshTokenRequest request)
+    public async Task<ErrorOr<AuthenticationResponse?>> RefreshAsync(RefreshTokenRequest request, CancellationToken token = default)
     {
         var validatedToken = GetPrincipalFromToken(request.Token);
 
@@ -101,7 +102,7 @@ public class AccountService : IAccountService
         return await GenerateTokenForUserAsync(userName);
     }
 
-    public async Task<ErrorOr<ChangePasswordResponse?>> ChangePasswordAsync(ChangePasswordRequest request)
+    public async Task<ErrorOr<ChangePasswordResponse?>> ChangePasswordAsync(ChangePasswordRequest request, CancellationToken token = default)
     {
         var user = await _userManager.FindByNameAsync(request.UserName);
 

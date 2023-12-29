@@ -1,20 +1,21 @@
 ﻿using Blazored.LocalStorage;
-using JewelryApp.Models.Dtos.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System.Net.Http.Json;
 using System.Text.Json;
+using JewelryApp.Shared.Attributes;
 
 namespace JewelryApp.Client.Security;
 
+[ScopedService<IAccessTokenProvider>]
 internal class AppAccessTokenProvider : IAccessTokenProvider
 {
     private readonly ILocalStorageService _localStorage;
-    private readonly HttpClient _unathorizedClient;
+    private readonly HttpClient _unauthorizedClient;
 
     public AppAccessTokenProvider(ILocalStorageService localStorage, IHttpClientFactory clientFactory)
     {
         _localStorage = localStorage;
-        _unathorizedClient = clientFactory.CreateClient("UnauthorizedClient");
+        _unauthorizedClient = clientFactory.CreateClient("UnauthorizedClient");
     }
 
     public async ValueTask<AccessTokenResult> RequestAccessToken()
@@ -82,7 +83,7 @@ internal class AppAccessTokenProvider : IAccessTokenProvider
     {
         var model = new UserTokenDto(token, refreshToken);
 
-        var responseMessage = await _unathorizedClient.PostAsJsonAsync("/refresh", model);
+        var responseMessage = await _unauthorizedClient.PostAsJsonAsync("/refresh", model);
 
         if (responseMessage.IsSuccessStatusCode)
         {

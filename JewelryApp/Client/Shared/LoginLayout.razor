@@ -3,7 +3,7 @@
 
 
 <MudRTLProvider RightToLeft="true">
-    <MudThemeProvider @ref="@_mudThemeProvider" Theme="customTheme" />
+    <MudThemeProvider @ref="@_mudThemeProvider" Theme="_customTheme" />
     <MudDialogProvider />
     <MudSnackbarProvider />
 
@@ -14,27 +14,27 @@
 
 @code {
     private MudThemeProvider? _mudThemeProvider;
-    private MudTheme? customTheme = new()
+    private readonly MudTheme? _customTheme = new()
     {
-        Palette = new PaletteLight()
+        Palette = new PaletteLight
         {
             Primary = Colors.Blue.Default,
             Secondary = Colors.Green.Accent4,
             AppbarBackground = Colors.Purple.Darken2,
         },
-        PaletteDark = new PaletteDark()
+        PaletteDark = new PaletteDark
         {
             Primary = Colors.Blue.Lighten1
         },
 
-        LayoutProperties = new LayoutProperties()
+        LayoutProperties = new LayoutProperties
         {
             DrawerWidthLeft = "260px",
             DrawerWidthRight = "300px"
         },
-        Typography = new Typography()
+        Typography = new Typography
         {
-            Default = new Default()
+            Default = new Default
             {
                 FontFamily = new[] { "IRANSans", "Poppins", "Helvetica", "Arial", "sans-serif" }
             }

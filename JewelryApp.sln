@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{0D9131
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JewelryApp.Shared", "JewelryApp.Shared\JewelryApp.Shared.csproj", "{CF2259D0-CF0E-40B2-B535-793507749C5D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JewelryApp.Client.Services", "JewelryApp.Client.Services\JewelryApp.Client.Services.csproj", "{F4F3FF00-0794-411E-A236-94A23F94C6AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{CF2259D0-CF0E-40B2-B535-793507749C5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF2259D0-CF0E-40B2-B535-793507749C5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF2259D0-CF0E-40B2-B535-793507749C5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4F3FF00-0794-411E-A236-94A23F94C6AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4F3FF00-0794-411E-A236-94A23F94C6AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4F3FF00-0794-411E-A236-94A23F94C6AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4F3FF00-0794-411E-A236-94A23F94C6AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +68,7 @@ Global
 		{BC55540D-336A-4587-8703-C11F0DA78B1E} = {6B0FC98E-7CCA-4445-87A0-6060E8CBE0E7}
 		{7A029A13-5E00-4807-81FB-4BB5F83E499D} = {6B0FC98E-7CCA-4445-87A0-6060E8CBE0E7}
 		{CF2259D0-CF0E-40B2-B535-793507749C5D} = {0D9131D7-8DC3-4F01-9076-3554BB68BE6C}
+		{F4F3FF00-0794-411E-A236-94A23F94C6AD} = {2E6D999C-08F9-4F90-8B3F-97F269FDFFDE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5C77FE9-8D36-476E-8862-EFF4848E56E9}

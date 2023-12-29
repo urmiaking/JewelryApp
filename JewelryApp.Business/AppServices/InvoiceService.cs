@@ -2,14 +2,15 @@
 using AutoMapper.QueryableExtensions;
 using ErrorOr;
 using JewelryApp.Application.Interfaces;
-using JewelryApp.Core.Attributes;
 using JewelryApp.Core.Constants;
 using JewelryApp.Core.DomainModels;
-using JewelryApp.Core.Errors;
 using JewelryApp.Core.Interfaces.Repositories;
+using JewelryApp.Shared.Abstractions;
+using JewelryApp.Shared.Attributes;
 using JewelryApp.Shared.Requests.Invoices;
 using JewelryApp.Shared.Responses.Invoices;
 using Microsoft.EntityFrameworkCore;
+using Errors = JewelryApp.Shared.Errors.Errors;
 
 namespace JewelryApp.Application.AppServices;
 

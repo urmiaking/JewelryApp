@@ -1,6 +1,8 @@
-﻿@inherits UserComponentBase
+﻿@using JewelryApp.Client.ViewModels
+@using System.Globalization
+@inherits UserComponentBase
 
-<MudTable Elevation="15" Class="@Class" ServerData="@(new Func<TableState, Task<TableData<InvoiceTableItemDto>>>(ServerReload))"
+<MudTable Elevation="15" Class="@Class" ServerData="@(new Func<TableState, Task<TableData<InvoicesListVm>>>(ServerReload))"
           Hover="true" @ref="_table" CanCancelEdit="true" RowEditCommit="async e => await CommitItemAsync(e)" Dense="true">
     <ToolBarContent>
         <MudText Typo="Typo.h6">لیست فاکتورها</MudText>
@@ -15,48 +17,48 @@
                    EndIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled">افزودن</MudButton>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh><MudTableSortLabel SortLabel="Id" T="InvoiceTableItemDto">شماره فاکتور</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="CustomerFullFullName" T="InvoiceTableItemDto">نام خریدار</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="FullNameNumber" T="InvoiceTableItemDto">شماره همراه</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="TotalCost" T="InvoiceTableItemDto">مبلغ کل</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="TotalCost" T="InvoiceTableItemDto">تعداد اجناس</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="BuyDate" T="InvoiceTableItemDto">تاریخ خرید</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel T="InvoiceTableItemDto">عملیات</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="Id" T="InvoicesListVm">شماره فاکتور</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="CustomerFullFullName" T="InvoicesListVm">نام خریدار</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="FullNameNumber" T="InvoicesListVm">شماره همراه</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="TotalCost" T="InvoicesListVm">مبلغ کل</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="TotalCost" T="InvoicesListVm">تعداد اجناس</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="BuyDate" T="InvoicesListVm">تاریخ خرید</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="InvoicesListVm">عملیات</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="شماره فاکتور">@context.InvoiceId</MudTd>
+        <MudTd DataLabel="شماره فاکتور">@context.InvoiceNumber</MudTd>
         <MudTd DataLabel="نام خریدار">@context.CustomerName</MudTd>
-        <MudTd DataLabel="شماره همراه">@context.CustomerPhone</MudTd>
+        <MudTd DataLabel="شماره همراه">@context.CustomerPhoneNumber</MudTd>
         <MudTd DataLabel="مبلغ کل">@context.TotalCost.ToString("C0").Replace("ریال", "") تومان</MudTd>
-        <MudTd DataLabel="تعداد اجناس">@context.ProductsCount</MudTd>
-        <MudTd DataLabel="تاریخ خرید">@context.BuyDate</MudTd>
+        <MudTd DataLabel="تعداد اجناس">@context.InvoiceItemsCount</MudTd>
+        <MudTd DataLabel="تاریخ خرید">@context.InvoiceDate.ToString(CultureInfo.CurrentCulture)</MudTd>
         <MudTd DataLabel="عملیات">
             <MudTooltip Text="ویرایش فاکتور">
                 <MudIconButton Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Edit"
-                               Color="@Color.Info" OnClick="@(() => EditInvoice(context.InvoiceId))"></MudIconButton>
+                               Color="@Color.Info" OnClick="@(() => EditInvoice(context.Id))"></MudIconButton>
             </MudTooltip>
             <MudTooltip Text="چاپ فاکتور">
                 <MudIconButton Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Print"
                                Color="@Color.Primary"></MudIconButton>
             </MudTooltip>
             <MudTooltip Text="حذف فاکتور">
-                <MudIconButton OnClick="@((e) => DeleteInvoice(_dialogOptions, context.InvoiceId))" 
+                <MudIconButton OnClick="@((e) => DeleteInvoice(_dialogOptions, context.Id))" 
                                Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Delete"
                                Color="@Color.Error"></MudIconButton>
             </MudTooltip>
         </MudTd>
     </RowTemplate>
     <RowEditingTemplate>
-        <MudTd DataLabel="شماره فاکتور">@context.InvoiceId</MudTd>
+        <MudTd DataLabel="شماره فاکتور">@context.InvoiceNumber</MudTd>
         <MudTd DataLabel="نام خریدار">
             <MudTextField @bind-Value="@context.CustomerName" Required />
         </MudTd>
         <MudTd DataLabel="شماره همراه">
-            <MudTextField @bind-Value="@context.CustomerPhone" Required />
+            <MudTextField @bind-Value="@context.CustomerPhoneNumber" Required />
         </MudTd>
         <MudTd DataLabel="مبلغ کل">@context.TotalCost.ToString("C0").Replace("ریال", "") تومان</MudTd>
-        <MudTd DataLabel="تعداد اجناس">@context.ProductsCount</MudTd>
-        <MudTd DataLabel="تاریخ">@context.BuyDate</MudTd>
+        <MudTd DataLabel="تعداد اجناس">@context.InvoiceItemsCount</MudTd>
+        <MudTd DataLabel="تاریخ">@context.InvoiceDate.ToString(CultureInfo.CurrentCulture)</MudTd>
     </RowEditingTemplate>
     <NoRecordsContent>
         <MudText>هیچ فاکتوری یافت نشد</MudText>

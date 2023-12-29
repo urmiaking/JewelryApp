@@ -1,7 +1,7 @@
 ﻿using JewelryApp.Application.Interfaces;
-using JewelryApp.Core.Attributes;
 using JewelryApp.Core.DomainModels;
 using JewelryApp.Core.Interfaces.Repositories.Base;
+using JewelryApp.Shared.Attributes;
 using Microsoft.EntityFrameworkCore;
 
 namespace JewelryApp.Application.AppServices;

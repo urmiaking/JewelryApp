@@ -1,7 +1,4 @@
-﻿using JewelryApp.Common.Enums;
-using JewelryApp.Models.Dtos.Invoice;
-using JewelryApp.Models.Dtos.Price;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
 namespace JewelryApp.Client.Pages;

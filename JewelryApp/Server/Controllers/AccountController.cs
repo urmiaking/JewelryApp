@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 using JewelryApp.Api.Common.Extensions;
-using JewelryApp.Application.Interfaces;
-using JewelryApp.Core.Errors;
+using JewelryApp.Shared.Abstractions;
 using JewelryApp.Shared.Requests.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Errors = JewelryApp.Shared.Errors.Errors;
 
 namespace JewelryApp.Api.Controllers;
 

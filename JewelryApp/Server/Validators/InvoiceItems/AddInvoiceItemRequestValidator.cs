@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using JewelryApp.Core.Attributes;
+using JewelryApp.Shared.Attributes;
 using JewelryApp.Shared.Requests.InvoiceItems;
 
 namespace JewelryApp.Api.Validators.InvoiceItems;

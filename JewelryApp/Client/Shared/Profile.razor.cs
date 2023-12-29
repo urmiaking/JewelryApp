@@ -1,6 +1,5 @@
 ﻿using System.Security.Claims;
 using System.Timers;
-using JewelryApp.Common.DateFunctions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Timer = System.Timers.Timer;
@@ -22,23 +21,18 @@ public partial class Profile
         _timer.Elapsed += TimerElapsed;
         _timer.Start();
 
-        _currentDateTime = DateTime.Now.ToShamsiDateTimeString();
+        _currentDateTime = DateTime.Now.ToShortTimeString();
 
         var authenticationState = await AuthenticationStateTask;
         var user = authenticationState.User;
 
-        _username = user.FindFirstValue(ClaimTypes.Name);
+        _username = user.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
         await base.OnInitializedAsync();
     }
 
     private void TimerElapsed(object? sender, ElapsedEventArgs e)
     {
-        _currentDateTime = DateTime.Now.ToShamsiDateTimeString();
+        _currentDateTime = DateTime.Now.ToShortTimeString();
         InvokeAsync(StateHasChanged);
-    }
-
-    public void Dispose()
-    {
-        _timer?.Dispose();
     }
 }
