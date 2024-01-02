@@ -1,6 +1,6 @@
-﻿using System.Net.Http.Json;
-using JewelryApp.Common.Enums;
-using JewelryApp.Models.Dtos.Product;
+﻿using JewelryApp.Client.ViewModels;
+using JewelryApp.Shared.Abstractions;
+using JewelryApp.Shared.Requests.Products;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -8,11 +8,11 @@ namespace JewelryApp.Client.Pages.Components.Product;
 
 public partial class AddProductDialog
 {
-    [CascadingParameter]
-    public MudDialogInstance MudDialog { get; set; } = default!;
+    [CascadingParameter] public MudDialogInstance MudDialog { get; set; } = default!;
 
-    [Parameter]
-    public ProductDto Model { get; set; } = new();
+    [Parameter] public AddProductVm Model { get; set; } = new();
+
+    [Inject] private IProductService ProductService { get; set; } = default!;
 
     private bool _processing;
 
@@ -20,19 +20,24 @@ public partial class AddProductDialog
 
     private async Task OnValidSubmit()
     {
-        await PostAsync("api/Products", Model);
+        var request = Mapper.Map<AddProductRequest>(Model);
 
-        _processing = false;
+        var response = await ProductService.AddProductAsync(request, CancellationTokenSource.Token);
 
-        if (ValidationProblems != null && ValidationProblems.Errors.Count > 0)
+        if (response.IsError)
         {
-            MudDialog.Close(DialogResult.Ok(ValidationProblems));
+            foreach (var error in response.Errors)
+            {
+                SnackBar.Add(error.Description);
+            }
         }
         else
         {
-            MudDialog.Close(DialogResult.Ok(1));
+            MudDialog.Close(DialogResult.Ok(response.Value));
         }
+
+        _processing = false;
     }
 
-    private readonly Func<Carat, string> _caretConverter = p => p.ToDisplay();
+    private readonly Func<CaratType, string> _caretConverter = p => p.ToDisplay();
 }

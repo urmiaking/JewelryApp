@@ -32,7 +32,7 @@
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="12" md="6" lg="6">
-                    <MudSelect T="Carat" Label="عیار" @bind-Value="Model.Carat" ToStringFunc="_caretConverter" For="() => Model.Carat" Variant="Variant.Outlined" Margin="Margin.Dense" >
+                    <MudSelect T="Carat" Label="عیار" @bind-Value="Model.CaratType" ToStringFunc="_caretConverter" For="() => Model.Carat" Variant="Variant.Outlined" Margin="Margin.Dense" >
                         @foreach (Carat caret in Enum.GetValues(typeof(Carat)))
                         {
                             <MudSelectItem T="Carat" Value="caret" />
