@@ -42,7 +42,7 @@ public static class EnumExtensions
     {
         Assert.NotNull(value, nameof(value));
 
-        DisplayProperty property = DisplayProperty.Name;
+        const DisplayProperty property = DisplayProperty.Name;
 
         var attribute = value.GetType()?.GetField(value.ToString())?
             .GetCustomAttributes<DisplayAttribute>(false).FirstOrDefault();
@@ -56,7 +56,7 @@ public static class EnumExtensions
 
     public static Dictionary<int, string> ToDictionary(this Enum value)
     {
-        return Enum.GetValues(value.GetType()).Cast<Enum>().ToDictionary(p => Convert.ToInt32(p), q => ToDisplay(q));
+        return Enum.GetValues(value.GetType()).Cast<Enum>().ToDictionary(Convert.ToInt32, ToDisplay);
     }
 }
 

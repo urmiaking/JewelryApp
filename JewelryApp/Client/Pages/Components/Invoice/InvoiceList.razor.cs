@@ -7,7 +7,7 @@ using MudBlazor;
 
 namespace JewelryApp.Client.Pages.Components.Invoice;
 
-public partial class InvoicesTable
+public partial class InvoiceList
 {
     [Inject] public IDialogService Dialog { get; set; } = default!;
     [Inject] public IInvoiceService InvoiceService { get; set; } = default!;

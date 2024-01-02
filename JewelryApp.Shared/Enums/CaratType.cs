@@ -1,21 +1,21 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace JewelryApp.Core.Enums;
+namespace JewelryApp.Shared.Enums;
 
 public enum CaratType
 {
     [Display(Name = "17 عیار")]
-    SevenTeen = 0,
+    SevenTeen = 1,
 
     [Display(Name = "18 عیار")]
-    Eighteen = 1,
+    Eighteen = 2,
 
     [Display(Name = "21 عیار")]
-    TwentyOne = 2,
+    TwentyOne = 3,
 
     [Display(Name = "22 عیار")]
-    TwentyTwo = 3,
+    TwentyTwo = 4,
 
     [Display(Name = "24 عیار")]
-    TwentyFour = 4
+    TwentyFour = 5
 }

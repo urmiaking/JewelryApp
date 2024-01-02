@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using JewelryApp.Client.ViewModels.Populated;
 
 namespace JewelryApp.Client.ViewModels;
 
@@ -30,4 +31,19 @@ public class ProductListVm
     [Display(Name = "بارکد")]
     public string Barcode { get; set; } = default!;
     public bool Deleted { get; set; }
+
+    public static int GetCaratTypeId(string caratType)
+    {
+        return CaratVm.GetCarats().FirstOrDefault(x => x.Name.Equals(caratType))!.Id;
+    }
+
+    public static int GetProductTypeId(string productType)
+    {
+        return ProductTypeVm.GetProductTypes().FirstOrDefault(x => x.Name.Equals(productType))!.Id;
+    }
+
+    public static int GetWageTypeId(string wageType)
+    {
+        return WageTypeVm.GetWageTypes().FirstOrDefault(x => x.Name.Equals(wageType))!.Id;
+    }
 }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace JewelryApp.Core.Enums;
+namespace JewelryApp.Shared.Enums;
 
 public enum WageType
 {

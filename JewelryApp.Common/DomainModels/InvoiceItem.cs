@@ -1,4 +1,5 @@
 ﻿using JewelryApp.Core.Enums;
+using JewelryApp.Shared.Enums;
 
 namespace JewelryApp.Core.DomainModels;
 

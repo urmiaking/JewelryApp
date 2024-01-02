@@ -86,18 +86,17 @@ public partial class ProductList
     {
         var product = item as ProductListVm;
 
-        var productDto = new UpdateProductRequest() // Problem with ProductType
-        {
-            Id = product!.Id,
-            Name = product.Name,
-            Carat = product.Carat,
-            ProductType = product.ProductType,
-            Wage = product.Wage,
-            Weight = product.Weight,
-            Barcode = product.Barcode
-        };
+        var request = Mapper.Map<UpdateProductRequest>(product);
 
-        await PostAsync("/api/Products", productDto);
+        var response = await ProductService.UpdateProductAsync(request, CancellationTokenSource.Token);
+
+        if (response.IsError)
+        {
+            foreach (var responseError in response.Errors)
+            {
+                SnackBar.Add(responseError.Description, Severity.Error);
+            }
+        }
     }
 
     private async Task OpenDeleteProductDialog(DialogOptions options, int productId)

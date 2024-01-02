@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace JewelryApp.Core.Utilities;
+namespace JewelryApp.Shared.Enums;
 
 public static class EnumExtensions
 {

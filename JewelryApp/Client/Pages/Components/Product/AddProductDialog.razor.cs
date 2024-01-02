@@ -38,6 +38,4 @@ public partial class AddProductDialog
 
         _processing = false;
     }
-
-    private readonly Func<CaratType, string> _caretConverter = p => p.ToDisplay();
 }

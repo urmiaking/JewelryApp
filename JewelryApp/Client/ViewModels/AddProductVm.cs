@@ -6,30 +6,30 @@ public class AddProductVm
 {
     [Display(Name = "نام جنس")]
     [Required(ErrorMessage = "وارد کردن {0} الزامی است")]
-    public string Name { get; } = default!;
+    public string Name { set; get; } = default!;
 
     [Display(Name = "وزن")]
     [Range(0.0001, double.MaxValue, ErrorMessage = "وارد کردن {0} الزامی است")]
-    public double Weight { get; }
+    public double Weight { set; get; }
 
     [Display(Name = "اجرت")]
     [Range(0, 100, ErrorMessage = "وارد کردن {0} الزامی است")]
-    public double Wage { get; }
+    public double Wage { set; get; }
 
     [Display(Name = "نوع اجرت")]
-    public int WageType { get; }
+    public int WageType { set; get; }
 
     [Display(Name = "نوع اجرت")]
-    public int ProductType { get; }
+    public int ProductType { set; get; }
 
     [Display(Name = "عیار")]
-    public int CaratType { get; }
+    public int CaratType { set; get; }
 
     [Display(Name = "دسته بندی")]
-    public int CategoryId { get; }
+    public int CategoryId { set; get; }
 
     [Display(Name = "بارکد")]
-    public string Barcode { get; } = default!;
+    public string Barcode { set; get; } = default!;
 
     public List<ProductCategoryVm> ProductCategories { get; set; } = new List<ProductCategoryVm>();
 }
