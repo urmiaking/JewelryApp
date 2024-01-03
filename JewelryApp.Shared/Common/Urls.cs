@@ -39,4 +39,10 @@ public static class Urls
     public const string ProductCategories = "/api/ProductCategories";
 
     #endregion
+
+    #region Price
+
+    public const string Price = "/api/Price";
+
+    #endregion
 }

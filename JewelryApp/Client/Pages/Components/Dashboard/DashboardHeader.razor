@@ -1,42 +1,42 @@
 ﻿@inherits UserComponentBase
 
-@if (_priceDto.Gram18 == 0)
+@if (_model is null)
 {
     <MudGrid>
         <MudItem xs="6" sm="6" md="4" lg="2">
             <MudPaper Elevation="15" Class="pa-4 text-center" Style="background-color: #00a65a">
-                <MudSkeleton Width="100%" Height="42px;" Animation="Animation.Wave" />
+                <MudText Typo="Typo.h6" Class="text-white text-center">گرم 17 عیار</MudText>
                 <MudSkeleton Width="100%" Height="52px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="6" md="4" lg="2" Class="align-items-center">
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: #0073b7">
-                <MudSkeleton Width="100%" Height="42px;" Animation="Animation.Wave" />
+                <MudText Typo="Typo.h6" Class="text-white text-center">گرم 18 عیار</MudText>
                 <MudSkeleton Width="100%" Height="52px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
 
         <MudItem xs="6" sm="6" md="4" lg="2">
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: chocolate">
-                <MudSkeleton Width="100%" Height="42px;" Animation="Animation.Wave" />
+                <MudText Typo="Typo.h6" Class="text-white text-center">گرم 24 عیار</MudText>
                 <MudSkeleton Width="100%" Height="52px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="6" md="4" lg="2">
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: darkorange">
-                <MudSkeleton Width="100%" Height="42px;" Animation="Animation.Wave" />
+                <MudText Typo="Typo.h6" Class="text-white text-center">قیمت دلار</MudText>
                 <MudSkeleton Width="100%" Height="52px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="6" md="4" lg="2">
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: darkturquoise">
-                <MudSkeleton Width="100%" Height="42px;" Animation="Animation.Wave" />
+                <MudText Typo="Typo.h6" Class="text-white text-center">مظنه طلا</MudText>
                 <MudSkeleton Width="100%" Height="52px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="6" md="4" lg="2">
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: darkgoldenrod">
-                <MudSkeleton Width="100%" Height="42px;" Animation="Animation.Wave" />
+                <MudText Typo="Typo.h6" Class="text-white text-center">مثقال</MudText>
                 <MudSkeleton Width="100%" Height="52px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
@@ -48,37 +48,37 @@ else
         <MudItem xs="6" sm="6" md="4" lg="2">
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: #00a65a">
                 <MudText Typo="Typo.h6" Class="text-white text-center">گرم 17 عیار</MudText>
-                <MudText Typo="Typo.h5" Class="mt-5 text-white  text-center">@(_priceDto.Gram17.ToString("N0"))</MudText>
+                <MudText Typo="Typo.h5" Class="mt-5 text-white  text-center">@(_model.Gram17.ToString("N0"))</MudText>
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="6" md="4" lg="2">
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: #0073b7">
                 <MudText Typo="Typo.h6" Class="text-white text-center">گرم 18 عیار</MudText>
-                <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_priceDto.Gram18.ToString("N0"))</MudText>
+                <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.Gram18.ToString("N0"))</MudText>
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="6" md="4" lg="2">
-            <MudPaper Elevation="15" Class="pa-4" Style="background-color: #chocolate">
+            <MudPaper Elevation="15" Class="pa-4" Style="background-color: chocolate">
                 <MudText Typo="Typo.h6" Class="text-white text-center">گرم 24 عیار</MudText>
-                <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_priceDto.Gram24.ToString("N0"))</MudText>
+                <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.Gram24.ToString("N0"))</MudText>
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="6" md="4" lg="2">
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: darkorange">
                 <MudText Typo="Typo.h6" Class="text-white text-center">قیمت دلار</MudText>
-                <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_priceDto.UsDollar.ToString("N0"))</MudText>
+                <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.UsDollar.ToString("N0"))</MudText>
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="6" md="4" lg="2">
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: darkturquoise">
                 <MudText Typo="Typo.h6" Class="text-white text-center">مظنه طلا</MudText>
-                <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_priceDto.Mazanneh.ToString("N0"))</MudText>
+                <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.Mazanneh.ToString("N0"))</MudText>
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="6" md="4" lg="2">
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: darkgoldenrod">
                 <MudText Typo="Typo.h6" Class="text-white text-center">مثقال</MudText>
-                <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_priceDto.Mesghal.ToString("N0"))</MudText>
+                <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.Mesghal.ToString("N0"))</MudText>
             </MudPaper>
         </MudItem>
     </MudGrid>

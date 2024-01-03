@@ -1,4 +1,6 @@
-﻿@inherits UserComponentBase
+﻿@using JewelryApp.Shared.Enums
+@using JewelryApp.Client.ViewModels.Populated
+@inherits UserComponentBase
 
 <MudIconButton OnClick="@ToggleOpen" Icon="@Icons.Material.Outlined.Calculate" Color="Color.Inherit"></MudIconButton>
 
@@ -20,13 +22,13 @@
             s
             <MudGrid>
                 <MudItem xs="6" sm="6" lg="6">
-                    <MudTextField @bind-Value="_productDto.GramPrice" AdornmentIcon="@Icons.Material.Filled.AttachMoney"
+                    <MudTextField @bind-Value="_model.GramPrice" AdornmentIcon="@Icons.Material.Filled.AttachMoney"
                                   Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined"
                                   HelperText="نرخ روز گرم">
                     </MudTextField>
                 </MudItem>
                 <MudItem xs="6" sm="6" lg="6">
-                     <MudTextField @bind-Value="_productDto.Weight" AdornmentIcon="@Icons.Material.Filled.ProductionQuantityLimits"
+                     <MudTextField @bind-Value="_model.Weight" AdornmentIcon="@Icons.Material.Filled.ProductionQuantityLimits"
                                   Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined"
                                   @onkeypress:preventDefault="true"
                                   HelperText="وزن">
@@ -35,13 +37,13 @@
             </MudGrid>
             <MudGrid>
                 <MudItem xs="6" sm="6" lg="6">
-                    <MudTextField @bind-Value="_productDto.Wage" AdornmentIcon="@Icons.Material.Filled.CurrencyExchange"
+                    <MudTextField @bind-Value="_model.Wage" AdornmentIcon="@Icons.Material.Filled.CurrencyExchange"
                                   Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined"
                                   HelperText="اجرت">
                     </MudTextField>
                 </MudItem>
                 <MudItem xs="6" sm="6" lg="6">
-                    <MudTextField @bind-Value="_productDto.TaxOffset" AdornmentIcon="@Icons.Material.Outlined.FactCheck"
+                    <MudTextField @bind-Value="_model.TaxOffset" AdornmentIcon="@Icons.Material.Outlined.FactCheck"
                                   Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined"
                                   HelperText="ضریب مالیات">
                     </MudTextField>
@@ -50,18 +52,18 @@
 
             <MudGrid>
                 <MudItem xs="6" sm="6" lg="6">
-                    <MudTextField @bind-Value="_productDto.Profit" AdornmentIcon="@Icons.Material.Outlined.Money"
+                    <MudTextField @bind-Value="_model.Profit" AdornmentIcon="@Icons.Material.Outlined.Money"
                                   Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined"
                                   HelperText="سود">
                     </MudTextField>
                 </MudItem>
                 <MudItem xs="6" sm="6" lg="6">
-                    <InputSelect class="select-text-calc" @bind-Value="_productDto.ProductType">
-                        @foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
+                    <MudSelect T="ProductTypeVm" Label="نوع جنس" @bind-Value="_model.ProductTypeVm" For="() => _model.ProductTypeVm" Margin="Margin.Dense" Variant="Variant.Outlined">
+                        @foreach (var productType in ProductTypeVm.GetProductTypes())
                         {
-                            <option class="p-4" value="@productType">@productType.ToDisplay()</option>
+                            <MudSelectItem T="ProductTypeVm" Value="productType">@productType.Name</MudSelectItem>
                         }
-                    </InputSelect>
+                    </MudSelect>
                 </MudItem>
             </MudGrid>
 
@@ -74,7 +76,7 @@
                 </MudItem>
                 <MudItem class="mt-5" xs="6" sm="6" lg="6">
                     <MudStack>
-                        <MudText Typo="Typo.body1">@((_productDto.FinalPrice - _productDto.Tax).ToString("C0").Replace("ریال", "")) تومان</MudText>
+                        <MudText Typo="Typo.body1">@((_model.FinalPrice - _model.Tax).ToString("C0").Replace("ریال", "")) تومان</MudText>
                     </MudStack>
                 </MudItem>
             </MudGrid>

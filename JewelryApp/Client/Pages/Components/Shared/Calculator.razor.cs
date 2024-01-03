@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Components.Web;
+﻿using JewelryApp.Client.ViewModels;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace JewelryApp.Client.Pages.Components.Shared;
 
 public partial class Calculator : IDisposable
 {
     private bool _isOpen;
-    private ProductCalculationDto _productDto = new();
+    private CalculatorVm _model = new();
     public string? BarcodeText { get; set; }
     private double _gramPrice;
 
@@ -27,47 +28,47 @@ public partial class Calculator : IDisposable
 
     private async Task GetGramPrice()
     {
-        try
-        {
-            var priceDto = await GetAsync<PriceDto>("api/Price");
+        //try
+        //{
+        //    var priceDto = await GetAsync<PriceDto>("api/Price");
 
-            _gramPrice = priceDto!.Gold18K;
+        //    _gramPrice = priceDto!.Gold18K;
 
-            _productDto.GramPrice = _gramPrice;
-        }
-        catch
-        {
-            //Ignore
-        }
+        //    _model.GramPrice = _gramPrice;
+        //}
+        //catch
+        //{
+        //    //Ignore
+        //}
     }
 
     public void Dispose()
     {
-        _productDto = new ProductCalculationDto
-        {
-            GramPrice = _gramPrice
-        };
+        //_model = new ProductCalculationDto
+        //{
+        //    GramPrice = _gramPrice
+        //};
     }
 
     private async Task BarcodeChanged(string barcode)
     {
-        if (!string.IsNullOrEmpty(barcode) && barcode.Length > 5)
-        {
-            _productDto = await GetAsync<ProductCalculationDto>($"api/Products/{barcode}") ?? new ProductCalculationDto();
-            _productDto.GramPrice = _gramPrice;
+        //if (!string.IsNullOrEmpty(barcode) && barcode.Length > 5)
+        //{
+        //    _model = await GetAsync<ProductCalculationDto>($"api/Products/{barcode}") ?? new ProductCalculationDto();
+        //    _model.GramPrice = _gramPrice;
 
-        }
+        //}
     }
 
     private void WeightKeyHandler(KeyboardEventArgs e)
     {
         if (e.Key == "+")
         {
-            _productDto.Weight += 1;
+            _model.Weight += 1;
         }
         else if (e.Key == "-")
         {
-            _productDto.Weight -= 1;
+            _model.Weight -= 1;
         }
     }
 }

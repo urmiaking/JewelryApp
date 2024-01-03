@@ -1,5 +1,4 @@
 ﻿using JewelryApp.Client.ViewModels.Populated;
-using JewelryApp.Shared.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace JewelryApp.Client.ViewModels;
@@ -33,9 +32,9 @@ public class AddProductVm
     [Display(Name = "بارکد")]
     public string Barcode { set; get; } = default!;
 
-    public ProductTypeVm ProductTypeVm { get; set; } = new ProductTypeVm();
-    public CaratTypeVm CaratTypeVm { get; set; } = new CaratTypeVm();
-    public WageTypeVm WageTypeVm { get; set; } = new WageTypeVm();
+    public ProductTypeVm ProductTypeVm { get; set; } = new();
+    public CaratTypeVm CaratTypeVm { get; set; } = new();
+    public WageTypeVm WageTypeVm { get; set; } = new();
 
-    public List<ProductCategoryVm> ProductCategories { get; set; } = new List<ProductCategoryVm>();
+    public List<ProductCategoryVm> ProductCategories { get; set; } = new ();
 }

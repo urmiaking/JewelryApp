@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using ErrorOr;
 using JewelryApp.Application.ExternalModels.Signal;
 using JewelryApp.Application.Interfaces;
 using JewelryApp.Core.DomainModels;
@@ -8,7 +7,6 @@ using JewelryApp.Shared.Abstractions;
 using JewelryApp.Shared.Attributes;
 using JewelryApp.Shared.Responses.Prices;
 using Microsoft.Extensions.Logging;
-using Errors = JewelryApp.Shared.Errors.Errors;
 
 namespace JewelryApp.Application.AppServices;
 
@@ -28,14 +26,14 @@ public class PriceService : IPriceService
         _priceRepository = priceRepository;
     }
 
-    public async Task<ErrorOr<PriceResponse?>> GetPriceAsync(CancellationToken cancellationToken = default)
+    public async Task<PriceResponse?> GetPriceAsync(CancellationToken cancellationToken = default)
     {
         try
         {
             var latestPrice = await _priceApiService.GetPriceAsync(cancellationToken);
 
             if (latestPrice is null)
-                return Errors.General.NoInternet;
+                return null;
 
             var price = _mapper.Map<PriceApiResult?, Price>(latestPrice);
 
@@ -55,7 +53,7 @@ public class PriceService : IPriceService
         catch (Exception e)
         {
             _logger.LogError(e.Message);
-            return Errors.General.ServerError;
+            return null;
         }
 
         

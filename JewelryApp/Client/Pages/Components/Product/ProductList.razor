@@ -43,7 +43,7 @@
             <MudTd DataLabel="نام جنس">@context.Name</MudTd>
             <MudTd DataLabel="وزن">@(context.Weight + " گرم")</MudTd>
                 <MudTd DataLabel="اجرت">
-                    @if (context.ProductTypeVm.Id == (int)ProductType.Gold)
+                    @if (context.ProductType == ProductType.Gold.ToString())
                     {
                         @(context.Wage + " درصد")
                     }
@@ -52,8 +52,8 @@
                         @(context.Wage.ToString("C0").Replace("ریال", "") + " تومان")
                     }
                 </MudTd>
-            <MudTd DataLabel="نوع جنس">@context.ProductTypeVm.Name</MudTd>
-            <MudTd DataLabel="عیار">@context.CaratTypeVm.Name</MudTd>
+            <MudTd DataLabel="نوع جنس">@context.ProductType</MudTd>
+            <MudTd DataLabel="عیار">@context.CaratType</MudTd>
             <MudTd DataLabel="عملیات">
                 <MudTooltip Text="چاپ بارکد">
                     <MudIconButton Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Print"

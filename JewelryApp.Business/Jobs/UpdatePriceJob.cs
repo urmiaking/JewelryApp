@@ -1,5 +1,4 @@
 ﻿using JewelryApp.Application.Hubs;
-using JewelryApp.Application.Interfaces;
 using JewelryApp.Shared.Abstractions;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;

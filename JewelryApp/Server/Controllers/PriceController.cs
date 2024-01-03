@@ -16,14 +16,5 @@ public class PriceController : ApiController
 
     [HttpGet]
     public async Task<IActionResult> Get()
-    {
-        var response = await _priceService.GetPriceAsync();
-
-        if (response.IsError && response.FirstError == Errors.General.NoInternet)
-            return Problem(
-                statusCode: StatusCodes.Status500InternalServerError,
-                title: response.FirstError.Description);
-
-        return response.Match(Ok, Problem);
-    }
+        => Ok(await _priceService.GetPriceAsync());
 }
