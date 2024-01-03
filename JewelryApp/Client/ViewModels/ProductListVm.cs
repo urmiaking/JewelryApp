@@ -34,7 +34,7 @@ public class ProductListVm
 
     public static int GetCaratTypeId(string caratType)
     {
-        return CaratVm.GetCarats().FirstOrDefault(x => x.Name.Equals(caratType))!.Id;
+        return CaratTypeVm.GetCarats().FirstOrDefault(x => x.Name.Equals(caratType))!.Id;
     }
 
     public static int GetProductTypeId(string productType)
@@ -46,4 +46,8 @@ public class ProductListVm
     {
         return WageTypeVm.GetWageTypes().FirstOrDefault(x => x.Name.Equals(wageType))!.Id;
     }
+
+    public CaratTypeVm CaratTypeVm { get; set; } = new CaratTypeVm();
+    public ProductTypeVm ProductTypeVm { get; set; } = new ProductTypeVm();
+    public WageTypeVm WageTypeVm { get; set; } = new WageTypeVm();
 }

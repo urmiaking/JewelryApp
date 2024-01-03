@@ -14,10 +14,10 @@
                     <MudNumericField Label="وزن" @bind-Value="Model.Weight" For="@(() => Model.Weight)" Variant="Variant.Outlined" Margin="Margin.Dense" />
                 </MudItem>
                 <MudItem xs="12" md="6" lg="6">
-                    <MudSelect T="WageTypeVm" Label="نوع اجرت" @bind-Value="Model.WageType" For="() => Model.WageType" Margin="Margin.Dense" Variant="Variant.Outlined">
+                    <MudSelect T="WageTypeVm" Label="نوع اجرت" For="() => Model.WageTypeVm" Margin="Margin.Dense" Variant="Variant.Outlined">
                         @foreach (var wageType in WageTypeVm.GetWageTypes())
                         {
-                            <MudSelectItem T="WageTypeVm" Value="wageType.Id">@wageType.Name</MudSelectItem>
+                            <MudSelectItem T="WageTypeVm" Value="wageType">@wageType.Name</MudSelectItem>
                         }
                     </MudSelect>
                 </MudItem>
@@ -25,18 +25,18 @@
                     <MudNumericField Label="اجرت" @bind-Value="Model.Wage" For="@(() => Model.Wage)" Variant="Variant.Outlined" Margin="Margin.Dense" Step="1" />
                 </MudItem>
                 <MudItem xs="12" md="6" lg="6">
-                    <MudSelect T="ProductTypeVm" Label="نوع جنس" @bind-Value="Model.ProductType" For="() => Model.ProductType" Margin="Margin.Dense" Variant="Variant.Outlined">
+                    <MudSelect T="ProductTypeVm" Label="نوع جنس" @bind-Value="Model.ProductTypeVm" For="() => Model.ProductTypeVm" Margin="Margin.Dense" Variant="Variant.Outlined">
                         @foreach (var productType in ProductTypeVm.GetProductTypes())
                         {
-                            <MudSelectItem T="ProductType" Value="productType.Id">@productType.Name</MudSelectItem>
+                            <MudSelectItem T="ProductTypeVm" Value="productType">@productType.Name</MudSelectItem>
                         }
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="12" md="6" lg="6">
-                    <MudSelect T="CaratVm" Label="عیار" @bind-Value="Model.CaratType" For="() => Model.CaratType" Margin="Margin.Dense" Variant="Variant.Outlined">
-                        @foreach (var caratType in CaratVm.GetCarats())
+                    <MudSelect T="CaratTypeVm" Label="عیار" @bind-Value="Model.CaratTypeVm" For="() => Model.CaratTypeVm" Margin="Margin.Dense" Variant="Variant.Outlined">
+                        @foreach (var caratType in CaratTypeVm.GetCarats())
                         {
-                            <MudSelectItem T="CaratVm" Value="caratType.Id">@caratType.Name</MudSelectItem>
+                            <MudSelectItem T="CaratTypeVm" Value="caratType">@caratType.Name</MudSelectItem>
                         }
                     </MudSelect>
                 </MudItem>
@@ -59,6 +59,6 @@
         </EditForm>
     </DialogContent>
     <DialogActions>
-        
+
     </DialogActions>
 </MudDialog>

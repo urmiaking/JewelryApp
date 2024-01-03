@@ -9,6 +9,7 @@ using MudBlazor;
 using MudBlazor.Services;
 using System.Reflection;
 using JewelryApp.Shared.Extensions;
+using JewelryApp.Client.Configurations;
 
 namespace JewelryApp.Client;
 
@@ -17,6 +18,7 @@ public static class DependencyInjection
     public static IServiceCollection AddClient(this IServiceCollection services, IWebAssemblyHostEnvironment hostEnvironment)
     {
         services.DiscoverServices();
+        services.AddAutoMapper(typeof(MappingProfile));
         services.AddMudServices(opt =>
         {
             opt.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;

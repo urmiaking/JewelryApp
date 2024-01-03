@@ -1,6 +1,4 @@
-﻿using JewelryApp.Models.Dtos.Price;
-using JewelryApp.Models.Dtos.Product;
-using Microsoft.AspNetCore.Components.Web;
+﻿using Microsoft.AspNetCore.Components.Web;
 
 namespace JewelryApp.Client.Pages.Components.Shared;
 

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System.Net.Http.Json;
 using System.Text.Json;
 using JewelryApp.Shared.Attributes;
+using JewelryApp.Shared.Responses.Authentication;
+using JewelryApp.Shared.Requests.Authentication;
 
 namespace JewelryApp.Client.Security;
 
@@ -79,16 +81,16 @@ internal class AppAccessTokenProvider : IAccessTokenProvider
         return new AccessToken { Value = token, Expires = expire };
     }
 
-    private async Task<UserTokenDto?> RefreshToken(string token, Guid refreshToken)
+    private async Task<AuthenticationResponse?> RefreshToken(string token, Guid refreshToken)
     {
-        var model = new UserTokenDto(token, refreshToken);
+        var model = new RefreshTokenRequest(token, refreshToken);
 
         var responseMessage = await _unauthorizedClient.PostAsJsonAsync("/refresh", model);
 
         if (responseMessage.IsSuccessStatusCode)
         {
             var content = await responseMessage.Content.ReadAsStringAsync();
-            var response = JsonSerializer.Deserialize<UserTokenDto>(content, new JsonSerializerOptions
+            var response = JsonSerializer.Deserialize<AuthenticationResponse>(content, new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             });
