@@ -7,32 +7,42 @@
 <MudPopover Open="@_isOpen" Fixed="false" TransformOrigin="Origin.TopLeft" AnchorOrigin="Origin.BottomLeft" Class="px-4 pt-4">
     <div class="d-flex flex-column">
         <MudStack Row Class="p-2 ml-2">
-            <MudText Class="mb-2">محاسبه قیمت تمام شده ی طلا و جواهر</MudText>
-            <MudSpacer />
-            <div style="max-width: 150px">
-                <MudTextField AdornmentIcon="@Icons.Material.Filled.QrCode"
-                              Adornment="Adornment.End" Variant="Variant.Outlined" Margin="Margin.Dense"
-                              Value="BarcodeText" ValueChanged="BarcodeChanged" T="string"
-                              Label="بارکد"></MudTextField>
-            </div>
-        </MudStack>
+             <MudText Class="mb-2">محاسبه قیمت تمام شده ی طلا و جواهر</MudText>
+             <MudSpacer />
+             <div style="max-width: 150px">
+                 <MudTextField AdornmentIcon="@Icons.Material.Filled.QrCode"
+                               Adornment="Adornment.End" Variant="Variant.Outlined" Margin="Margin.Dense"
+                               Value="BarcodeText" ValueChanged="BarcodeChanged" T="string"
+                               Label="بارکد"></MudTextField>
+             </div>
+         </MudStack>
 
-        <MudDivider />
-        <MudPaper Class="p-2 m-2">
-            s
-            <MudGrid>
-                <MudItem xs="6" sm="6" lg="6">
-                    <MudTextField @bind-Value="_model.GramPrice" AdornmentIcon="@Icons.Material.Filled.AttachMoney"
-                                  Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined"
-                                  HelperText="نرخ روز گرم">
-                    </MudTextField>
-                </MudItem>
-                <MudItem xs="6" sm="6" lg="6">
+         <MudDivider />
+         <MudPaper Class="p-2 m-2">
+             <MudGrid>
+                 <MudItem xs="6" sm="6" lg="6">
+                     <MudTextField @bind-Value="_model.GramPrice" AdornmentIcon="@Icons.Material.Filled.AttachMoney"
+                                   Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined"
+                                   HelperText="نرخ روز گرم">
+                     </MudTextField>
+                 </MudItem>
+                 <MudItem xs="6" sm="6" lg="6">
                      <MudTextField @bind-Value="_model.Weight" AdornmentIcon="@Icons.Material.Filled.ProductionQuantityLimits"
-                                  Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined"
-                                  @onkeypress:preventDefault="true"
-                                  HelperText="وزن">
-                    </MudTextField>
+                                   Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined"
+                                   @onkeypress:preventDefault="true"
+                                   HelperText="وزن">
+                     </MudTextField>
+                 </MudItem>
+             </MudGrid>
+             <MudGrid>
+                 <MudItem xs="12">
+                     <MudText Typo="Typo.caption">نوع جنس</MudText>
+                     <MudRadioGroup T="CalculationProductType">
+                         @foreach (CalculationProductType productType in Enum.GetValues(typeof(CalculationProductType)))
+                        {
+                            <MudRadio T="CalculationProductType" Class="ml-5 mr-5" Value="@productType" Dense="true" Color="Color.Primary" UnCheckedColor="Color.Default">@productType.GetDisplayName()</MudRadio>
+                        }
+                    </MudRadioGroup>
                 </MudItem>
             </MudGrid>
             <MudGrid>
@@ -56,14 +66,6 @@
                                   Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined"
                                   HelperText="سود">
                     </MudTextField>
-                </MudItem>
-                <MudItem xs="6" sm="6" lg="6">
-                    <MudSelect T="ProductTypeVm" Label="نوع جنس" @bind-Value="_model.ProductTypeVm" For="() => _model.ProductTypeVm" Margin="Margin.Dense" Variant="Variant.Outlined">
-                        @foreach (var productType in ProductTypeVm.GetProductTypes())
-                        {
-                            <MudSelectItem T="ProductTypeVm" Value="productType">@productType.Name</MudSelectItem>
-                        }
-                    </MudSelect>
                 </MudItem>
             </MudGrid>
 

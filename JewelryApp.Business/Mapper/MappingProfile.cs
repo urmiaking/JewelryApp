@@ -27,16 +27,16 @@ public class MappingProfile : Profile
             .ForMember(x => x.ProductCategoryId, a => a.MapFrom(b => b.CategoryId));
 
         CreateMap<Product, AddProductResponse>()
-            .ConstructUsing(x => new AddProductResponse(x.Id, x.Name, x.Weight, x.Wage, (int)x.WageType,
-                (int)x.ProductType, (int)x.Carat, x.ProductCategoryId, x.Barcode));
+            .ConstructUsing(x => new AddProductResponse(x.Id, x.Name, x.Weight, x.Wage, x.WageType.ToString(),
+                x.ProductType.ToString(), x.Carat.ToString(), x.ProductCategoryId, x.Barcode));
 
         CreateMap<UpdateProductRequest, Product>()
             .ForMember(x => x.Carat, a => a.MapFrom(b => b.CaratType))
             .ForMember(x => x.ProductCategoryId, a => a.MapFrom(b => b.CategoryId));
 
         CreateMap<Product, UpdateProductResponse>()
-            .ConstructUsing(x => new UpdateProductResponse(x.Id, x.Name, x.Weight, x.Wage, (int)x.WageType,
-                (int)x.ProductType, (int)x.Carat, x.ProductCategoryId, x.Barcode));
+            .ConstructUsing(x => new UpdateProductResponse(x.Id, x.Name, x.Weight, x.Wage, x.WageType.ToString(),
+                x.ProductType.ToString(), x.Carat.ToString(), x.ProductCategoryId, x.Barcode));
 
         CreateProjection<Product, GetProductResponse>()
             .ForMember(x => x.CaratType, a => a.MapFrom(b => b.Carat.ToDisplay()))

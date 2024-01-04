@@ -1,8 +1,16 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Authorization
 
 @inherits UserComponentBase
 
-<DashboardHeader></DashboardHeader>
+<AuthorizeView>
+    <Authorized>
+        <DashboardHeader></DashboardHeader>
 
-<InvoicesTable Class="mt-5"></InvoicesTable>
-<ProductList></ProductList>
+        <InvoiceList Class="mt-5"></InvoiceList>
+        <ProductList></ProductList>
+    </Authorized>
+    <NotAuthorized>
+        <Logout />
+    </NotAuthorized>
+</AuthorizeView>

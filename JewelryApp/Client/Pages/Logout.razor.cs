@@ -14,7 +14,7 @@ public partial class Logout
         {
             await authStateProvider.LogoutAsync();
 
-            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/login");
         }
 
         await base.OnInitializedAsync();

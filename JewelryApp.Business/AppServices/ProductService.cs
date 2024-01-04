@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using ErrorOr;
-using JewelryApp.Application.Interfaces;
 using JewelryApp.Core.Constants;
 using JewelryApp.Core.DomainModels;
 using JewelryApp.Core.Interfaces.Repositories;

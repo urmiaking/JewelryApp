@@ -254,3 +254,12 @@ a, .btn-link {
 .centered-rows td {
     text-align: center;
 }
+
+.ml-3 {
+    margin-left: 150px; /* Default margin for desktop */
+    /* Media query for mobile devices */
+
+    @media (max-width: 767px) {
+        margin: 50px; /* Margin for mobile devices */
+    }
+}

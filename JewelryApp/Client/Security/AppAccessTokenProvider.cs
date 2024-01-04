@@ -5,6 +5,7 @@ using System.Text.Json;
 using JewelryApp.Shared.Attributes;
 using JewelryApp.Shared.Responses.Authentication;
 using JewelryApp.Shared.Requests.Authentication;
+using JewelryApp.Shared.Common;
 
 namespace JewelryApp.Client.Security;
 
@@ -85,7 +86,7 @@ internal class AppAccessTokenProvider : IAccessTokenProvider
     {
         var model = new RefreshTokenRequest(token, refreshToken);
 
-        var responseMessage = await _unauthorizedClient.PostAsJsonAsync("/refresh", model);
+        var responseMessage = await _unauthorizedClient.PostAsJsonAsync(Urls.RefreshToken, model);
 
         if (responseMessage.IsSuccessStatusCode)
         {

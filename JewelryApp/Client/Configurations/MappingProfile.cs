@@ -18,5 +18,6 @@ public class MappingProfile : Profile
         CreateMap<AddProductVm, AddProductRequest>();
         CreateMap<GetProductResponse, ProductListVm>();
         CreateMap<ChangePasswordVm, ChangePasswordRequest>();
+        CreateMap<GetProductResponse, CalculatorVm>();
     }
 }

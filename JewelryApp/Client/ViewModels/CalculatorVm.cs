@@ -1,4 +1,4 @@
-﻿using JewelryApp.Client.ViewModels.Populated;
+﻿using JewelryApp.Shared.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace JewelryApp.Client.ViewModels;
@@ -31,23 +31,19 @@ public class CalculatorVm
     public double Profit { set; get; }
 
     [Display(Name = "نوع اجرت")]
-    public int WageType { set; get; }
+    public WageType WageType { set; get; }
 
     [Display(Name = "نوع جنس")]
-    public int ProductType { set; get; }
+    public CalculationProductType ProductType { set; get; }
 
     [Display(Name = "عیار")]
-    public int CaratType { set; get; }
+    public CaratType CaratType { set; get; }
 
     [Display(Name = "دسته بندی")]
     public int CategoryId { set; get; }
 
     [Display(Name = "بارکد")]
     public string Barcode { set; get; } = default!;
-
-    public ProductTypeVm ProductTypeVm { get; set; } = new();
-    public CaratTypeVm CaratTypeVm { get; set; } = new();
-    public WageTypeVm WageTypeVm { get; set; } = new();
 
     public List<ProductCategoryVm> ProductCategories { get; set; } = new();
 
@@ -57,26 +53,26 @@ public class CalculatorVm
         {
             switch (CaratType)
             {
-                case (int)JewelryApp.Shared.Enums.CaratType.SevenTeen:
+                case CaratType.SevenTeen:
                     Weight = Weight * 17.0 / 18.0;
                     break;
-                case (int)JewelryApp.Shared.Enums.CaratType.Eighteen:
+                case CaratType.Eighteen:
                     break;
-                case (int)JewelryApp.Shared.Enums.CaratType.TwentyOne:
+                case CaratType.TwentyOne:
                     Weight = Weight * 21.0 / 18.0;
                     break;
-                case (int)JewelryApp.Shared.Enums.CaratType.TwentyTwo:
+                case CaratType.TwentyTwo:
                     Weight = Weight * 22.0 / 18.0;
                     break;
             }
 
             return ProductType switch
             {
-                (int)JewelryApp.Shared.Enums.ProductType.Gold => Weight * (((TaxOffset / 100.0) * (Profit + Wage)) / 100) * GramPrice,
-                (int)JewelryApp.Shared.Enums.ProductType.Jewelry => WageType switch
+                CalculationProductType.Gold => Weight * (((TaxOffset / 100.0) * (Profit + Wage)) / 100) * GramPrice,
+                CalculationProductType.Jewelry => WageType switch
                 {
-                    (int)JewelryApp.Shared.Enums.WageType.Toman => ((Wage * Weight) + (GramPrice * Weight)) * (TaxOffset / 100.0),
-                    (int)JewelryApp.Shared.Enums.WageType.Dollar => ((((DollarPrice * Wage) / Weight) * Weight) + (GramPrice * Weight)) * (TaxOffset / 100.0),
+                    WageType.Toman => ((Wage * Weight) + (GramPrice * Weight)) * (TaxOffset / 100.0),
+                    WageType.Dollar => ((((DollarPrice * Wage) / Weight) * Weight) + (GramPrice * Weight)) * (TaxOffset / 100.0),
                     _ => 0
                 },
                 _ => 0
@@ -90,26 +86,26 @@ public class CalculatorVm
         {
             switch (CaratType)
             {
-                case (int)JewelryApp.Shared.Enums.CaratType.SevenTeen:
+                case CaratType.SevenTeen:
                     Weight = Weight * 17.0 / 18.0;
                     break;
-                case (int)JewelryApp.Shared.Enums.CaratType.Eighteen:
+                case CaratType.Eighteen:
                     break;
-                case (int)JewelryApp.Shared.Enums.CaratType.TwentyOne:
+                case CaratType.TwentyOne:
                     Weight = Weight * 21.0 / 18.0;
                     break;
-                case (int)JewelryApp.Shared.Enums.CaratType.TwentyTwo:
+                case CaratType.TwentyTwo:
                     Weight = Weight * 22.0 / 18.0;
                     break;
             }
 
             return ProductType switch
             {
-                (int)JewelryApp.Shared.Enums.ProductType.Gold => (Weight + (Weight * Profit / 100.0) + (Weight + (Weight * Profit / 100.0)) * Wage / 100.0) * GramPrice,
-                (int)JewelryApp.Shared.Enums.ProductType.Jewelry => WageType switch
-                {
-                    (int)JewelryApp.Shared.Enums.WageType.Toman => ((Wage + GramPrice) + ((Wage + GramPrice) * Profit / 100.0)) * Weight,
-                    (int)JewelryApp.Shared.Enums.WageType.Dollar => ((((DollarPrice * Wage) / Weight) + GramPrice) + ((((DollarPrice * Wage) / Weight) + GramPrice) * Profit / 100.0)) * Weight,
+                CalculationProductType.Gold => (Weight + (Weight * Profit / 100.0) + (Weight + (Weight * Profit / 100.0)) * Wage / 100.0) * GramPrice,
+                CalculationProductType.Jewelry => WageType switch
+                {   
+                    WageType.Toman => ((Wage + GramPrice) + ((Wage + GramPrice) * Profit / 100.0)) * Weight,
+                    WageType.Dollar => ((((DollarPrice * Wage) / Weight) + GramPrice) + ((((DollarPrice * Wage) / Weight) + GramPrice) * Profit / 100.0)) * Weight,
                     _ => 0
                 },
                 _ => 0
