@@ -2,23 +2,11 @@
 @using System.Globalization
 @using System.Security.Claims
 
-<MudDrawer @bind-Open="@DrawerOpen" ClipMode="DrawerClipMode.Always" Elevation="5">
+<MudDrawer @bind-Open="@DrawerOpen" Elevation="5" OpenMiniOnHover="false" Breakpoint="Breakpoint.Xs" Variant="@DrawerVariant.Mini" Fixed="true" PreserveOpenState="true">
     <MudNavMenu Color="Color.Primary">
-        <MudSpacer></MudSpacer>
-        <MudContainer Class="mt-5 mb-5">
-            <MudStack Row>
-                <MudBadge Color="Color.Success" Overlap="true" Bordered="true">
-                    <MudAvatar Rounded="true" Size="Size.Large" Elevation="5">
-                        <MudImage Src="img/avatar.png"></MudImage>
-                    </MudAvatar>
-                </MudBadge>
-                <Profile></Profile>
-            </MudStack>
-        </MudContainer>
-        <MudDivider />
         <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">داشبورد</MudNavLink>
-        <MudDivider />
         <MudNavLink Href="/settings" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Settings">تغيير رمز عبور</MudNavLink>
+        <MudNavLink Href="/logout" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Logout">خروج</MudNavLink>
     </MudNavMenu>
 </MudDrawer>
 

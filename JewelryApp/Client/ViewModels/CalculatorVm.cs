@@ -24,23 +24,20 @@ public class CalculatorVm
 
     [Display(Name = "مالیات")]
     [Range(0, 100, ErrorMessage = "وارد کردن {0} الزامی است")]
-    public double TaxOffset { set; get; }
+    public double TaxOffset { set; get; } = 9;
 
     [Display(Name = "سود")]
     [Range(0, 100, ErrorMessage = "وارد کردن {0} الزامی است")]
-    public double Profit { set; get; }
+    public double Profit { set; get; } = 7;
 
     [Display(Name = "نوع اجرت")]
-    public WageType WageType { set; get; }
+    public WageType WageType { set; get; } = WageType.Percent;
 
     [Display(Name = "نوع جنس")]
-    public CalculationProductType ProductType { set; get; }
+    public CalculationProductType ProductType { set; get; } = CalculationProductType.Gold;
 
     [Display(Name = "عیار")]
-    public CaratType CaratType { set; get; }
-
-    [Display(Name = "دسته بندی")]
-    public int CategoryId { set; get; }
+    public CaratType CaratType { set; get; } = CaratType.Eighteen;
 
     [Display(Name = "بارکد")]
     public string Barcode { set; get; } = default!;

@@ -7,12 +7,12 @@
 <MudPopover Open="@_isOpen" Fixed="false" TransformOrigin="Origin.TopLeft" AnchorOrigin="Origin.BottomLeft" Class="px-4 pt-4">
     <div class="d-flex flex-column">
         <MudStack Row Class="p-2 ml-2">
-             <MudText Class="mb-2">محاسبه قیمت تمام شده ی طلا و جواهر</MudText>
+             <MudText Class="mb-2" Typo="Typo.h6">محاسبه قیمت طلا و جواهر</MudText>
              <MudSpacer />
              <div style="max-width: 150px">
                  <MudTextField AdornmentIcon="@Icons.Material.Filled.QrCode"
                                Adornment="Adornment.End" Variant="Variant.Outlined" Margin="Margin.Dense"
-                               Value="BarcodeText" ValueChanged="BarcodeChanged" T="string"
+                               Value="@_model.Barcode" ValueChanged="BarcodeChanged" T="string" AutoFocus="true"
                                Label="بارکد"></MudTextField>
              </div>
          </MudStack>
@@ -28,19 +28,39 @@
                  </MudItem>
                  <MudItem xs="6" sm="6" lg="6">
                      <MudTextField @bind-Value="_model.Weight" AdornmentIcon="@Icons.Material.Filled.ProductionQuantityLimits"
-                                   Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined"
-                                   @onkeypress:preventDefault="true"
-                                   HelperText="وزن">
+                                   Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined" HelperText="وزن">
                      </MudTextField>
                  </MudItem>
              </MudGrid>
              <MudGrid>
                  <MudItem xs="12">
                      <MudText Typo="Typo.caption">نوع جنس</MudText>
-                     <MudRadioGroup T="CalculationProductType">
+                     <MudRadioGroup T="CalculationProductType" @bind-SelectedOption="@_model.ProductType">
                          @foreach (CalculationProductType productType in Enum.GetValues(typeof(CalculationProductType)))
                         {
-                            <MudRadio T="CalculationProductType" Class="ml-5 mr-5" Value="@productType" Dense="true" Color="Color.Primary" UnCheckedColor="Color.Default">@productType.GetDisplayName()</MudRadio>
+                            <MudRadio T="CalculationProductType" Class="ml-5 mr-5" Option="@productType" Dense="true" Color="Color.Primary" UnCheckedColor="Color.Default">@productType.GetDisplayName()</MudRadio>
+                        }
+                    </MudRadioGroup>
+                </MudItem>
+            </MudGrid>
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.caption">عیار</MudText>
+                    <MudRadioGroup T="CaratType" @bind-SelectedOption="_model.CaratType">
+                        @foreach (CaratType caratType in Enum.GetValues(typeof(CaratType)))
+                        {
+                            <MudRadio Option="@caratType" T="CaratType" Class="ml-5 mr-5" Dense="true" Color="Color.Secondary" UnCheckedColor="Color.Default">@caratType.GetDisplayName()</MudRadio>
+                        }
+                    </MudRadioGroup>
+                </MudItem>
+            </MudGrid>
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.caption">نوع اجرت</MudText>
+                    <MudRadioGroup T="WageType" @bind-SelectedOption="@_model.WageType">
+                        @foreach (WageType wageType in Enum.GetValues(typeof(WageType)))
+                        {
+                            <MudRadio T="WageType" Class="ml-5 mr-5" Option="@wageType" Dense="true" Color="Color.Error" UnCheckedColor="Color.Default">@wageType.GetDisplayName()</MudRadio>
                         }
                     </MudRadioGroup>
                 </MudItem>
@@ -53,9 +73,9 @@
                     </MudTextField>
                 </MudItem>
                 <MudItem xs="6" sm="6" lg="6">
-                    <MudTextField @bind-Value="_model.TaxOffset" AdornmentIcon="@Icons.Material.Outlined.FactCheck"
+                    <MudTextField @bind-Value="_model.DollarPrice" AdornmentIcon="@Icons.Material.Outlined.FactCheck"
                                   Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined"
-                                  HelperText="ضریب مالیات">
+                                  HelperText="نرخ دلار">
                     </MudTextField>
                 </MudItem>
             </MudGrid>
@@ -65,6 +85,12 @@
                     <MudTextField @bind-Value="_model.Profit" AdornmentIcon="@Icons.Material.Outlined.Money"
                                   Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined"
                                   HelperText="سود">
+                    </MudTextField>
+                </MudItem>
+                <MudItem xs="6" sm="6" lg="6">
+                    <MudTextField @bind-Value="_model.TaxOffset" AdornmentIcon="@Icons.Material.Outlined.Money"
+                                  Adornment="Adornment.Start" Margin="Margin.Dense" Variant="Variant.Outlined"
+                                  HelperText="مالیات">
                     </MudTextField>
                 </MudItem>
             </MudGrid>
@@ -84,6 +110,12 @@
             </MudGrid>
         </MudPaper>
 
-        <MudButton OnClick="@ToggleOpen" Class="ml-auto mr-n3 mb-1" Color="Color.Error">بستن</MudButton>
+         <MudButton OnClick="@ToggleOpen" Class="ml-auto mr-n3 mb-1" Color="Color.Error">بستن</MudButton>
+         <MudOverlay Visible="_isBusy" LightBackground="true" Absolute="true">
+             <div style="display: flex; gap: 10px; justify-content: center; align-items: center">
+                 <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+                 لطفا منتظر بمانید...
+             </div>
+         </MudOverlay>
     </div>
 </MudPopover>

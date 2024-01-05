@@ -39,14 +39,14 @@ public class MappingProfile : Profile
                 x.ProductType.ToString(), x.Carat.ToString(), x.ProductCategoryId, x.Barcode));
 
         CreateProjection<Product, GetProductResponse>()
-            .ForMember(x => x.CaratType, a => a.MapFrom(b => b.Carat.ToDisplay()))
-            .ForMember(x => x.ProductType, a => a.MapFrom(b => b.ProductType.ToDisplay()))
-            .ForMember(x => x.WageType, a => a.MapFrom(b => b.WageType.ToDisplay()))
+            .ForMember(x => x.CaratType, a => a.MapFrom(b => b.Carat.ToString()))
+            .ForMember(x => x.ProductType, a => a.MapFrom(b => b.ProductType.ToString()))
+            .ForMember(x => x.WageType, a => a.MapFrom(b => b.WageType.ToString()))
             .ForMember(x => x.CategoryName, a => a.MapFrom(b => b.ProductCategory.Name));
 
         CreateMap<Product, GetProductResponse>()
-            .ConstructUsing(x => new GetProductResponse(x.Id, x.Name, x.Weight, x.Wage, x.WageType.ToDisplay(),
-                x.ProductType.ToDisplay(), x.Carat.ToDisplay(), x.ProductCategory.Name, x.Barcode, x.Deleted));
+            .ConstructUsing(x => new GetProductResponse(x.Id, x.Name, x.Weight, x.Wage, x.WageType.ToString(),
+                x.ProductType.ToString(), x.Carat.ToString(), x.ProductCategory.Name, x.Barcode, x.Deleted));
 
         #endregion
 
