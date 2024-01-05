@@ -66,6 +66,23 @@ public class PriceService : IPriceService
                price1.Gram24 == price2.Gram24 &&
                price1.Mazanneh == price2.Mazanneh &&
                price1.Mesghal == price2.Mesghal &&
-               price1.UsDollar == price2.UsDollar;
+               price1.UsDollar == price2.UsDollar &&
+               price1.UsEuro == price2.UsEuro &&
+               price1.CoinImam == price2.CoinImam &&
+               price1.CoinNim == price2.CoinNim &&
+               price1.CoinRob == price2.CoinRob &&
+               price1.CoinBahar == price2.CoinBahar &&
+               price1.CoinGrami == price2.CoinGrami &&
+               price1.CoinParsian500Sowt == price2.CoinParsian500Sowt &&
+               price1.CoinParsian400Sowt == price2.CoinParsian400Sowt &&
+               price1.CoinParsian300Sowt == price2.CoinParsian300Sowt &&
+               price1.CoinParsian250Sowt == price2.CoinParsian250Sowt &&
+               price1.CoinParsian200Sowt == price2.CoinParsian200Sowt &&
+               price1.CoinParsian150Sowt == price2.CoinParsian150Sowt &&
+               price1.CoinParsian100Sowt == price2.CoinParsian100Sowt &&
+               price1.CoinParsian50Sowt == price2.CoinParsian50Sowt &&
+               price1.CoinParsian1Gram == price2.CoinParsian1Gram &&
+               price1.CoinParsian2Gram == price2.CoinParsian2Gram &&
+               price1.CoinParsian15Gram == price2.CoinParsian15Gram;
     }
 }

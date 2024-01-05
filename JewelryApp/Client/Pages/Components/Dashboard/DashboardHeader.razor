@@ -5,39 +5,39 @@
     <MudGrid>
         <MudItem xs="6" sm="6" md="4" lg="2">
             <MudPaper Elevation="15" Class="pa-4 text-center" Style="background-color: #00a65a">
-                <MudText Typo="Typo.h6" Class="text-white text-center">گرم 17 عیار</MudText>
-                <MudSkeleton Width="100%" Height="52px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="100%" Height="40px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="100%" Height="40px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="6" md="4" lg="2" Class="align-items-center">
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: #0073b7">
-                <MudText Typo="Typo.h6" Class="text-white text-center">گرم 18 عیار</MudText>
-                <MudSkeleton Width="100%" Height="52px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="100%" Height="40px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="100%" Height="40px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
 
         <MudItem xs="6" sm="6" md="4" lg="2">
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: chocolate">
-                <MudText Typo="Typo.h6" Class="text-white text-center">گرم 24 عیار</MudText>
-                <MudSkeleton Width="100%" Height="52px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="100%" Height="40px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="100%" Height="40px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="6" md="4" lg="2">
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: darkorange">
-                <MudText Typo="Typo.h6" Class="text-white text-center">قیمت دلار</MudText>
-                <MudSkeleton Width="100%" Height="52px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="100%" Height="40px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="100%" Height="40px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="6" md="4" lg="2">
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: darkturquoise">
-                <MudText Typo="Typo.h6" Class="text-white text-center">مظنه طلا</MudText>
-                <MudSkeleton Width="100%" Height="52px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="100%" Height="40px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="100%" Height="40px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="6" md="4" lg="2">
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: darkgoldenrod">
-                <MudText Typo="Typo.h6" Class="text-white text-center">مثقال</MudText>
-                <MudSkeleton Width="100%" Height="52px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="100%" Height="40px;" Animation="Animation.Wave" />
+                <MudSkeleton Width="100%" Height="40px;" Animation="Animation.Wave" />
             </MudPaper>
         </MudItem>
     </MudGrid>
@@ -46,39 +46,128 @@ else
 {
     <MudGrid>
         <MudItem xs="6" sm="6" md="4" lg="2">
+
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: #00a65a">
-                <MudText Typo="Typo.h6" Class="text-white text-center">گرم 17 عیار</MudText>
-                <MudText Typo="Typo.h5" Class="mt-5 text-white  text-center">@(_model.Gram17.ToString("N0"))</MudText>
+                <MudCarousel Class="mud-width-full" Style="height:80px;" TData="object" ShowArrows="false" ShowBullets="false" AutoCycleTime="TimeSpan.FromSeconds(3)">
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">گرم 17 عیار</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white  text-center">@(_model.Gram17.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">گرم 18 عیار</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white  text-center">@(_model.Gram18.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">گرم 24 عیار</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.Gram24.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                </MudCarousel>
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="6" md="4" lg="2">
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: #0073b7">
-                <MudText Typo="Typo.h6" Class="text-white text-center">گرم 18 عیار</MudText>
-                <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.Gram18.ToString("N0"))</MudText>
+                <MudCarousel Class="mud-width-full" Style="height:80px;" TData="object" ShowArrows="false" ShowBullets="false" AutoCycleTime="TimeSpan.FromSeconds(3)">
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">سکه بهار آزادی</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.CoinBahar.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">سکه امامی</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.CoinImam.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">نیم سکه</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.Gram18.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">ربع سکه</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.Gram18.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                </MudCarousel>
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="6" md="4" lg="2">
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: chocolate">
-                <MudText Typo="Typo.h6" Class="text-white text-center">گرم 24 عیار</MudText>
-                <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.Gram24.ToString("N0"))</MudText>
+                <MudCarousel Class="mud-width-full" Style="height:80px;" TData="object" ShowArrows="false" ShowBullets="false" AutoCycleTime="TimeSpan.FromSeconds(3)">
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">مظنه طلا</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.Mazanneh.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">مثقال طلا</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.Mesghal.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                </MudCarousel>
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="6" md="4" lg="2">
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: darkorange">
-                <MudText Typo="Typo.h6" Class="text-white text-center">قیمت دلار</MudText>
-                <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.UsDollar.ToString("N0"))</MudText>
+                <MudCarousel Class="mud-width-full" Style="height:80px;" TData="object" ShowArrows="false" ShowBullets="false" AutoCycleTime="TimeSpan.FromSeconds(3)">
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">قیمت دلار</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.UsDollar.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">قیمت یورو</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.UsEuro.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                </MudCarousel>
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="6" md="4" lg="2">
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: darkturquoise">
-                <MudText Typo="Typo.h6" Class="text-white text-center">مظنه طلا</MudText>
-                <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.Mazanneh.ToString("N0"))</MudText>
+                <MudCarousel Class="mud-width-full" Style="height:80px;" TData="object" ShowArrows="false" ShowBullets="false" AutoCycleTime="TimeSpan.FromSeconds(3)">
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">پارسیان 1 گرمی</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.CoinParsian1Gram.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">پارسیان 2 گرمی</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.CoinParsian2Gram.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">پارسیان 15 گرمی</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.CoinParsian15Gram.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                </MudCarousel>
             </MudPaper>
         </MudItem>
         <MudItem xs="6" sm="6" md="4" lg="2">
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: darkgoldenrod">
-                <MudText Typo="Typo.h6" Class="text-white text-center">مثقال</MudText>
-                <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.Mesghal.ToString("N0"))</MudText>
+                <MudCarousel Class="mud-width-full" Style="height:80px;" TData="object" ShowArrows="false" ShowBullets="false" AutoCycleTime="TimeSpan.FromSeconds(3)">
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">پارسیان 500 سوت</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.CoinParsian500Sowt.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">پارسیان 400 سوت</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.CoinParsian400Sowt.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">پارسیان 300 سوت</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.CoinParsian300Sowt.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">پارسیان 250 سوت</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.CoinParsian250Sowt.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">پارسیان 200 سوت</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.CoinParsian200Sowt.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">پارسیان 150 سوت</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.CoinParsian150Sowt.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">پارسیان 100 سوت</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.CoinParsian100Sowt.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                    <MudCarouselItem>
+                        <MudText Typo="Typo.h6" Class="text-white text-center">پارسیان 50 سوت</MudText>
+                        <MudText Typo="Typo.h5" Class="mt-5 text-white text-center">@(_model.CoinParsian50Sowt.ToString("N0"))</MudText>
+                    </MudCarouselItem>
+                </MudCarousel>
             </MudPaper>
         </MudItem>
     </MudGrid>

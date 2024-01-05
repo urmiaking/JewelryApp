@@ -4,6 +4,7 @@ using JewelryApp.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JewelryApp.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240105214312_AddPrices")]
+    partial class AddPrices
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -440,9 +443,6 @@ namespace JewelryApp.Infrastructure.Migrations
                         .HasColumnType("float");
 
                     b.Property<double>("CoinParsian250Sowt")
-                        .HasColumnType("float");
-
-                    b.Property<double>("CoinParsian2Gram")
                         .HasColumnType("float");
 
                     b.Property<double>("CoinParsian300Sowt")

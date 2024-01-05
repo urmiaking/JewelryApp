@@ -26,25 +26,33 @@ public class PriceApiService : IPriceApiService
         };
 
         var signalCurrencyResponse = await _httpClient.PostAsJsonAsync(AppConstants.SignalApiUrl, payload, cancellationToken: token);
+
         payload.Market = "gold";
         var signalGoldResponse = await _httpClient.PostAsJsonAsync(AppConstants.SignalApiUrl, payload, cancellationToken: token);
 
-        if (!signalCurrencyResponse.IsSuccessStatusCode || !signalGoldResponse.IsSuccessStatusCode)
+        payload.Market = "coin";
+        var signalCoinResponse = await _httpClient.PostAsJsonAsync(AppConstants.SignalApiUrl, payload, cancellationToken: token);
+
+        if (!signalCurrencyResponse.IsSuccessStatusCode || !signalGoldResponse.IsSuccessStatusCode || !signalCoinResponse.IsSuccessStatusCode)
             return null;
 
         var signalCurrencyApiResult = await signalCurrencyResponse.Content.ReadFromJsonAsync<SignalApiResult>(cancellationToken: token);
 
         var signalGoldApiResult = await signalGoldResponse.Content.ReadFromJsonAsync<SignalApiResult>(cancellationToken: token);
 
-        var currencyData = signalCurrencyApiResult?.Data.InnerData?.FirstOrDefault(x => x.Id == 200000);
-        var goldDataList = signalGoldApiResult?.Data.InnerData?.Where(x => x.Id is >= 100010 and <= 100014);
+        var signalCoinApiResult = await signalCoinResponse.Content.ReadFromJsonAsync<SignalApiResult>(cancellationToken: token);
 
-        if (currencyData is null || goldDataList is null)
+        var currencyDataList = signalCurrencyApiResult?.Data.InnerData?.Where(x => x.Id is 200000 or 200001).ToList();
+        var goldDataList = signalGoldApiResult?.Data.InnerData?.Where(x => x.Id is >= 100010 and <= 100014).ToList();
+        var coinDataList = signalCoinApiResult?.Data.InnerData?.Where(x => x.Id is >= 100000 and <= 100027).ToList();
+
+        if (currencyDataList is null || goldDataList is null || coinDataList is null)
             return null;
 
         var priceApiResult = new PriceApiResult
         {
-            UsDollar = currencyData.Close.RemoveLeadingZero()
+            UsDollar = currencyDataList.FirstOrDefault(x => x.Id == 200000)!.Close.RemoveLeadingZero(),
+            UsEuro = currencyDataList.FirstOrDefault(x => x.Id == 200001)!.Close.RemoveLeadingZero()
         };
 
         foreach (var goldData in goldDataList)
@@ -64,6 +72,59 @@ public class PriceApiService : IPriceApiService
                     break;
                 case 100014:
                     priceApiResult.Mesghal = goldData.Close.RemoveLeadingZero();
+                    break;
+            }
+
+        foreach (var coinData in coinDataList)
+            switch (coinData.Id)
+            {
+                case 100001:
+                    priceApiResult.CoinImam = coinData.Close.RemoveLeadingZero();
+                    break;
+                case 100002:
+                    priceApiResult.CoinNim = coinData.Close.RemoveLeadingZero();
+                    break;
+                case 100003:
+                    priceApiResult.CoinRob = coinData.Close.RemoveLeadingZero();
+                    break;
+                case 100000:
+                    priceApiResult.CoinBahar = coinData.Close.RemoveLeadingZero();
+                    break;
+                case 100004:
+                    priceApiResult.CoinGrami = coinData.Close.RemoveLeadingZero();
+                    break;
+                case 100024:
+                    priceApiResult.CoinParsian500Sowt = coinData.Close.RemoveLeadingZero();
+                    break;
+                case 100023:
+                    priceApiResult.CoinParsian400Sowt = coinData.Close.RemoveLeadingZero();
+                    break;
+                case 100022:
+                    priceApiResult.CoinParsian300Sowt = coinData.Close.RemoveLeadingZero();
+                    break;
+                case 100021:
+                    priceApiResult.CoinParsian250Sowt = coinData.Close.RemoveLeadingZero();
+                    break;
+                case 100020:
+                    priceApiResult.CoinParsian200Sowt = coinData.Close.RemoveLeadingZero();
+                    break;
+                case 100019:
+                    priceApiResult.CoinParsian150Sowt = coinData.Close.RemoveLeadingZero();
+                    break;
+                case 100018:
+                    priceApiResult.CoinParsian100Sowt = coinData.Close.RemoveLeadingZero();
+                    break;
+                case 100017:
+                    priceApiResult.CoinParsian50Sowt = coinData.Close.RemoveLeadingZero();
+                    break;
+                case 100025:
+                    priceApiResult.CoinParsian1Gram = coinData.Close.RemoveLeadingZero();
+                    break;
+                case 100027:
+                    priceApiResult.CoinParsian15Gram = coinData.Close.RemoveLeadingZero();
+                    break;
+                case 100026:
+                    priceApiResult.CoinParsian2Gram = coinData.Close.RemoveLeadingZero();
                     break;
             }
 
