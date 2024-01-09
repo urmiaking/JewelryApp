@@ -46,7 +46,6 @@ else
 {
     <MudGrid>
         <MudItem xs="6" sm="6" md="4" lg="2">
-
             <MudPaper Elevation="15" Class="pa-4" Style="background-color: #00a65a">
                 <MudCarousel Class="mud-width-full" Style="height:80px;" TData="object" ShowArrows="false" ShowBullets="false" AutoCycleTime="TimeSpan.FromSeconds(3)">
                     <MudCarouselItem>
@@ -171,4 +170,8 @@ else
             </MudPaper>
         </MudItem>
     </MudGrid>
+
+    <div class="d-flex">
+        @_model.DateTime.ToString()
+    </div>
 }

@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 using JewelryApp.Application.AppServices;
+using JewelryApp.Application.ExternalApis;
+using JewelryApp.Application.ExternalApis.Abstraction;
 using JewelryApp.Application.Interfaces;
 using JewelryApp.Application.Jobs;
 using JewelryApp.Application.Mapper;
@@ -15,7 +17,9 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddAutoMapper(typeof(MappingProfile));
-        services.AddHttpClient<IPriceApiService, PriceApiService>();
+        services.AddHttpClient<IGoldService, GoldService>();
+        services.AddHttpClient<ICurrencyService, CurrencyService>();
+        services.AddHttpClient<ICoinService, CoinService>();
         services.AddSignalR();
 
         services.AddCronJob<UpdatePriceJob>(configuration);

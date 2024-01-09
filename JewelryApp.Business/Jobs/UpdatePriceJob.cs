@@ -23,8 +23,8 @@ public class UpdatePriceJob : ICronJob
     public async Task Run(CancellationToken token = default)
     {
         await using var scope = _serviceProvider.CreateAsyncScope();
-        var priceRepository = scope.ServiceProvider.GetRequiredService<IPriceService>();
-        var price = await priceRepository.GetPriceAsync(token);
+        var priceService = scope.ServiceProvider.GetRequiredService<IPriceService>();
+        var price = await priceService.GetPriceAsync(token);
 
         var json = JsonConvert.SerializeObject(price);
 

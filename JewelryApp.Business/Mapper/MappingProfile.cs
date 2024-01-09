@@ -52,8 +52,9 @@ public class MappingProfile : Profile
 
         #region Price
 
-        CreateMap<PriceApiResult, Price>().ReverseMap();
-        CreateMap<PriceResponse, Price>().ReverseMap();
+        CreateMap<PriceApiResult, Price>();
+            
+        CreateMap<Price, PriceResponse>();
 
         #endregion
 

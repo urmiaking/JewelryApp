@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using JewelryApp.Application.ExternalApis.Abstraction;
 using JewelryApp.Application.ExternalModels.Signal;
 using JewelryApp.Application.Interfaces;
 using JewelryApp.Core.DomainModels;
@@ -7,6 +8,7 @@ using JewelryApp.Shared.Abstractions;
 using JewelryApp.Shared.Attributes;
 using JewelryApp.Shared.Responses.Prices;
 using Microsoft.Extensions.Logging;
+using static JewelryApp.Shared.Errors.Errors;
 
 namespace JewelryApp.Application.AppServices;
 
@@ -15,14 +17,19 @@ public class PriceService : IPriceService
 {
     private readonly IMapper _mapper;
     private readonly ILogger<PriceService> _logger;
-    private readonly IPriceApiService _priceApiService;
+    private readonly ICoinService _coinService;
+    private readonly IGoldService _goldService;
+    private readonly ICurrencyService _currencyService;
     private readonly IPriceRepository _priceRepository;
 
-    public PriceService(IMapper mapper, IPriceApiService priceApiService, IPriceRepository priceRepository, ILogger<PriceService> logger)
+    public PriceService(IMapper mapper, ICoinService coinService, IPriceRepository priceRepository, ILogger<PriceService> logger,
+        IGoldService goldService, ICurrencyService currencyService)
     {
         _mapper = mapper;
         _logger = logger;
-        _priceApiService = priceApiService;
+        _goldService = goldService;
+        _currencyService = currencyService;
+        _coinService = coinService;
         _priceRepository = priceRepository;
     }
 
@@ -30,20 +37,74 @@ public class PriceService : IPriceService
     {
         try
         {
-            var latestPrice = await _priceApiService.GetPriceAsync(cancellationToken);
+            Price currencyPrice;
+            Price goldPrice;
+            Price coinPrice;
 
-            if (latestPrice is null)
-                return null;
+            do
+            {
+                var currencyResult = await _currencyService.GetCurrencyAsync(cancellationToken);
 
-            var price = _mapper.Map<PriceApiResult?, Price>(latestPrice);
+                currencyPrice = _mapper.Map<PriceApiResult, Price>(currencyResult);
+
+            } while (currencyPrice.UsDollar == 0);
+
+            do
+            {
+                var goldResult = await _goldService.GetGoldPriceAsync(cancellationToken);
+
+                goldPrice = _mapper.Map<PriceApiResult, Price>(goldResult);
+
+            } while (goldPrice.Gram18 == 0);
+
+            do
+            {
+                var coinResult = await _coinService.GetCoinPriceAsync(cancellationToken);
+
+                coinPrice = _mapper.Map<PriceApiResult, Price>(coinResult);
+
+            } while (coinPrice.CoinBahar == 0);
+
+            var price = new Price
+            {
+                Gram17 = goldPrice.Gram17,
+                Gram18 = goldPrice.Gram18,
+                Gram24 = goldPrice.Gram24,
+                Mazanneh = goldPrice.Mazanneh,
+                Mesghal = goldPrice.Mesghal,
+                UsDollar = currencyPrice.UsDollar,
+                UsEuro = currencyPrice.UsEuro,
+                CoinImam = coinPrice.CoinImam,
+                CoinNim = coinPrice.CoinNim,
+                CoinRob = coinPrice.CoinRob,
+                CoinBahar = coinPrice.CoinBahar,
+                CoinGrami = coinPrice.CoinGrami,
+                CoinParsian500Sowt = coinPrice.CoinParsian500Sowt,
+                CoinParsian400Sowt = coinPrice.CoinParsian400Sowt,
+                CoinParsian300Sowt = coinPrice.CoinParsian300Sowt,
+                CoinParsian250Sowt = coinPrice.CoinParsian250Sowt,
+                CoinParsian200Sowt = coinPrice.CoinParsian200Sowt,
+                CoinParsian150Sowt = coinPrice.CoinParsian150Sowt,
+                CoinParsian100Sowt = coinPrice.CoinParsian100Sowt,
+                CoinParsian50Sowt = coinPrice.CoinParsian50Sowt,
+                CoinParsian1Gram = coinPrice.CoinParsian1Gram,
+                CoinParsian2Gram = coinPrice.CoinParsian2Gram,
+                CoinParsian15Gram = coinPrice.CoinParsian15Gram,
+                DateTime = coinPrice.DateTime
+            };
 
             var latestSavedPrice = await _priceRepository.GetLastSavedPriceAsync(cancellationToken);
 
-            if (latestSavedPrice is null || !ArePricesIdentical(price, latestSavedPrice))
+            if (latestSavedPrice is null)
             {
-                price.DateTime = DateTime.Now;
-
                 await _priceRepository.AddAsync(price, cancellationToken);
+            }
+            else
+            {
+                if (!IsPricesIdentical(price, latestSavedPrice))
+                {
+                    await _priceRepository.AddAsync(price, cancellationToken);
+                }
             }
 
             var priceResponse = _mapper.Map<Price, PriceResponse>(price);
@@ -59,7 +120,7 @@ public class PriceService : IPriceService
         
     }
 
-    private static bool ArePricesIdentical(Price price1, Price price2)
+    private static bool IsPricesIdentical(Price price1, Price price2)
     {
         return price1.Gram18 == price2.Gram18 &&
                price1.Gram17 == price2.Gram17 &&

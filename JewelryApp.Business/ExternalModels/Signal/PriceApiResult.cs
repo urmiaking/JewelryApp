@@ -26,4 +26,6 @@ public class PriceApiResult
     public double CoinParsian1Gram { get; set; }
     public double CoinParsian2Gram { get; set; }
     public double CoinParsian15Gram { get; set; }
+
+    public string? DateTime { get; set; }
 }

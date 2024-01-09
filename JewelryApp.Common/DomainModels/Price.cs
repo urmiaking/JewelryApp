@@ -29,6 +29,6 @@ public class Price : IEntity
     public double CoinParsian2Gram { get; set; }
     public double CoinParsian15Gram { get; set; }
 
-    public DateTime? DateTime { get; set; }
+    public string DateTime { get; set; } = default!;
 }
 

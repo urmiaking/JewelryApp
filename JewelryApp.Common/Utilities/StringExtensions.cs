@@ -1,4 +1,6 @@
-﻿namespace JewelryApp.Core.Utilities;
+﻿using System.Globalization;
+
+namespace JewelryApp.Core.Utilities;
 
 public static class StringExtensions
 {
@@ -108,5 +110,23 @@ public static class StringExtensions
         var randomNumber = random.Next(10000, 100000) * 10;
 
         return randomNumber.ToString();
+    }
+
+    public static string FormatShamsiDateTime(this string shamsiDate)
+    {
+        if (string.IsNullOrWhiteSpace(shamsiDate) || shamsiDate.Length < 14)
+            return string.Empty;
+
+        var year = shamsiDate.Substring(0, 4);
+        var month = shamsiDate.Substring(4, 2);
+        var day = shamsiDate.Substring(6, 2);
+        var hour = shamsiDate.Substring(8, 2);
+        var minute = shamsiDate.Substring(10, 2);
+        var second = shamsiDate.Substring(12, 2);
+
+        PersianCalendar persianCalendar = new PersianCalendar();
+        DateTime dateTime = persianCalendar.ToDateTime(int.Parse(year), int.Parse(month), int.Parse(day), int.Parse(hour), int.Parse(minute), int.Parse(second), 0);
+
+        return $"{year}/{month}/{day} {hour}:{minute}:{second}";
     }
 }
