@@ -1,4 +1,5 @@
 ﻿using JewelryApp.Client.ViewModels.Populated;
+using JewelryApp.Shared.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace JewelryApp.Client.ViewModels;
@@ -18,23 +19,19 @@ public class AddProductVm
     public double Wage { set; get; }
 
     [Display(Name = "نوع اجرت")]
-    public int WageType { set; get; }
+    public WageType WageType { set; get; } = WageType.Percent;
 
-    [Display(Name = "نوع اجرت")]
-    public int ProductType { set; get; }
+    [Display(Name = "نوع جنس")]
+    public ProductType ProductType { set; get; } = ProductType.Gold;
 
     [Display(Name = "عیار")]
-    public int CaratType { set; get; }
+    public CaratType CaratType { set; get; } = CaratType.Eighteen;
 
     [Display(Name = "دسته بندی")]
-    public int CategoryId { set; get; }
+    public ProductCategoryVm ProductCategory { set; get; } = new ProductCategoryVm() { Id = 0, Name = "انتخاب کنید" };
 
     [Display(Name = "بارکد")]
     public string Barcode { set; get; } = default!;
-
-    public ProductTypeVm ProductTypeVm { get; set; } = new();
-    public CaratTypeVm CaratTypeVm { get; set; } = new();
-    public WageTypeVm WageTypeVm { get; set; } = new();
 
     public List<ProductCategoryVm> ProductCategories { get; set; } = new ();
 }

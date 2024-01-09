@@ -14,7 +14,9 @@ public class AddProductRequestValidator : AbstractValidator<AddProductRequest>
         RuleFor(x => x.Name).NotEmpty().WithMessage("نام جنس نمی تواند خالی باشد");
         RuleFor(x => x.Barcode).NotEmpty().WithMessage("بارکد نمی تواند خالی باشد");
         RuleFor(x => x.Weight).NotEmpty().NotEqual(0).WithMessage("وزن جنس نمی تواند صفر باشد");
-        RuleFor(x => x.CategoryId).NotEmpty().NotEqual(0).WithMessage("لطفا زیرگروه جنس را مشخص کنید");
+        RuleFor(x => x.CategoryId)
+            .NotEmpty().WithMessage("لطفا زیرگروه جنس را مشخص کنید")
+            .NotEqual(0).WithMessage("لطفا زیرگروه جنس را مشخص کنید");
         RuleFor(x => x.CaratType)
             .NotEmpty()
             .Must(caratType => Enum.IsDefined(typeof(CaratType), caratType))

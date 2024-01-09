@@ -1,13 +1,13 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Components;
-using JewelryApp.Client.ViewModels;
+﻿using JewelryApp.Client.ViewModels;
 using JewelryApp.Shared.Abstractions;
 using JewelryApp.Shared.Requests.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components;
+using System.Security.Claims;
 
-namespace JewelryApp.Client.Pages;
+namespace JewelryApp.Client.Pages.Components.Account;
 
-public partial class Settings
+public partial class ChangePassword
 {
     [Parameter]
     public ChangePasswordVm PasswordModel { get; set; } = new();
@@ -22,13 +22,7 @@ public partial class Settings
             x.Type == ClaimTypes.Name)?.Value;
 
         var request = Mapper.Map<ChangePasswordRequest>(PasswordModel);
-        
+
         await AccountService.ChangePasswordAsync(request, CancellationTokenSource.Token);
     }
-
-    private void Close()
-    {
-        
-    }
 }
-

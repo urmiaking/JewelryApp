@@ -1,0 +1,53 @@
+﻿@using JewelryApp.Client.ViewModels
+
+@inherits UserComponentBase
+
+<div class="mt-5 mb-5">
+    <MudTable Elevation="15" ServerData="@(new Func<TableState, Task<TableData<ProductCategoryVm>>>(ServerReload))"
+              Hover="true" @ref="_table" CanCancelEdit="true" RowEditCommit="async e => await CommitItemAsync(e)" Dense="true" EditTrigger="TableEditTrigger.EditButton">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">دسته بندی اجناس</MudText>
+            <MudSpacer />
+            <MudTextField T="string" ValueChanged="@(OnSearch)" Placeholder="جستجو" Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Style="max-width: 200px;" Class="mt-0"></MudTextField>
+            <MudSpacer />
+
+            <MudButton Color="Color.Primary" @* OnClick="@((e) => OpenAddProductDialog(_dialogOptions, "افزودن جنس"))" *@
+                       EndIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled">افزودن</MudButton>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortLabel="Id" T="string">رديف</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="Name" T="string">نام دسته بندی</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="" T="string">عملیات</MudTableSortLabel></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="رديف">@context.Id</MudTd>
+            <MudTd DataLabel="نام دسته بندی">@context.Name</MudTd>
+        </RowTemplate>
+            <RowEditingTemplate>
+                <MudTd DataLabel="رديف">@context.Id</MudTd>
+                <MudTd DataLabel="نام دسته بندي">
+                    <MudTextField @bind-Value="context.Name" Required />
+             </MudTd>
+        </RowEditingTemplate>
+         <NoRecordsContent>
+             <MudText>هیچ دسته بندی یافت نشد</MudText>
+         </NoRecordsContent>
+         <LoadingContent>
+             <MudText>در حال بارگذاری</MudText>
+         </LoadingContent>
+         <PagerContent>
+             <div class="d-flex flex-column align-center">
+                 <MudPagination SelectedChanged="PageChanged"
+                                Color="Color.Primary"
+                                Count="@((_table.GetFilteredItemsCount() + _table.RowsPerPage - 1) / _table.RowsPerPage)"
+                                Class="pa-4"
+                                ShowFirstButton="true"
+                                ShowLastButton="true" />
+             </div>
+         </PagerContent>
+         <EditButtonContent Context="button">
+             <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
+         </EditButtonContent>
+    </MudTable>
+</div>

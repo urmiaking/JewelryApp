@@ -16,7 +16,7 @@
     }
 
     <MudTable MultiSelection="true" SelectOnRowClick="false" @bind-SelectedItems="_selectedItems" Elevation="15" ServerData="@(new Func<TableState, Task<TableData<ProductListVm>>>(ServerReload))"
-              Hover="true" @ref="_table" CanCancelEdit="true" RowEditCommit="async e => await CommitItemAsync(e)" Dense="true">
+              Hover="true" @ref="_table" CanCancelEdit="true" RowEditCommit="async e => await CommitItemAsync(e)" Dense="true" EditTrigger="TableEditTrigger.EditButton">
         <ToolBarContent>
             <MudText Typo="Typo.h6">لیست اجناس</MudText>
             <MudSpacer />
@@ -24,60 +24,67 @@
                           AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Style="max-width: 200px;" Class="mt-0"></MudTextField>
             <MudSpacer />
 
-
             <MudButton Color="Color.Primary" OnClick="@((e) => OpenAddProductDialog(_dialogOptions, "افزودن جنس"))"
                        EndIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled">افزودن</MudButton>
 
         </ToolBarContent>
         <HeaderContent>
-            <MudTh><MudTableSortLabel SortLabel="Barcode" T="ProductListVm">کد جنس</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="Name" T="ProductListVm">نام جنس</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="Weight" T="ProductListVm">وزن</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="Wage" T="ProductListVm">اجرت ساخت</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="ProductType" T="ProductListVm">نوع جنس</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="Carat" T="ProductListVm">عیار</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="" T="ProductListVm">عملیات</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="Barcode" T="string">کد جنس</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="Name" T="string">نام جنس</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="Category" T="string">دسته بندي</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="Weight" T="string">وزن</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="Wage" T="string">اجرت ساخت</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="ProductType" T="string">نوع جنس</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="Carat" T="string">عیار</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="" T="string">عملیات</MudTableSortLabel></MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="بارکد جنس">@context.Barcode</MudTd>
-            <MudTd DataLabel="نام جنس">@context.Name</MudTd>
-            <MudTd DataLabel="وزن">@(context.Weight + " گرم")</MudTd>
+                <MudTd DataLabel="بارکد جنس">@context.Barcode</MudTd>
+                <MudTd DataLabel="نام جنس">@context.Name</MudTd>
+                <MudTd DataLabel="دسته بندي">@context.CategoryName</MudTd>
+                <MudTd DataLabel="وزن">@(context.Weight + " گرم")</MudTd>
                 <MudTd DataLabel="اجرت">
-                    @if (context.ProductType == ProductType.Gold.ToString())
+                    @switch (context.ProductType)
                     {
-                        @(context.Wage + " درصد")
+                        case ProductType.Gold:
+                            @(context.Wage + " درصد")
+                            break;
+                        case ProductType.Jewelry:
+                            if (context.WageType == WageType.Toman)
+                                @(context.Wage.ToString("C0").Replace("ریال", "") + " تومان")
+                            else
+                                @(context.Wage + " دلار")
+                            break;
+                        default:
+                            break;
                     }
-                    else
-                    {
-                        @(context.Wage.ToString("C0").Replace("ریال", "") + " تومان")
-                    }
-                </MudTd>
-            <MudTd DataLabel="نوع جنس">@context.ProductType</MudTd>
-            <MudTd DataLabel="عیار">@context.CaratType</MudTd>
+            </MudTd>
+                <MudTd DataLabel="نوع جنس">@context.ProductType.GetDisplayName()</MudTd>
+                <MudTd DataLabel="عیار">@context.CaratType.GetDisplayName()</MudTd>
             <MudTd DataLabel="عملیات">
                 <MudTooltip Text="چاپ بارکد">
                     <MudIconButton Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Print"
-                                   Color="@Color.Primary"></MudIconButton>
+                                    Color="@Color.Primary"></MudIconButton>
                 </MudTooltip>
                 <MudTooltip Text="حذف جنس">
-                    <MudIconButton OnClick="@((e) => OpenDeleteProductDialog(_dialogOptions, context.Id))" Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Delete"
-                                   Color="@Color.Error"></MudIconButton>
+                    <MudIconButton OnClick="@((e) => OpenDeleteProductDialog(_dialogOptions, context.Id))" 
+                        Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Delete" Color="@Color.Error"></MudIconButton>
                 </MudTooltip>
             </MudTd>
-        </RowTemplate>
-        <RowEditingTemplate>
-            <MudTd DataLabel="بارکد جنس">@context.Barcode</MudTd>
-            <MudTd DataLabel="نام جنس">
-                <MudTextField @bind-Value="@context.Name" Required />
-            </MudTd>
-            <MudTd DataLabel="وزن">
-                <MudNumericField @bind-Value="@context.Weight" Required Min="0.01" />
-            </MudTd>
-            <MudTd DataLabel="اجرت">
-                <MudNumericField @bind-Value="@context.Wage" Required Min="0" />
-            </MudTd>
-            <MudTd DataLabel="نوع جنس">
-                <MudSelect T="ProductTypeVm" Label="نوع جنس" @bind-Value="context.ProductTypeVm" Variant="Variant.Text">
+            </RowTemplate>
+            <RowEditingTemplate>
+                <MudTd DataLabel="بارکد جنس">@context.Barcode</MudTd>
+                <MudTd DataLabel="نام جنس">
+                    <MudTextField @bind-Value="context.Name" Required />
+             </MudTd>
+             <MudTd DataLabel="وزن">
+                 <MudNumericField @bind-Value="context.Weight" Required Min="0.01" />
+             </MudTd>
+             <MudTd DataLabel="اجرت">
+                 <MudNumericField @bind-Value="context.Wage" Required Min="0" />
+             </MudTd>
+             <MudTd DataLabel="نوع جنس">
+                 <MudSelect T="ProductTypeVm" Label="نوع جنس" @bind-Value="context.ProductTypeVm" Variant="Variant.Text">
                      @foreach (var productType in ProductTypeVm.GetProductTypes())
                     {
                         <MudSelectItem T="ProductTypeVm" Value="productType">@productType.Name</MudSelectItem>
@@ -102,7 +109,7 @@
         </LoadingContent>
         <PagerContent>
             <div class="d-flex flex-column align-center">
-                <MudPagination SelectedChanged="PageChanged" 
+                <MudPagination SelectedChanged="PageChanged"
                                Color="Color.Primary"
                                Count="@((_table.GetFilteredItemsCount() + _table.RowsPerPage - 1) / _table.RowsPerPage)"
                                Class="pa-4"
