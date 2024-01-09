@@ -44,20 +44,7 @@
                 <MudTd DataLabel="دسته بندي">@context.CategoryName</MudTd>
                 <MudTd DataLabel="وزن">@(context.Weight + " گرم")</MudTd>
                 <MudTd DataLabel="اجرت">
-                    @switch (context.ProductType)
-                    {
-                        case ProductType.Gold:
-                            @(context.Wage + " درصد")
-                            break;
-                        case ProductType.Jewelry:
-                            if (context.WageType == WageType.Toman)
-                                @(context.Wage.ToString("C0").Replace("ریال", "") + " تومان")
-                            else
-                                @(context.Wage + " دلار")
-                            break;
-                        default:
-                            break;
-                    }
+                    @(context.Wage) @context.WageType.GetDisplayName()
             </MudTd>
                 <MudTd DataLabel="نوع جنس">@context.ProductType.GetDisplayName()</MudTd>
                 <MudTd DataLabel="عیار">@context.CaratType.GetDisplayName()</MudTd>
@@ -66,10 +53,13 @@
                     <MudIconButton Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Print"
                                     Color="@Color.Primary"></MudIconButton>
                 </MudTooltip>
-                <MudTooltip Text="حذف جنس">
-                    <MudIconButton OnClick="@((e) => OpenDeleteProductDialog(_dialogOptions, context.Id))" 
-                        Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Delete" Color="@Color.Error"></MudIconButton>
-                </MudTooltip>
+                @if (!context.Deleted)
+                {
+                    <MudTooltip Text="حذف جنس">
+                        <MudIconButton OnClick="@((e) => OpenDeleteProductDialog(_dialogOptions, context))" 
+                                       Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Delete" Color="@Color.Error"></MudIconButton>
+                    </MudTooltip>
+                }
             </MudTd>
             </RowTemplate>
             <RowEditingTemplate>

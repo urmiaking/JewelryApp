@@ -1,14 +1,12 @@
 ﻿using AutoMapper;
 using JewelryApp.Application.ExternalApis.Abstraction;
 using JewelryApp.Application.ExternalModels.Signal;
-using JewelryApp.Application.Interfaces;
 using JewelryApp.Core.DomainModels;
 using JewelryApp.Core.Interfaces.Repositories;
 using JewelryApp.Shared.Abstractions;
 using JewelryApp.Shared.Attributes;
 using JewelryApp.Shared.Responses.Prices;
 using Microsoft.Extensions.Logging;
-using static JewelryApp.Shared.Errors.Errors;
 
 namespace JewelryApp.Application.AppServices;
 
@@ -116,8 +114,6 @@ public class PriceService : IPriceService
             _logger.LogError(e.Message);
             return null;
         }
-
-        
     }
 
     private static bool IsPricesIdentical(Price price1, Price price2)

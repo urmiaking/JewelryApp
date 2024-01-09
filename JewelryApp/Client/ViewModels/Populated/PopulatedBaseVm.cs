@@ -1,9 +1,12 @@
-﻿namespace JewelryApp.Client.ViewModels.Populated;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace JewelryApp.Client.ViewModels.Populated;
 
 public class PopulatedBaseVm : IEquatable<ProductCategoryVm>
 {
     public int Id { get; set; }
 
+    [Required(ErrorMessage = "لطفا نام را وارد کنید")]
     public string Name { get; set; } = default!;
 
     public bool Equals(ProductCategoryVm? other)

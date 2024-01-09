@@ -5,8 +5,8 @@
         <EditForm Model="@_model" OnValidSubmit="OnValidSubmit">
             <DataAnnotationsValidator />
             <MudGrid>
-                 <MudItem xs="12" md="6" lg="6">
-                     <MudTextField Label="نام جنس" AutoFocus="true" @bind-Value="_model.Name" For="@(() => _model.Name)" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                 <MudItem xs="12">
+                     <MudTextField Label="نام دسته بندی" AutoFocus="true" @bind-Value="_model.Name" For="@(() => _model.Name)" Variant="Variant.Outlined" Margin="Margin.Dense" />
                  </MudItem>
             </MudGrid>
 

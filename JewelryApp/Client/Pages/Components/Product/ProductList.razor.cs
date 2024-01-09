@@ -61,6 +61,7 @@ public partial class ProductList
             }
             else
             {
+                SnackBar.Add("جنس با موفقیت درج شد", Severity.Success);
                 await _table.ReloadServerData();
             }
         }
@@ -99,18 +100,16 @@ public partial class ProductList
         }
     }
 
-    private async Task OpenDeleteProductDialog(DialogOptions options, int productId)
+    private async Task OpenDeleteProductDialog(DialogOptions options, ProductListVm model)
     {
-        var parameters = new DialogParameters<PromptDialog>
+        var parameters = new DialogParameters<RemoveProductDialog>
         {
-            { x => x.ContentText, "آیا مطمئن هستید؟ تنها اجناسی قابل حذف می باشند که در فاکتوری استفاده نشده باشند" },
-            { x => x.ButtonText, "حذف" },
-            { x => x.Color, Color.Error },
-            { x => x.EndIcon, Icons.Material.Filled.Delete },
-            { x => x.EndpointUrl, $"/api/Products/{productId}"}
+            { x => x.Id, model.Id },
+            { x => x.Name, model.Name },
+            { x => x.Barcode, model.Barcode }
         };
 
-        var dialog = await Dialog.ShowAsync<PromptDialog>("حذف جنس", parameters, options);
+        var dialog = await Dialog.ShowAsync<RemoveProductDialog>("حذف جنس", parameters, options);
 
         var result = await dialog.Result;
 
@@ -120,6 +119,7 @@ public partial class ProductList
 
             if (isDeleted)
             {
+                SnackBar.Add("جنس مورد نظر با موفقیت حذف شد", Severity.Success);
                 await _table.ReloadServerData();
             }
         }

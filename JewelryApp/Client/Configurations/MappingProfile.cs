@@ -26,5 +26,6 @@ public class MappingProfile : Profile
         CreateMap<GetProductCategoryResponse, ProductCategoryVm>();
 
         CreateMap<ProductCategoryVm, UpdateProductCategoryRequest>();
+        CreateMap<ProductCategoryVm, AddProductCategoryRequest>();
     }
 }

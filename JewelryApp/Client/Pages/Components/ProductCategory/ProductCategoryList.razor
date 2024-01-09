@@ -12,17 +12,23 @@
                           AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Style="max-width: 200px;" Class="mt-0"></MudTextField>
             <MudSpacer />
 
-            <MudButton Color="Color.Primary" @* OnClick="@((e) => OpenAddProductDialog(_dialogOptions, "افزودن جنس"))" *@
+            <MudButton Color="Color.Primary"  OnClick="@((e) => OpenAddProductCategoryDialog(_dialogOptions, "افزودن دسته بندی"))" 
                        EndIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled">افزودن</MudButton>
         </ToolBarContent>
         <HeaderContent>
-            <MudTh><MudTableSortLabel SortLabel="Id" T="string">رديف</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="Name" T="string">نام دسته بندی</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="" T="string">عملیات</MudTableSortLabel></MudTh>
+            <MudTh>رديف</MudTh>
+            <MudTh>نام دسته بندی</MudTh>
+            <MudTh>عملیات</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="رديف">@context.Id</MudTd>
             <MudTd DataLabel="نام دسته بندی">@context.Name</MudTd>
+            <MudTd DataLabel="عملیات">
+                <MudTooltip Text="حذف دسته بندی">
+                    <MudIconButton OnClick="@((e) => OpenDeleteProductCategoryDialog(_dialogOptions, context.Id))" 
+                                   Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Delete" Color="@Color.Error"></MudIconButton>
+                </MudTooltip>
+            </MudTd>
         </RowTemplate>
             <RowEditingTemplate>
                 <MudTd DataLabel="رديف">@context.Id</MudTd>
