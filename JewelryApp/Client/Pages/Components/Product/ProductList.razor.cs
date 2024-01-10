@@ -5,6 +5,7 @@ using JewelryApp.Client.ViewModels;
 using JewelryApp.Shared.Abstractions;
 using JewelryApp.Shared.Common;
 using JewelryApp.Shared.Requests.Products;
+using static MudBlazor.CategoryTypes;
 
 namespace JewelryApp.Client.Pages.Components.Product;
 
@@ -12,6 +13,8 @@ public partial class ProductList
 {
     [Inject] public IDialogService Dialog { get; set; } = default!;
     [Inject] public IProductService ProductService { get; set; } = default!;
+    [Inject] private IProductCategoryService ProductCategoryService { get; set; } = default!;
+
 
     [Parameter] 
     public string? Class { get; set; }
@@ -27,6 +30,8 @@ public partial class ProductList
     private int _totalItems;
 
     private string? _searchString;
+
+    private int _selectedRowNumber = -1;
 
     private async Task<TableData<ProductListVm>> ServerReload(TableState state)
     {
@@ -128,5 +133,29 @@ public partial class ProductList
     private void PageChanged(int i)
     {
         _table.NavigateTo(i - 1);
+    }
+
+    private string SelectedRowClassFunc(ProductListVm row, int rowNumber)
+    {
+        if (row.Deleted)
+        {
+            return "deleted";
+        }
+
+        return string.Empty;
+    }
+
+    private async void RowEditPreview(object obj)
+    {
+        var row = (ProductListVm)obj;
+
+        var response = await ProductCategoryService.GetProductCategoriesAsync(CancellationTokenSource.Token);
+
+        row.ProductCategories = Mapper.Map<List<ProductCategoryVm>>(response);
+
+        row.ProductCategory = row.ProductCategories.FirstOrDefault(x => x.Name == row.CategoryName) ??
+                              new ProductCategoryVm { Id = 0, Name = "انتخاب کنید" };
+
+        StateHasChanged();
     }
 }

@@ -27,7 +27,7 @@ public class ProductCategoryService : IProductCategoryService
 
     public async Task<IEnumerable<GetProductCategoryResponse>> GetProductCategoriesAsync(
         CancellationToken cancellationToken = default)
-        => await _productCategoryRepository.Get()
+        => await _productCategoryRepository.Get(useAuthentication: false)
             .ProjectTo<GetProductCategoryResponse>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
     
     public async Task<ErrorOr<GetProductCategoryResponse>> GetProductCategoryByIdAsync(int id, CancellationToken cancellationToken = default)

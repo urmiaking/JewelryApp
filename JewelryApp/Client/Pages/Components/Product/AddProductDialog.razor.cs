@@ -11,7 +11,7 @@ public partial class AddProductDialog
 {
     [CascadingParameter] public MudDialogInstance MudDialog { get; set; } = default!;
 
-    private AddProductVm _model = new();
+    private readonly AddProductVm _model = new();
 
     [Inject] private IProductService ProductService { get; set; } = default!;
     [Inject] private IProductCategoryService ProductCategoryService { get; set; } = default!;

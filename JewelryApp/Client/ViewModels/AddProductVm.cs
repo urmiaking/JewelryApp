@@ -28,7 +28,7 @@ public class AddProductVm
     public CaratType CaratType { set; get; } = CaratType.Eighteen;
 
     [Display(Name = "دسته بندی")]
-    public ProductCategoryVm ProductCategory { set; get; } = new ProductCategoryVm() { Id = 0, Name = "انتخاب کنید" };
+    public ProductCategoryVm ProductCategory { set; get; } = new() { Id = 0, Name = "انتخاب کنید" };
 
     [Display(Name = "بارکد")]
     public string Barcode { set; get; } = default!;

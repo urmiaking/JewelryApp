@@ -33,7 +33,8 @@ public class ProductListVm
     public string Barcode { get; set; } = default!;
     public bool Deleted { get; set; }
 
-    public CaratTypeVm CaratTypeVm { get; set; } = new CaratTypeVm();
-    public ProductTypeVm ProductTypeVm { get; set; } = new ProductTypeVm();
-    public WageTypeVm WageTypeVm { get; set; } = new WageTypeVm();
+    [Display(Name = "دسته بندی")]
+    public ProductCategoryVm ProductCategory { set; get; } = new() { Id = 0, Name = "انتخاب کنید" };
+
+    public List<ProductCategoryVm> ProductCategories { get; set; } = new();
 }

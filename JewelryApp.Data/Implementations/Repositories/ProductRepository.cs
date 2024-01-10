@@ -28,5 +28,5 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
         => await Get().AnyAsync(x => x.Id == productId && x.SellDateTime.HasValue, token);
 
     public async Task<int> GetProductsCountAsync(CancellationToken token = default)
-        => await Get().CountAsync(token);
+        => await Get(retrieveDeletedRecords: true).CountAsync(token);
 }

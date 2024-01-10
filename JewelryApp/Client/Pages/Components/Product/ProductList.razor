@@ -3,6 +3,20 @@
 @using JewelryApp.Shared.Enums
 @inherits UserComponentBase
 
+<style>
+    .deleted {
+        background-color: #fc032c !important;
+    }
+
+        .deleted > td {
+            color: white !important;
+        }
+
+            .deleted > td .mud-input {
+                color: white !important;
+            }
+</style>
+
 <div class="mt-5 mb-5">
     @if (_selectedItems.Any())
     {
@@ -15,7 +29,7 @@
         </MudPaper>
     }
 
-    <MudTable MultiSelection="true" SelectOnRowClick="false" @bind-SelectedItems="_selectedItems" Elevation="15" ServerData="@(new Func<TableState, Task<TableData<ProductListVm>>>(ServerReload))"
+    <MudTable MultiSelection="true" Bordered="true" RowEditPreview="((e) => RowEditPreview(e))" RowClassFunc="SelectedRowClassFunc" RowClass="cursor-pointer" SelectOnRowClick="false" @bind-SelectedItems="_selectedItems" Elevation="15" ServerData="@(new Func<TableState, Task<TableData<ProductListVm>>>(ServerReload))"
               Hover="true" @ref="_table" CanCancelEdit="true" RowEditCommit="async e => await CommitItemAsync(e)" Dense="true" EditTrigger="TableEditTrigger.EditButton">
         <ToolBarContent>
             <MudText Typo="Typo.h6">لیست اجناس</MudText>
@@ -39,53 +53,61 @@
             <MudTh><MudTableSortLabel SortLabel="" T="string">عملیات</MudTableSortLabel></MudTh>
         </HeaderContent>
         <RowTemplate>
-                <MudTd DataLabel="بارکد جنس">@context.Barcode</MudTd>
+            <MudTd DataLabel="بارکد جنس">@context.Barcode</MudTd>
                 <MudTd DataLabel="نام جنس">@context.Name</MudTd>
                 <MudTd DataLabel="دسته بندي">@context.CategoryName</MudTd>
                 <MudTd DataLabel="وزن">@(context.Weight + " گرم")</MudTd>
                 <MudTd DataLabel="اجرت">
                     @(context.Wage) @context.WageType.GetDisplayName()
             </MudTd>
-                <MudTd DataLabel="نوع جنس">@context.ProductType.GetDisplayName()</MudTd>
+            <MudTd DataLabel="نوع جنس">@context.ProductType.GetDisplayName()</MudTd>
                 <MudTd DataLabel="عیار">@context.CaratType.GetDisplayName()</MudTd>
-            <MudTd DataLabel="عملیات">
-                <MudTooltip Text="چاپ بارکد">
-                    <MudIconButton Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Print"
-                                    Color="@Color.Primary"></MudIconButton>
-                </MudTooltip>
-                @if (!context.Deleted)
+                <MudTd DataLabel="عملیات">
+                    <MudTooltip Text="چاپ بارکد">
+                        <MudIconButton Size="@Size.Small" Class="mr-2" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Print"
+                                       Color="@Color.Primary"></MudIconButton>
+                    </MudTooltip>
+                    @if (!context.Deleted)
                 {
                     <MudTooltip Text="حذف جنس">
-                        <MudIconButton OnClick="@((e) => OpenDeleteProductDialog(_dialogOptions, context))" 
+                        <MudIconButton OnClick="@((e) => OpenDeleteProductDialog(_dialogOptions, context))"
                                        Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Delete" Color="@Color.Error"></MudIconButton>
                     </MudTooltip>
                 }
             </MudTd>
-            </RowTemplate>
-            <RowEditingTemplate>
-                <MudTd DataLabel="بارکد جنس">@context.Barcode</MudTd>
+        </RowTemplate>
+        <RowEditingTemplate>
+            <MudTd DataLabel="بارکد جنس">@context.Barcode</MudTd>
                 <MudTd DataLabel="نام جنس">
                     <MudTextField @bind-Value="context.Name" Required />
              </MudTd>
-             <MudTd DataLabel="وزن">
-                 <MudNumericField @bind-Value="context.Weight" Required Min="0.01" />
+             <MudTd DataLabel="CategoryName">
+                 <MudSelect T="ProductCategoryVm" @bind-Value="context.ProductCategory" For="() => context.ProductCategory" Margin="Margin.Dense">
+                     @foreach (var productCategory in context.ProductCategories)
+                    {
+                        <MudSelectItem T="ProductCategoryVm" Value="productCategory">@productCategory.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudTd>
+            <MudTd DataLabel="وزن">
+                <MudNumericField @bind-Value="context.Weight" Required Min="0.01" />
              </MudTd>
              <MudTd DataLabel="اجرت">
                  <MudNumericField @bind-Value="context.Wage" Required Min="0" />
              </MudTd>
              <MudTd DataLabel="نوع جنس">
-                 <MudSelect T="ProductTypeVm" Label="نوع جنس" @bind-Value="context.ProductTypeVm" Variant="Variant.Text">
-                     @foreach (var productType in ProductTypeVm.GetProductTypes())
+                 <MudSelect T="ProductType" @bind-Value="context.ProductType" Variant="Variant.Text">
+                     @foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
                     {
-                        <MudSelectItem T="ProductTypeVm" Value="productType">@productType.Name</MudSelectItem>
+                        <MudSelectItem T="ProductType" Value="productType">@productType.GetDisplayName()</MudSelectItem>
                     }
                 </MudSelect>
             </MudTd>
             <MudTd DataLabel="عیار">
-                <MudSelect T="CaratTypeVm" Label="عیار" @bind-Value="context.CaratTypeVm" Variant="Variant.Text">
-                    @foreach (var caret in CaratTypeVm.GetCarats())
+                <MudSelect T="CaratType" @bind-Value="context.CaratType" Variant="Variant.Text">
+                    @foreach (CaratType caratType in Enum.GetValues(typeof(CaratType)))
                     {
-                        <MudSelectItem T="CaratTypeVm" Value="caret">@caret.Name</MudSelectItem>
+                        <MudSelectItem T="CaratType" Value="caratType">@caratType.GetDisplayName()</MudSelectItem>
                     }
                 </MudSelect>
             </MudTd>
