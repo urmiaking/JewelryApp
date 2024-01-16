@@ -104,4 +104,18 @@ public class InvoiceService : IInvoiceService
             return new GetInvoicesCountResponse(0);
         }
     }
+
+    public async Task<GetLastInvoiceNumberResponse> GetLastInvoiceNumber(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await _authorizedClient.GetAsync($"{Urls.Invoices}/GetInvoiceNumber", cancellationToken);
+
+            return await response.GenerateResponseAsync<GetLastInvoiceNumberResponse>(cancellationToken) ?? new GetLastInvoiceNumberResponse(1);
+        }
+        catch
+        {
+            return new GetLastInvoiceNumberResponse(1);
+        }
+    }
 }

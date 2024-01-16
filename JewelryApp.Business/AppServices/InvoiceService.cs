@@ -121,11 +121,18 @@ public class InvoiceService : IInvoiceService
         return new RemoveInvoiceResponse(invoice.Id);
     }
 
-    public async Task<GetInvoicesCountResponse> GetTotalInvoicesCount(CancellationToken cancellationToken)
+    public async Task<GetInvoicesCountResponse> GetTotalInvoicesCount(CancellationToken cancellationToken = default)
     { 
         var count = await _invoiceRepository.Get().CountAsync(cancellationToken);
 
         return new GetInvoicesCountResponse(count);
+    }
+
+    public async Task<GetLastInvoiceNumberResponse> GetLastInvoiceNumber(CancellationToken cancellationToken = default)
+    {
+        var invoiceNumber = await _invoiceRepository.GetLastSavedInvoiceNumberAsync(cancellationToken);
+
+        return new GetLastInvoiceNumberResponse(invoiceNumber);
     }
 
     private static object? GetPropertyValue(object obj, string propertyName)

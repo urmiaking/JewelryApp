@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using JewelryApp.Client.ViewModels;
+using JewelryApp.Client.ViewModels.Invoice;
 using JewelryApp.Shared.Requests.Authentication;
 using JewelryApp.Shared.Requests.Invoices;
 using JewelryApp.Shared.Requests.ProductCategories;
@@ -27,5 +28,7 @@ public class MappingProfile : Profile
 
         CreateMap<ProductCategoryVm, UpdateProductCategoryRequest>();
         CreateMap<ProductCategoryVm, AddProductCategoryRequest>();
+
+        CreateMap<GetProductResponse, AddInvoiceItemVm>();
     }
 }

@@ -1,0 +1,65 @@
+﻿@page "/invoices/add"
+
+@inherits UserComponentBase
+
+<MudCard>
+    <MudCardHeader Class="d-flex flex-row" Style="padding: 0 !important;">
+        <MudIconButton Icon="@Icons.Material.Outlined.ArrowCircleRight" OnClick="@(GoBack)"></MudIconButton>
+        <MudText Typo="Typo.h5">ثبت فاکتور</MudText>
+        <MudSpacer />
+        <div class="small-width mt-5 ml-5">
+            <MudDatePicker Margin="Margin.Dense" Color="Color.Secondary" Rounded="true" HelperText="تاریخ ثبت فاکتور"
+                           Label="تاریخ فاکتور" HelperTextOnFocus="true" @bind-Date="_invoiceModel.BuyDateTime"
+                           Editable="true" DisableToolbar="true"
+                           For="@(() => _invoiceModel.BuyDateTime)" Variant="Variant.Outlined" />
+        </div>
+        <div class="small-width mt-5 ml-5">
+            <MudTextField Margin="Margin.Dense" Style="small-width" Variant="Variant.Outlined" Label="شماره فاکتور"
+                          HelperText="شماره فاکتور" HelperTextOnFocus="true" InputMode="InputMode.numeric" Disabled="true"
+                          @bind-Value="_invoiceModel.InvoiceNumber" For="@(() => _invoiceModel.InvoiceNumber)" />
+        </div>
+    </MudCardHeader>
+    <MudDivider />
+    <MudCardContent>
+        <MudPaper Class="mr-1 ml-1 mb-1 pl-4 pr-4 pb-4" Elevation="5">
+            <div class="d-flex flex-column align-items-start">
+                <MudText Typo="Typo.h6" Class="mb-3 mt-2">مشخصات فردی مشتری</MudText>
+            </div>
+            <MudGrid>
+                <MudItem lg="6" md="6" sm="12" xs="12">
+                    <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="نام" HelperText="نام و نام خانوادگی مشتری"
+                                  HelperTextOnFocus="true" Clearable AutoFocus="true"
+                                  @bind-Value="_customerModel.Name" For="@(() => _customerModel.Name)" />
+                </MudItem>
+                <MudItem lg="6" md="6" sm="12" xs="12">
+                    <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="شماره همراه" Mask="@PhoneNumberMask"
+                                  HelperText="شماره همراه مشتری" HelperTextOnFocus="true"
+                                  @bind-Value="_customerModel.PhoneNumber" For="@(() => _customerModel.PhoneNumber)" />
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+        <MudPaper Class="mr-1 ml-1 mb-1 pl-4 pr-4 pb-4" Elevation="5">
+            <div class="d-flex flex-grow-1 gap-4">
+                <div class="flex-grow-1" style="width: 64px">
+                    <MudText Typo="Typo.h6" Class="mb-3">لیست اجناس</MudText>
+                </div>
+                <MudHidden>
+                    <MudPaper Width="120px" Elevation="0" Style="margin-bottom: 3px;">
+                        <MudTextField AdornmentIcon="@Icons.Material.Filled.QrCode"
+                                      Adornment="Adornment.End" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                      Value="_barcodeText" ValueChanged="BarcodeTextChanged" T="string"
+                                      Label="بارکد"></MudTextField>
+                    </MudPaper>
+                </MudHidden>
+
+                <MudPaper Width="40px" Elevation="0">
+                    <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Info" OnClick="@(e => AddInvoiceItem(null))"></MudIconButton>
+                </MudPaper>
+            </div>
+            @foreach (var item in _items)
+            {
+                <div>@item.Name</div><br />
+            }
+        </MudPaper>
+    </MudCardContent>
+</MudCard>

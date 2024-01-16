@@ -64,7 +64,7 @@ public class InvoicesController : ApiController
         return response.Match(Ok, Problem);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> Remove(int id, CancellationToken cancellationToken)
     {
         var result = await _invoiceService.RemoveInvoiceAsync(id, cancellationToken);
@@ -75,5 +75,9 @@ public class InvoicesController : ApiController
     [HttpGet(nameof(Count))]
     public async Task<IActionResult> Count(CancellationToken cancellationToken)
         => Ok(await _invoiceService.GetTotalInvoicesCount(cancellationToken));
+
+    [HttpGet(nameof(GetInvoiceNumber))]
+    public async Task<IActionResult> GetInvoiceNumber(CancellationToken cancellationToken)
+        => Ok(await _invoiceService.GetLastInvoiceNumber(cancellationToken));
 }
 
