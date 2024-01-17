@@ -2,4 +2,4 @@
 
 public record AddProductResponse(int Id, string Name, double Weight, double Wage,
     string WageType, string ProductType, string CaratType,
-    int CategoryName, string Barcode);
+    string CategoryName, string Barcode);

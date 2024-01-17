@@ -50,7 +50,8 @@
                                    Label="بارکد"></MudTextField>
                  </MudPaper>
                  <MudPaper Width="40px" Elevation="0">
-                     <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Small" Variant="Variant.Filled" Color="Color.Info" OnClick="@(e => AddInvoiceItem(null))"></MudIconButton>
+                     <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Small" Variant="Variant.Filled" Color="Color.Info"
+                                    OnClick="@(_ => AddInvoiceItem(null))"></MudIconButton>
                  </MudPaper>
              </MudStack>
              <MudTable Items="@_items" Hover="true" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true">
@@ -77,9 +78,11 @@
                      <MudTd DataLabel="عیار">@context.CaratType.GetDisplayName()</MudTd>
                      <MudTd DataLabel="ضریب مالیات">@context.TaxOffset درصد</MudTd>
                      <MudTd DataLabel="نرخ گرم روز">@context.GramPrice.ToString("C0").Replace("ریال", "") تومان</MudTd>
-                     <MudTd DataLabel="قیمت نهایی">@context.FinalPrice</MudTd>
+                     <MudTd DataLabel="قیمت نهایی">@context.FinalPrice.ToString("C0").Replace("ریال", "") تومان</MudTd>
                      <MudTd DataLabel="عملیات">
-                         <MudIconButton Icon="@Icons.Material.Filled.Remove"></MudIconButton>
+                         <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Variant="Variant.Filled" 
+                                        Color="Color.Error" OnClick="_ => RemoveRow(context)"></MudIconButton>
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
                      </MudTd>
                  </RowTemplate>
              </MudTable>

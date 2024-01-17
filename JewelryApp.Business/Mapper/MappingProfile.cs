@@ -28,7 +28,7 @@ public class MappingProfile : Profile
 
         CreateMap<Product, AddProductResponse>()
             .ConstructUsing(x => new AddProductResponse(x.Id, x.Name, x.Weight, x.Wage, x.WageType.ToString(),
-                x.ProductType.ToString(), x.Carat.ToString(), x.ProductCategoryId, x.Barcode));
+                x.ProductType.ToString(), x.Carat.ToString(), x.ProductCategory.Name, x.Barcode));
 
         CreateMap<UpdateProductRequest, Product>()
             .ForMember(x => x.Carat, a => a.MapFrom(b => b.CaratType))

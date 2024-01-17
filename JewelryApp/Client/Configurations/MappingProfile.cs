@@ -30,5 +30,6 @@ public class MappingProfile : Profile
         CreateMap<ProductCategoryVm, AddProductCategoryRequest>();
 
         CreateMap<GetProductResponse, AddInvoiceItemVm>();
+        CreateMap<AddProductResponse, AddInvoiceItemVm>();
     }
 }

@@ -35,6 +35,7 @@ public class ProductService : IProductService
             return Errors.Product.BarcodeExists;
 
         await _productRepository.AddAsync(product, token);
+        await _productRepository.LoadReferenceAsync(product, x => x.ProductCategory, token);
 
         var response = _mapper.Map<AddProductResponse>(product);
 

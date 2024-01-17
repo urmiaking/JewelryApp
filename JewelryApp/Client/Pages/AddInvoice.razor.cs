@@ -1,8 +1,12 @@
-﻿using JewelryApp.Client.ViewModels.Invoice;
+﻿using JewelryApp.Client.Pages.Components.Product;
+using JewelryApp.Client.ViewModels.Invoice;
 using JewelryApp.Shared.Abstractions;
+using JewelryApp.Shared.Common;
 using JewelryApp.Shared.Responses.Prices;
+using JewelryApp.Shared.Responses.Products;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using static MudBlazor.CategoryTypes;
 
 namespace JewelryApp.Client.Pages;
 
@@ -11,6 +15,7 @@ public partial class AddInvoice
     [Inject] private IInvoiceService InvoiceService { get; set; } = default!;
     [Inject] private IProductService ProductService { get; set; } = default!;
     [Inject] private IPriceService PriceService { get; set; } = default!;
+    [Inject] private IDialogService DialogService { get; set; } = default!;
 
     private readonly AddCustomerVm _customerModel = new();
     private readonly AddInvoiceVm _invoiceModel = new();
@@ -57,13 +62,24 @@ public partial class AddInvoice
             else
             {
                 var invoiceItem = Mapper.Map<AddInvoiceItemVm>(response.Value);
-                AddInvoiceItem(invoiceItem);
+                await AddInvoiceItem(invoiceItem);
             }
         }
     }
 
-    private void AddInvoiceItem(AddInvoiceItemVm? invoiceItem)
+    private async Task AddInvoiceItem(AddInvoiceItemVm? invoiceItem)
     {
+        if (invoiceItem is null)
+        {
+            var dialog = await DialogService.ShowAsync<AddProductDialog>();
+
+            var result = await dialog.Result;
+
+            if (!result.Canceled)
+                if (result.Data is AddProductResponse data)
+                    invoiceItem = Mapper.Map<AddInvoiceItemVm>(data);
+        }
+
         if (invoiceItem != null && _price != null)
         {
             invoiceItem.DollarPrice = _price.UsDollar;
@@ -71,5 +87,10 @@ public partial class AddInvoice
         }
 
         _items.Add(invoiceItem ?? new AddInvoiceItemVm());
+    }
+
+    private void RemoveRow(AddInvoiceItemVm item)
+    {
+        _items.Remove(item);
     }
 }
