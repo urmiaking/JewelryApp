@@ -1,4 +1,5 @@
 ﻿@page "/invoices/add"
+@using JewelryApp.Shared.Enums
 
 @inherits UserComponentBase
 
@@ -29,37 +30,59 @@
                 <MudItem lg="6" md="6" sm="12" xs="12">
                     <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="نام" HelperText="نام و نام خانوادگی مشتری"
                                   HelperTextOnFocus="true" Clearable AutoFocus="true"
-                                  @bind-Value="_customerModel.Name" For="@(() => _customerModel.Name)" />
-                </MudItem>
-                <MudItem lg="6" md="6" sm="12" xs="12">
-                    <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="شماره همراه" Mask="@PhoneNumberMask"
-                                  HelperText="شماره همراه مشتری" HelperTextOnFocus="true"
-                                  @bind-Value="_customerModel.PhoneNumber" For="@(() => _customerModel.PhoneNumber)" />
-                </MudItem>
-            </MudGrid>
-        </MudPaper>
-        <MudPaper Class="mr-1 ml-1 mb-1 pl-4 pr-4 pb-4" Elevation="5">
-            <div class="d-flex flex-grow-1 gap-4">
-                <div class="flex-grow-1" style="width: 64px">
-                    <MudText Typo="Typo.h6" Class="mb-3">لیست اجناس</MudText>
-                </div>
-                <MudHidden>
-                    <MudPaper Width="120px" Elevation="0" Style="margin-bottom: 3px;">
-                        <MudTextField AdornmentIcon="@Icons.Material.Filled.QrCode"
-                                      Adornment="Adornment.End" Variant="Variant.Outlined" Margin="Margin.Dense"
-                                      Value="_barcodeText" ValueChanged="BarcodeTextChanged" T="string"
-                                      Label="بارکد"></MudTextField>
-                    </MudPaper>
-                </MudHidden>
-
-                <MudPaper Width="40px" Elevation="0">
-                    <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Info" OnClick="@(e => AddInvoiceItem(null))"></MudIconButton>
-                </MudPaper>
-            </div>
-            @foreach (var item in _items)
-            {
-                <div>@item.Name</div><br />
-            }
-        </MudPaper>
-    </MudCardContent>
-</MudCard>
+                                   @bind-Value="_customerModel.Name" For="@(() => _customerModel.Name)" />
+                 </MudItem>
+                 <MudItem lg="6" md="6" sm="12" xs="12">
+                     <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="شماره همراه" Mask="@PhoneNumberMask"
+                                   HelperText="شماره همراه مشتری" HelperTextOnFocus="true"
+                                   @bind-Value="_customerModel.PhoneNumber" For="@(() => _customerModel.PhoneNumber)" />
+                 </MudItem>
+             </MudGrid>
+         </MudPaper>
+         <MudPaper Class="mr-1 ml-1 mb-1 mt-2 pl-4 pr-4 pb-4" Elevation="5">
+             <MudStack Row AlignItems="AlignItems.Center" Class="mt-2">
+                 <MudText Typo="Typo.h6">لیست اجناس</MudText>
+                 <MudSpacer />
+                 <MudPaper Width="120px" Elevation="0">
+                     <MudTextField AdornmentIcon="@Icons.Material.Filled.QrCode" Margin="Margin.Dense"
+                                   Adornment="Adornment.End" Variant="Variant.Outlined"
+                                   Value="_barcodeText" ValueChanged="BarcodeTextChanged" T="string"
+                                   Label="بارکد"></MudTextField>
+                 </MudPaper>
+                 <MudPaper Width="40px" Elevation="0">
+                     <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Small" Variant="Variant.Filled" Color="Color.Info" OnClick="@(e => AddInvoiceItem(null))"></MudIconButton>
+                 </MudPaper>
+             </MudStack>
+             <MudTable Items="@_items" Hover="true" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true">
+                 <HeaderContent>
+                     <MudTh>دسته بندی</MudTh>
+                     <MudTh>نام</MudTh>
+                     <MudTh>نوع</MudTh>
+                     <MudTh>وزن</MudTh>
+                     <MudTh>اجرت</MudTh>
+                     <MudTh>سود</MudTh>
+                     <MudTh>عیار</MudTh>
+                     <MudTh>ضریب مالیات</MudTh>
+                     <MudTh>نرخ گرم</MudTh>
+                     <MudTh>قیمت نهایی</MudTh>
+                     <MudTh>عملیات</MudTh>
+                 </HeaderContent>
+                 <RowTemplate>
+                     <MudTd DataLabel="دسته بندی">@context.CategoryName</MudTd>
+                     <MudTd DataLabel="نام کالا">@context.Name</MudTd>
+                     <MudTd DataLabel="نوع کالا">@context.ProductType.GetDisplayName()</MudTd>
+                     <MudTd DataLabel="وزن">@context.Weight گرم</MudTd>
+                     <MudTd DataLabel="اجرت">@context.Wage @context.WageType.GetDisplayName()</MudTd>
+                     <MudTd DataLabel="سود">@context.Profit درصد</MudTd>
+                     <MudTd DataLabel="عیار">@context.CaratType.GetDisplayName()</MudTd>
+                     <MudTd DataLabel="ضریب مالیات">@context.TaxOffset درصد</MudTd>
+                     <MudTd DataLabel="نرخ گرم روز">@context.GramPrice.ToString("C0").Replace("ریال", "") تومان</MudTd>
+                     <MudTd DataLabel="قیمت نهایی">@context.FinalPrice</MudTd>
+                     <MudTd DataLabel="عملیات">
+                         <MudIconButton Icon="@Icons.Material.Filled.Remove"></MudIconButton>
+                     </MudTd>
+                 </RowTemplate>
+             </MudTable>
+         </MudPaper>
+     </MudCardContent>
+ </MudCard>

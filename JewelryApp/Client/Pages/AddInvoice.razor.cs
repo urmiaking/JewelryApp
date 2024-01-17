@@ -1,5 +1,6 @@
 ﻿using JewelryApp.Client.ViewModels.Invoice;
 using JewelryApp.Shared.Abstractions;
+using JewelryApp.Shared.Responses.Prices;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -9,15 +10,19 @@ public partial class AddInvoice
 {
     [Inject] private IInvoiceService InvoiceService { get; set; } = default!;
     [Inject] private IProductService ProductService { get; set; } = default!;
+    [Inject] private IPriceService PriceService { get; set; } = default!;
 
     private readonly AddCustomerVm _customerModel = new();
     private readonly AddInvoiceVm _invoiceModel = new();
     private readonly List<AddInvoiceItemVm> _items = new ();
+    private PriceResponse? _price = default!;
     private string? _barcodeText;
 
     protected override async Task OnInitializedAsync()
     {
         var response = await InvoiceService.GetLastInvoiceNumber(CancellationTokenSource.Token);
+
+        _price = await PriceService.GetPriceAsync(CancellationTokenSource.Token);
 
         _invoiceModel.InvoiceNumber = response.InvoiceNumber;
 
@@ -59,6 +64,12 @@ public partial class AddInvoice
 
     private void AddInvoiceItem(AddInvoiceItemVm? invoiceItem)
     {
+        if (invoiceItem != null && _price != null)
+        {
+            invoiceItem.DollarPrice = _price.UsDollar;
+            invoiceItem.GramPrice = _price.Gram18;
+        }
+
         _items.Add(invoiceItem ?? new AddInvoiceItemVm());
     }
 }

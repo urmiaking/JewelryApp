@@ -4,10 +4,10 @@ namespace JewelryApp.Shared.Enums;
 
 public enum WageType
 {
-    [Display(Name = "درصدی")]
+    [Display(Name = "درصد")]
     Percent = 1,
     [Display(Name = "تومان")]
     Toman = 2,
-    [Display(Name = "دلاری")]
+    [Display(Name = "دلار")]
     Dollar = 3
 }
