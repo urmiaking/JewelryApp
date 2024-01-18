@@ -118,4 +118,18 @@ public class ProductService : IProductService
             return Error.Failure(description: e.Message);
         }
     }
+
+    public async Task<IEnumerable<GetProductResponse>?> GetProductsByNameAsync(string name, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await _authorizedClient.GetAsync($"{Urls.Products}/name/{name}", cancellationToken);
+
+            return await response.GenerateResponseAsync<List<GetProductResponse>>(cancellationToken);
+        }
+        catch (Exception e)
+        {
+            return new List<GetProductResponse>();
+        }
+    }
 }

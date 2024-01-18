@@ -2,20 +2,21 @@
 using JewelryApp.Client.ViewModels;
 using JewelryApp.Shared.Abstractions;
 using JewelryApp.Shared.Requests.Products;
+using JewelryApp.Shared.Responses.Products;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using static System.Net.WebRequestMethods;
 
 namespace JewelryApp.Client.Pages.Components.Product;
 
 public partial class AddProductDialog
 {
     [CascadingParameter] public MudDialogInstance MudDialog { get; set; } = default!;
-
-    private readonly AddProductVm _model = new();
-
     [Inject] private IProductService ProductService { get; set; } = default!;
     [Inject] private IProductCategoryService ProductCategoryService { get; set; } = default!;
 
+    private AddProductVm _model = new();
+    private IEnumerable<GetProductResponse>? _inputProducts = new List<GetProductResponse>();
     private bool _processing;
 
     protected override async Task OnInitializedAsync()
@@ -32,6 +33,29 @@ public partial class AddProductDialog
     private void GenerateBarcode()
     {
         _model.Barcode = BarcodeService.Generate();
+    }
+
+    async Task HandleNameChange(ChangeEventArgs e)
+    {
+        var name = e.Value?.ToString();
+        if (name?.Length > 2)
+        {
+            _inputProducts = await ProductService.GetProductsByNameAsync(name, CancellationTokenSource.Token);
+        }
+        else
+        {
+            _inputProducts = null;
+        }
+    }
+
+    void SelectProduct(GetProductResponse selectedProduct)
+    {
+        var productCategories = _model.ProductCategories;
+        _model = Mapper.Map<AddProductVm>(selectedProduct);
+        _model.ProductCategories = productCategories;
+        _model.ProductCategory = _model.ProductCategories.FirstOrDefault(c => c.Name.Equals(selectedProduct.Name)) ?? _model.ProductCategories.First();
+        _model.Barcode = BarcodeService.IncrementByOne(_model.Barcode);
+        _inputProducts = null;
     }
 
     private async Task OnValidSubmit()

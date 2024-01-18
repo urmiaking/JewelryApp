@@ -13,4 +13,5 @@ public interface IProductService
     Task<GetProductsCountResponse> GetTotalProductsCount(CancellationToken cancellationToken = default);
     Task<ErrorOr<GetProductResponse>> GetProductByBarcodeAsync(string barcode, CancellationToken token = default);
     Task<ErrorOr<GetProductResponse>> GetProductByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<IEnumerable<GetProductResponse>?> GetProductsByNameAsync(string name, CancellationToken cancellationToken = default);
 }

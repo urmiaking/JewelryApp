@@ -11,7 +11,7 @@
                 <MudItem xs="12" md="6" lg="6">
                     <MudStack Row AlignItems="AlignItems.Center">
                          <MudItem xs="10">
-                             <MudTextField Label="بارکد" @bind-Value="_model.Barcode" For="@(() => _model.Barcode)" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                             <MudTextField Label="بارکد" AutoFocus="true" @bind-Value="_model.Barcode" For="@(() => _model.Barcode)" Variant="Variant.Outlined" Margin="Margin.Dense" />
                          </MudItem>
                          <MudItem xs="2">
                              <MudIconButton Color="Color.Primary" OnClick="GenerateBarcode" Icon="@Icons.Material.Filled.Refresh" Variant="Variant.Filled"></MudIconButton>
@@ -19,7 +19,49 @@
                      </MudStack>
                  </MudItem>
                  <MudItem xs="12" md="6" lg="6">
-                     <MudTextField Label="نام جنس" AutoFocus="true" @bind-Value="_model.Name" For="@(() => _model.Name)" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                     @* <MudTextField Label="نام جنس" id="product-name" AutoFocus="true" @bind-Value="_model.Name" For="@(() => _model.Name)" Variant="Variant.Outlined" Margin="Margin.Dense" /> *@
+                     <div class="mud-input-control mud-input-control-margin-dense mud-input-input-control">
+                         <div class="mud-input-control-input-container">
+                             <div class="autocomplete mud-input mud-input-outlined mud-input-margin-dense mud-shrink">
+                                 <input @bind=_model.Name @oninput=HandleNameChange class="mud-input-slot mud-input-root mud-input-root-outlined mud-input-root-margin-dense" type="text"
+                                 inputmode="text" maxlength="524288" aria-invalid="false" _bl_39="">
+                                 @if (_inputProducts is not null)
+                                {
+                                    <ul class="options">
+                                        @if (_inputProducts.Any())
+                                        {
+                                            @foreach (var product in _inputProducts)
+                                            {
+                                                <li class="option" @onclick=@(_ => SelectProduct(product))>
+                                                    <span class="option-text">@product.Name</span>
+                                                </li>
+                                            }
+                                        }
+                                    </ul>
+                                }
+                                 <div class="mud-input-slot mud-input-root mud-input-root-outlined mud-input-root-margin-dense" style="display:none" tabindex="‎−1" _bl_40=""></div>
+                                 
+                                 <div class="mud-input-outlined-border"></div>
+                             </div>
+                             <label class="mud-input-label mud-input-label-animated mud-input-label-outlined mud-input-label-margin-dense mud-input-label-inputcontrol"
+                             for="mudinput-75c8d8ff-4e1d-443b-a87c-e3ac28ea99e4">نام جنس</label></div></div>
+                         <div class="autocomplete">
+                         @* <input @bind=_model.Name @oninput=HandleNameChange class="form-control filter" />
+                         @if (_inputProducts is not null)
+                        {
+                            <ul class="options">
+                                @if (_inputProducts.Any())
+                                {
+                                    @foreach (var product in _inputProducts)
+                                    {
+                                        <li class="option" @onclick=@(_ => SelectProduct(product))>
+                                            <span class="option-text">@product.Name</span>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        } *@
+                     </div>
                  </MudItem>
                  <MudItem xs="12" md="6" lg="6">
                      <MudNumericField Label="وزن" @bind-Value="_model.Weight" For="@(() => _model.Weight)" Variant="Variant.Outlined" Margin="Margin.Dense" />

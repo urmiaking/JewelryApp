@@ -78,6 +78,10 @@ public partial class AddInvoice
             if (!result.Canceled)
                 if (result.Data is AddProductResponse data)
                     invoiceItem = Mapper.Map<AddInvoiceItemVm>(data);
+                else
+                    return;
+            else
+                return;
         }
 
         if (invoiceItem != null && _price != null)

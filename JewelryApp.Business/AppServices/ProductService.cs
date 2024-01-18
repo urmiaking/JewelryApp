@@ -119,6 +119,13 @@ public class ProductService : IProductService
         return response;
     }
 
+    public async Task<IEnumerable<GetProductResponse>?> GetProductsByNameAsync(string name, CancellationToken cancellationToken = default)
+    {
+        var products = _productRepository.Get().Where(x => x.Name.Contains(name));
+
+        return await products.ProjectTo<GetProductResponse>(_mapper.ConfigurationProvider).ToListAsync();
+    }
+
     public async Task<ErrorOr<GetProductResponse>> GetProductByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         var product = await _productRepository.GetByIdAsync(id, cancellationToken);
@@ -134,5 +141,4 @@ public class ProductService : IProductService
 
     private static object? GetPropertyValue(object obj, string propertyName)
         => obj.GetType().GetProperty(propertyName)?.GetValue(obj, null);
-
 }

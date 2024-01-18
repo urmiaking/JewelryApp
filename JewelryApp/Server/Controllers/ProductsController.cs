@@ -38,6 +38,13 @@ public class ProductsController : ApiController
         return response.Match(Ok, Problem);
     }
 
+    [HttpGet("name/{name}")]
+    public async Task<IActionResult> GetByName(string name, CancellationToken cancellationToken)
+    {
+        var response = await _productService.GetProductsByNameAsync(name, cancellationToken);
+        return Ok(response);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Add(AddProductRequest request, CancellationToken cancellationToken)
     {
