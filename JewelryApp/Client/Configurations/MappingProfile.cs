@@ -32,5 +32,11 @@ public class MappingProfile : Profile
         CreateMap<GetProductResponse, AddInvoiceItemVm>();
         CreateMap<AddProductResponse, AddInvoiceItemVm>();
         CreateMap<GetProductResponse, AddProductVm>();
+        CreateMap<GetProductResponse, EditInvoiceItemVm>();
+        CreateMap<AddInvoiceItemVm, EditInvoiceItemVm>();
+        CreateMap<EditInvoiceItemVm, AddInvoiceItemVm>();
+        CreateMap<EditInvoiceItemVm, UpdateProductRequest>()
+            .ConstructUsing(x => new UpdateProductRequest(x.Id, x.Name, x.Weight, x.Wage, x.WageType.ToString(), x.ProductType.ToString(), x.CaratType.ToString(),
+            x.ProductCategory.Id, x.Barcode));
     }
 }

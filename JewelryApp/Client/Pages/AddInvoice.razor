@@ -1,5 +1,6 @@
 ﻿@page "/invoices/add"
 @using JewelryApp.Shared.Enums
+@using JewelryApp.Client.Extensions
 
 @inherits UserComponentBase
 
@@ -15,8 +16,8 @@
                            For="@(() => _invoiceModel.BuyDateTime)" Variant="Variant.Outlined" />
         </div>
         <div class="small-width mt-5 ml-5">
-            <MudTextField Margin="Margin.Dense" Style="small-width" Variant="Variant.Outlined" Label="شماره فاکتور"
-                          HelperText="شماره فاکتور" HelperTextOnFocus="true" InputMode="InputMode.numeric" Disabled="true"
+            <MudTextField Margin="Margin.Dense" Variant="Variant.Outlined" Label="شماره فاکتور"
+                          HelperText="شماره فاکتور" HelperTextOnFocus="true" InputMode="InputMode.numeric"
                           @bind-Value="_invoiceModel.InvoiceNumber" For="@(() => _invoiceModel.InvoiceNumber)" />
         </div>
     </MudCardHeader>
@@ -39,53 +40,109 @@
                  </MudItem>
              </MudGrid>
          </MudPaper>
-         <MudPaper Class="mr-1 ml-1 mb-1 mt-2 pl-4 pr-4 pb-4" Elevation="5">
-             <MudStack Row AlignItems="AlignItems.Center" Class="mt-2">
-                 <MudText Typo="Typo.h6">لیست اجناس</MudText>
-                 <MudSpacer />
-                 <MudPaper Width="120px" Elevation="0">
-                     <MudTextField AdornmentIcon="@Icons.Material.Filled.QrCode" Margin="Margin.Dense"
-                                   Adornment="Adornment.End" Variant="Variant.Outlined"
-                                   Value="_barcodeText" ValueChanged="BarcodeTextChanged" T="string"
-                                   Label="بارکد"></MudTextField>
-                 </MudPaper>
-                 <MudPaper Width="40px" Elevation="0">
-                     <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Small" Variant="Variant.Filled" Color="Color.Info"
-                                    OnClick="@(_ => AddInvoiceItem(null))"></MudIconButton>
-                 </MudPaper>
-             </MudStack>
-             <MudTable Items="@_items" Hover="true" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true">
-                 <HeaderContent>
-                     <MudTh>دسته بندی</MudTh>
-                     <MudTh>نام</MudTh>
-                     <MudTh>نوع</MudTh>
-                     <MudTh>وزن</MudTh>
-                     <MudTh>اجرت</MudTh>
-                     <MudTh>سود</MudTh>
-                     <MudTh>عیار</MudTh>
-                     <MudTh>ضریب مالیات</MudTh>
-                     <MudTh>نرخ گرم</MudTh>
-                     <MudTh>قیمت نهایی</MudTh>
-                     <MudTh>عملیات</MudTh>
-                 </HeaderContent>
-                 <RowTemplate>
-                     <MudTd DataLabel="دسته بندی">@context.CategoryName</MudTd>
-                     <MudTd DataLabel="نام کالا">@context.Name</MudTd>
-                     <MudTd DataLabel="نوع کالا">@context.ProductType.GetDisplayName()</MudTd>
-                     <MudTd DataLabel="وزن">@context.Weight گرم</MudTd>
-                     <MudTd DataLabel="اجرت">@context.Wage @context.WageType.GetDisplayName()</MudTd>
-                     <MudTd DataLabel="سود">@context.Profit درصد</MudTd>
-                     <MudTd DataLabel="عیار">@context.CaratType.GetDisplayName()</MudTd>
-                     <MudTd DataLabel="ضریب مالیات">@context.TaxOffset درصد</MudTd>
-                     <MudTd DataLabel="نرخ گرم روز">@context.GramPrice.ToString("C0").Replace("ریال", "") تومان</MudTd>
-                     <MudTd DataLabel="قیمت نهایی">@context.FinalPrice.ToString("C0").Replace("ریال", "") تومان</MudTd>
-                     <MudTd DataLabel="عملیات">
-                         <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Variant="Variant.Filled" 
-                                        Color="Color.Error" OnClick="_ => RemoveRow(context)"></MudIconButton>
-                         <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"></MudIconButton>
-                     </MudTd>
-                 </RowTemplate>
-             </MudTable>
-         </MudPaper>
+        <MudPaper Class="mr-1 ml-1 mb-1 mt-2 pl-4 pr-4 pb-4" Elevation="5">
+            <MudStack Row AlignItems="AlignItems.Center" Class="mt-2">
+                <MudText Typo="Typo.h6">لیست اجناس</MudText>
+                <MudSpacer />
+                <MudPaper Width="120px" Elevation="0">
+                    <MudTextField AdornmentIcon="@Icons.Material.Filled.QrCode" Margin="Margin.Dense"
+                                  Adornment="Adornment.End" Variant="Variant.Outlined"
+                                  Value="_barcodeText" ValueChanged="BarcodeTextChanged" T="string"
+                                  Label="بارکد"></MudTextField>
+                </MudPaper>
+                <MudPaper Width="40px" Elevation="0">
+                    <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Small" Variant="Variant.Filled" Color="Color.Info"
+                                   OnClick="@(_ => AddInvoiceItem(null))"></MudIconButton>
+                </MudPaper>
+            </MudStack>
+            <MudTable Items="@_items" Hover="true" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true" Class="mt-3">
+                <HeaderContent>
+                    <MudTh>دسته بندی</MudTh>
+                    <MudTh>نام</MudTh>
+                    <MudTh>نوع</MudTh>
+                    <MudTh>وزن</MudTh>
+                    <MudTh>اجرت</MudTh>
+                    <MudTh>سود</MudTh>
+                    <MudTh>عیار</MudTh>
+                    <MudTh>ضریب مالیات</MudTh>
+                    <MudTh>نرخ گرم</MudTh>
+                    <MudTh>قیمت نهایی</MudTh>
+                    <MudTh>عملیات</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="دسته بندی">@context.CategoryName</MudTd>
+                    <MudTd DataLabel="نام کالا">@context.Name</MudTd>
+                    <MudTd DataLabel="نوع کالا">@context.ProductType.GetDisplayName()</MudTd>
+                    <MudTd DataLabel="وزن">@context.Weight گرم</MudTd>
+                    <MudTd DataLabel="اجرت">@context.Wage @context.WageType.GetDisplayName()</MudTd>
+                    <MudTd DataLabel="سود">@context.Profit درصد</MudTd>
+                    <MudTd DataLabel="عیار">@context.CaratType.GetDisplayName()</MudTd>
+                    <MudTd DataLabel="ضریب مالیات">@context.TaxOffset درصد</MudTd>
+                    <MudTd DataLabel="نرخ گرم روز">@context.GramPrice.ToCurrency()</MudTd>
+                    <MudTd DataLabel="قیمت نهایی">@context.FinalPrice.ToCurrency()</MudTd>
+                    <MudTd DataLabel="عملیات">
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Variant="Variant.Filled" 
+                                       Color="Color.Error" OnClick="_ => RemoveRow(context)"></MudIconButton>
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Variant="Variant.Filled"
+                                       Color="Color.Primary" OnClick="_ => EditRow(context)"></MudIconButton>
+                    </MudTd>
+                </RowTemplate>
+                <NoRecordsContent>
+                    <MudText>هیچ جنسی به فاکتور افزوده نشده است</MudText>
+                </NoRecordsContent>
+            </MudTable>
+        </MudPaper>
+        @if (_items.Any())
+        {
+            <MudPaper Class="mr-1 ml-1 mb-1 mt-2 pl-4 pr-4 pb-4" Elevation="5">
+                <MudGrid>
+                    <MudItem lg="3" xs="12">
+                        <MudText Typo="Typo.body2">قیمت کل: @_items.Sum(x => x.Price).ToCurrency()</MudText>
+                    </MudItem>
+                    <MudItem lg="3" xs="12">
+                        <MudText Typo="Typo.body2">مالیات: @_items.Sum(x => x.Tax).ToCurrency()</MudText>
+                    </MudItem>
+                    <MudItem lg="3" xs="12">
+                        <MudText Typo="Typo.body2">مبلغ قابل پرداخت: @_items.Sum(x => x.FinalPrice).ToCurrency()</MudText>
+                    </MudItem>
+                    <MudItem lg="3" xs="12">
+                        <MudText Class="cursor-pointer" Typo="Typo.body2" @onclick="ToggleDiscount">
+                            تخفیف: @discountText
+                        </MudText>
+                        <MudPopover Open="@_isDiscountOpen" Fixed="true" Class="px-4 pt-4">
+                            <div class="d-flex flex-column">
+                                <MudTextField AdornmentIcon="@Icons.Material.Filled.Discount" Margin="Margin.Dense" Class="small-width"
+                                              Adornment="Adornment.End" Variant="Variant.Outlined"
+                                              HelperText="تخفیف" HelperTextOnFocus="true"
+                                              @bind-value="_invoiceModel.Discount" For="() => _invoiceModel.Discount"
+                                              Label="تخفیف"></MudTextField>
+                                <MudButton OnClick="@ToggleDiscount" Class="ml-auto mr-n3 mb-1" Color="Color.Success">اعمال</MudButton>
+                            </div>
+                        </MudPopover>
+                    </MudItem>
+                    <MudItem lg="3" xs="12">
+                        <MudText Class="cursor-pointer" Typo="Typo.body2" @onclick="ToggleDebt">
+                            بدهی: @debtText
+                        </MudText>
+                        <MudPopover Open="@_isDebtOpen" Fixed="true" Class="px-4 pt-4">
+                            <div class="d-flex flex-column">
+                                <MudTextField AdornmentIcon="@Icons.Material.Filled.Money" Margin="Margin.Dense" Class="small-width"
+                                              Adornment="Adornment.End" Variant="Variant.Outlined"
+                                              HelperText="مبلغ بدهی" HelperTextOnFocus="true"
+                                              @bind-value="_invoiceModel.Debt" For="() => _invoiceModel.Debt"
+                                              Label="مبلغ بدهی"></MudTextField>
+                                <MudDatePicker Margin="Margin.Dense" Color="Color.Secondary" Rounded="true" HelperText="موعد بدهی"
+                                               Label="موعد بدهی" HelperTextOnFocus="true" @bind-Date="_invoiceModel.DebtDate"
+                                               Editable="true" DisableToolbar="true"
+                                               For="@(() => _invoiceModel.DebtDate)" Variant="Variant.Outlined" />
+                                <MudButton OnClick="@ToggleDebt" Class="ml-auto mr-n3 mb-1" Color="Color.Success">اعمال</MudButton>
+                            </div>
+                        </MudPopover>
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+
+        }
+        
      </MudCardContent>
  </MudCard>

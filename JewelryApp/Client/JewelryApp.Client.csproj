@@ -35,10 +35,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Extensions\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\..\JewelryApp.Client.Services\JewelryApp.Client.Services.csproj" />
 	</ItemGroup>
 

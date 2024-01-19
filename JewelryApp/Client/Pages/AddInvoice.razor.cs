@@ -1,12 +1,12 @@
-﻿using JewelryApp.Client.Pages.Components.Product;
+﻿using JewelryApp.Client.Extensions;
+using JewelryApp.Client.Pages.Components.Invoice;
+using JewelryApp.Client.Pages.Components.Product;
 using JewelryApp.Client.ViewModels.Invoice;
 using JewelryApp.Shared.Abstractions;
-using JewelryApp.Shared.Common;
 using JewelryApp.Shared.Responses.Prices;
 using JewelryApp.Shared.Responses.Products;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using static MudBlazor.CategoryTypes;
 
 namespace JewelryApp.Client.Pages;
 
@@ -19,8 +19,8 @@ public partial class AddInvoice
 
     private readonly AddCustomerVm _customerModel = new();
     private readonly AddInvoiceVm _invoiceModel = new();
-    private readonly List<AddInvoiceItemVm> _items = new ();
-    private PriceResponse? _price = default!;
+    private readonly List<AddInvoiceItemVm> _items = new();
+    private PriceResponse? _price;
     private string? _barcodeText;
 
     protected override async Task OnInitializedAsync()
@@ -86,6 +86,12 @@ public partial class AddInvoice
 
         if (invoiceItem != null && _price != null)
         {
+            if (_items.Any(x => x.Id == invoiceItem.Id))
+            {
+                SnackBar.Add($"جنس با بارکد {invoiceItem.Barcode} قبلا به لیست اجناس افزوده شده است", Severity.Info);
+                return;
+            }
+
             invoiceItem.DollarPrice = _price.UsDollar;
             invoiceItem.GramPrice = _price.Gram18;
         }
@@ -96,5 +102,44 @@ public partial class AddInvoice
     private void RemoveRow(AddInvoiceItemVm item)
     {
         _items.Remove(item);
+    }
+
+    private async Task EditRow(AddInvoiceItemVm context)
+    {
+        var editInvoiceItemVm = Mapper.Map<EditInvoiceItemVm>(context);
+
+        var parameters = new DialogParameters<EditInvoiceItem> { { x => x.Model, editInvoiceItemVm } };
+
+        var dialog = await DialogService.ShowAsync<EditInvoiceItem>("ویرایش جنس", parameters);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            if (result.Data is EditInvoiceItemVm data)
+            {
+                var item = Mapper.Map<AddInvoiceItemVm>(data);
+                _items.Remove(context);
+                _items.Add(item);
+            }
+    }
+
+    private bool _isDiscountOpen;
+    private string? discountText;
+    private void ToggleDiscount()
+    {
+        //TODO: Find a solution
+        discountText = _invoiceModel.Discount.HasValue ? _invoiceModel.Discount.Value.ToCurrency() : "ندارد";
+        _isDiscountOpen = !_isDiscountOpen;
+        StateHasChanged();
+    }
+
+    private bool _isDebtOpen;
+    private string? debtText;
+    private void ToggleDebt()
+    {
+        //TODO: Find a solution
+        debtText = _invoiceModel.Debt.HasValue ? _invoiceModel.Debt.Value.ToCurrency() : "ندارد";
+        _isDebtOpen = !_isDebtOpen;
+        StateHasChanged();
     }
 }
