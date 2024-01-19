@@ -20,6 +20,7 @@ public partial class AddInvoice
     private readonly AddCustomerVm _customerModel = new();
     private readonly AddInvoiceVm _invoiceModel = new();
     private readonly List<AddInvoiceItemVm> _items = new();
+    private readonly List<AddOldGoldVm> _oldGoldItems = new();
     private PriceResponse? _price;
     private string? _barcodeText;
 
@@ -97,11 +98,13 @@ public partial class AddInvoice
         }
 
         _items.Add(invoiceItem ?? new AddInvoiceItemVm());
+        StateHasChanged();
     }
 
     private void RemoveRow(AddInvoiceItemVm item)
     {
         _items.Remove(item);
+        StateHasChanged();
     }
 
     private async Task EditRow(AddInvoiceItemVm context)
@@ -121,25 +124,53 @@ public partial class AddInvoice
                 _items.Remove(context);
                 _items.Add(item);
             }
+        StateHasChanged();
     }
 
     private bool _isDiscountOpen;
-    private string? discountText;
     private void ToggleDiscount()
     {
         //TODO: Find a solution
-        discountText = _invoiceModel.Discount.HasValue ? _invoiceModel.Discount.Value.ToCurrency() : "ندارد";
         _isDiscountOpen = !_isDiscountOpen;
         StateHasChanged();
     }
 
     private bool _isDebtOpen;
-    private string? debtText;
     private void ToggleDebt()
     {
         //TODO: Find a solution
-        debtText = _invoiceModel.Debt.HasValue ? _invoiceModel.Debt.Value.ToCurrency() : "ندارد";
         _isDebtOpen = !_isDebtOpen;
         StateHasChanged();
+    }
+
+    private bool _isAdditionalPricesOpen;
+    private void ToggleAdditionalPrices()
+    {
+        //TODO: Find a solution
+        _isAdditionalPricesOpen = !_isAdditionalPricesOpen;
+        StateHasChanged();
+    }
+
+    private bool _isOldGoldOpen;
+    private void ToggleOldGold()
+    {
+        //TODO: Find a solution
+        _isOldGoldOpen = !_isOldGoldOpen;
+        StateHasChanged();
+    }
+
+    private void AddOldGold()
+    {
+        _oldGoldItems.Add(new AddOldGoldVm());
+    }
+
+    private void RemoveOldGoldRow(AddOldGoldVm context)
+    {
+        _oldGoldItems.Remove(context);
+    }
+
+    private void EditOldGoldRow(AddOldGoldVm context)
+    {
+        throw new NotImplementedException();
     }
 }
