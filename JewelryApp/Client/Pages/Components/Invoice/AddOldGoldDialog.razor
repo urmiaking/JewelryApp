@@ -1,0 +1,40 @@
+﻿@using JewelryApp.Client.Extensions
+@inherits UserComponentBase
+
+<MudDialog>
+    <DialogContent>
+        <EditForm Model="@Model" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator />
+            <MudGrid>
+                <MudItem xs="6" lg="4">
+                    <MudTextField Label="نام جنس" AutoFocus="true" @bind-Value="Model.Name" For="@(() => Model.Name)" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem xs="6" lg="4">
+                    <MudTextField Label="وزن" @bind-Value="Model.Weight" For="@(() => Model.Weight)" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem xs="6" lg="4">
+                    <MudTextField Label="نرخ گرم روز" @bind-Value="Model.GramPrice" For="@(() => Model.GramPrice)" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+            </MudGrid>
+            <MudStack Row Class="mt-5">
+                 <MudText Typo="Typo.body2">قیمت نهایی: @Model.Price.ToCurrency()</MudText>
+                 <MudSpacer />
+                 <MudButton OnClick="Cancel" Variant="Variant.Filled" Color="Color.Error">لغو</MudButton>
+                 <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Disabled="@_processing">
+                     @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">در حال ذخیره</MudText>
+                    }
+                    else
+                    {
+                        <MudText>ذخیره</MudText>
+                    }
+                </MudButton>
+            </MudStack>
+        </EditForm>
+    </DialogContent>
+    <DialogActions>
+
+    </DialogActions>
+</MudDialog>

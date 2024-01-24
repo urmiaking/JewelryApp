@@ -2,6 +2,8 @@
 using JewelryApp.Client.ViewModels;
 using JewelryApp.Client.ViewModels.Invoice;
 using JewelryApp.Shared.Requests.Authentication;
+using JewelryApp.Shared.Requests.Customer;
+using JewelryApp.Shared.Requests.InvoiceItems;
 using JewelryApp.Shared.Requests.Invoices;
 using JewelryApp.Shared.Requests.ProductCategories;
 using JewelryApp.Shared.Requests.Products;
@@ -38,5 +40,9 @@ public class MappingProfile : Profile
         CreateMap<EditInvoiceItemVm, UpdateProductRequest>()
             .ConstructUsing(x => new UpdateProductRequest(x.Id, x.Name, x.Weight, x.Wage, x.WageType.ToString(), x.ProductType.ToString(), x.CaratType.ToString(),
             x.ProductCategory.Id, x.Barcode));
+
+        CreateMap<AddCustomerVm, AddCustomerRequest>();
+        CreateMap<AddInvoiceVm, AddInvoiceRequest>();
+        CreateMap<AddInvoiceItemVm, AddInvoiceItemRequest>();
     }
 }

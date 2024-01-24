@@ -16,13 +16,11 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
     protected readonly AppDbContext DbContext;
     private DbSet<TEntity> Entities { get; }
 
-    private readonly UserManager<AppUser> _userManager;
     private readonly IElevatedAccessService _elevatedAccessService;
 
     public RepositoryBase(AppDbContext dbContext, IElevatedAccessService elevatedAccessService, UserManager<AppUser> userManager)
     {
         DbContext = dbContext;
-        _userManager = userManager;
         _elevatedAccessService = elevatedAccessService;
         Entities = DbContext.Set<TEntity>();
     }
@@ -128,11 +126,11 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             await DbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public virtual async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default, bool saveNow = true)
+    public virtual async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default, bool saveNow = true, bool deletePermenantly = false)
     {
         Assert.NotNull(entity, nameof(entity));
 
-        if (entity is SoftDeleteModelBase softDeleteEntity)
+        if (entity is SoftDeleteModelBase softDeleteEntity && !deletePermenantly)
         {
             softDeleteEntity.Deleted = true;
             Entities.Update(entity);
@@ -160,14 +158,14 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             await DbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public virtual async Task DeleteRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default, bool saveNow = true)
+    public virtual async Task DeleteRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default, bool saveNow = true, bool deletePermenantly = false)
     {
         var entitiesList = entities.ToList();
         Assert.NotNull(entitiesList, nameof(entities));
 
         foreach (var entity in entitiesList)
         {
-            if (entity is SoftDeleteModelBase softDeleteEntity)
+            if (entity is SoftDeleteModelBase softDeleteEntity && !deletePermenantly)
             {
                 softDeleteEntity.Deleted = true;
                 Entities.Update(entity);
@@ -276,11 +274,11 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             DbContext.SaveChanges();
     }
 
-    public virtual void Delete(TEntity entity, bool saveNow = true)
+    public virtual void Delete(TEntity entity, bool saveNow = true, bool deletePermenantly = false)
     {
         Assert.NotNull(entity, nameof(entity));
             
-        if (entity is SoftDeleteModelBase softDeleteEntity)
+        if (entity is SoftDeleteModelBase softDeleteEntity && !deletePermenantly)
         {
             softDeleteEntity.Deleted = true;
             Entities.Update(entity);
@@ -308,13 +306,13 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
             DbContext.SaveChanges();
     }
 
-    public virtual void DeleteRange(IEnumerable<TEntity> entities, bool saveNow = true)
+    public virtual void DeleteRange(IEnumerable<TEntity> entities, bool saveNow = true, bool deletePermenantly = false)
     {
         var entitiesList = entities.ToList();
         Assert.NotNull(entitiesList, nameof(entities));
         foreach (var entity in entitiesList)
         {
-            if (entity is SoftDeleteModelBase softDeleteEntity)
+            if (entity is SoftDeleteModelBase softDeleteEntity && !deletePermenantly)
             {
                 softDeleteEntity.Deleted = true;
                 Entities.Update(entity);

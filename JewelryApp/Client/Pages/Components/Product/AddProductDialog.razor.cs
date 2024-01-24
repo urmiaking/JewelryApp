@@ -5,7 +5,6 @@ using JewelryApp.Shared.Requests.Products;
 using JewelryApp.Shared.Responses.Products;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using static System.Net.WebRequestMethods;
 
 namespace JewelryApp.Client.Pages.Components.Product;
 

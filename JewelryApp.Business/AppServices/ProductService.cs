@@ -123,7 +123,7 @@ public class ProductService : IProductService
     {
         var products = _productRepository.Get().Where(x => x.Name.Contains(name));
 
-        return await products.ProjectTo<GetProductResponse>(_mapper.ConfigurationProvider).ToListAsync();
+        return (await products.ProjectTo<GetProductResponse>(_mapper.ConfigurationProvider).ToListAsync()).DistinctBy(x => x.Name);
     }
 
     public async Task<ErrorOr<GetProductResponse>> GetProductByIdAsync(int id, CancellationToken cancellationToken = default)

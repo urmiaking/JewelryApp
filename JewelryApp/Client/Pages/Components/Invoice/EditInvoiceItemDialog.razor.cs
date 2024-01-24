@@ -9,7 +9,7 @@ using MudBlazor;
 
 namespace JewelryApp.Client.Pages.Components.Invoice;
 
-public partial class EditInvoiceItem
+public partial class EditInvoiceItemDialog
 {
     [CascadingParameter] public MudDialogInstance MudDialog { get; set; } = default!;
     [Inject] private IProductService ProductService { get; set; } = default!;

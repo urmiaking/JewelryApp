@@ -9,6 +9,10 @@ public static class ServiceExtensions
     public static void ConfigureCulture(this WebAssemblyHostBuilder builder)
     {
         var culture = new CultureInfo("fa-IR");
+
+        //culture.NumberFormat.CurrencyDecimalDigits = 0;
+        //culture.NumberFormat.CurrencySymbol = "تومان";
+
         DateTimeFormatInfo formatInfo = culture.DateTimeFormat;
         formatInfo.AbbreviatedDayNames = new[] { "ی", "د", "س", "چ", "پ", "ج", "ش" };
         formatInfo.DayNames = new[] { "یکشنبه", "دوشنبه", "سه شنبه", "چهار شنبه", "پنجشنبه", "جمعه", "شنبه" };

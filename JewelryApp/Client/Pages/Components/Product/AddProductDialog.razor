@@ -66,7 +66,7 @@
                  </MudItem>
                  <MudItem xs="12" md="6" lg="6">
                      <MudSelect T="ProductType" Label="نوع جنس" @bind-Value="_model.ProductType" For="() => _model.ProductType" Margin="Margin.Dense" Variant="Variant.Outlined">
-                         @foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
+                        @foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
                         {
                             <MudSelectItem T="ProductType" Value="productType">@productType.GetDisplayName()</MudSelectItem>
                         }
