@@ -45,4 +45,10 @@ public static class Urls
     public const string Price = "/api/Price";
 
     #endregion
+
+    #region Old Golds
+
+    public const string OldGolds = "/api/OldGolds";
+
+    #endregion
 }

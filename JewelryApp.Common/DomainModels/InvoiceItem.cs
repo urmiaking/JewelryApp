@@ -5,7 +5,6 @@ namespace JewelryApp.Core.DomainModels;
 
 public class InvoiceItem : SoftDeleteModelBase
 {
-    public int Quantity { get; set; } = 1;
     public double Profit { get; set; }
     public double TaxOffset { get; set; }
     public double Tax { get; set; }

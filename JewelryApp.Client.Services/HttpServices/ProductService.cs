@@ -47,11 +47,11 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task<ErrorOr<RemoveProductResponse>> RemoveProductAsync(int id, CancellationToken token = default)
+    public async Task<ErrorOr<RemoveProductResponse>> RemoveProductAsync(int id, bool deletePermanently = false, CancellationToken token = default)
     {
         try
         {
-            var response = await _authorizedClient.DeleteAsync($"{Urls.Products}/{id}", token);
+            var response = await _authorizedClient.DeleteAsync($"{Urls.Products}/{id}/{deletePermanently}", token);
 
             return await response.GenerateErrorOrResponseAsync<RemoveProductResponse>(token);
         }

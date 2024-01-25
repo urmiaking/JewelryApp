@@ -6,6 +6,8 @@ namespace JewelryApp.Client.ViewModels.Invoice;
 public class EditInvoiceItemVm
 {
     public int Id { set; get; }
+    public int ProductId { set; get; }
+    public int InvoiceId { set; get; }
 
     [Display(Name = "نام جنس")]
     [Required(ErrorMessage = "وارد کردن {0} الزامی است")]

@@ -16,5 +16,5 @@ public interface IProductCategoryService
     Task<ErrorOr<UpdateProductCategoryResponse>> UpdateProductCategoryAsync(UpdateProductCategoryRequest request,
         CancellationToken cancellationToken = default);
 
-    Task<ErrorOr<RemoveProductCategoryResponse>> RemoveProductCategoryAsync(int id, CancellationToken cancellationToken = default);
+    Task<ErrorOr<RemoveProductCategoryResponse>> RemoveProductCategoryAsync(int id, bool deletePermanently = false, CancellationToken cancellationToken = default);
 }

@@ -5,13 +5,14 @@ using JewelryApp.Client.ViewModels;
 using JewelryApp.Shared.Abstractions;
 using JewelryApp.Shared.Common;
 using JewelryApp.Shared.Requests.Products;
-using static MudBlazor.CategoryTypes;
+using JewelryApp.Client.ViewModels.Invoice;
+using JewelryApp.Client.ViewModels.Product;
 
 namespace JewelryApp.Client.Pages.Components.Product;
 
 public partial class ProductList
 {
-    [Inject] public IDialogService Dialog { get; set; } = default!;
+    [Inject] public IDialogService DialogService { get; set; } = default!;
     [Inject] public IProductService ProductService { get; set; } = default!;
     [Inject] private IProductCategoryService ProductCategoryService { get; set; } = default!;
 
@@ -48,7 +49,7 @@ public partial class ProductList
 
     private async Task OpenAddProductDialog(DialogOptions options, string dialogTitle)
     {
-        var dialog = await Dialog.ShowAsync<AddProductDialog>(dialogTitle, options);
+        var dialog = await DialogService.ShowAsync<AddProductDialog>(dialogTitle, options);
 
         var result = await dialog.Result;
 
@@ -88,24 +89,7 @@ public partial class ProductList
         StateHasChanged();
     }
 
-    private async Task CommitItemAsync(object item)
-    {
-        var product = item as ProductListVm;
-
-        var request = Mapper.Map<UpdateProductRequest>(product);
-
-        var response = await ProductService.UpdateProductAsync(request, CancellationTokenSource.Token);
-
-        if (response.IsError)
-        {
-            foreach (var responseError in response.Errors)
-            {
-                SnackBar.Add(responseError.Description, Severity.Error);
-            }
-        }
-    }
-
-    private async Task OpenDeleteProductDialog(DialogOptions options, ProductListVm model)
+    private async Task RemoveRow(ProductListVm model)
     {
         var parameters = new DialogParameters<RemoveProductDialog>
         {
@@ -114,7 +98,7 @@ public partial class ProductList
             { x => x.Barcode, model.Barcode }
         };
 
-        var dialog = await Dialog.ShowAsync<RemoveProductDialog>("حذف جنس", parameters, options);
+        var dialog = await DialogService.ShowAsync<RemoveProductDialog>("حذف جنس", parameters, _dialogOptions);
 
         var result = await dialog.Result;
 
@@ -135,27 +119,23 @@ public partial class ProductList
         _table.NavigateTo(i - 1);
     }
 
-    private string SelectedRowClassFunc(ProductListVm row, int rowNumber)
+    private async Task EditRow(ProductListVm context)
     {
-        if (row.Deleted)
-        {
-            return "deleted";
-        }
+        var editProductVm = Mapper.Map<EditProductVm>(context);
 
-        return string.Empty;
-    }
+        var parameters = new DialogParameters<EditProductDialog> { { x => x.Model, editProductVm } };
 
-    private async void RowEditPreview(object obj)
-    {
-        var row = (ProductListVm)obj;
+        var dialog = await DialogService.ShowAsync<EditProductDialog>("ویرایش جنس", parameters);
 
-        var response = await ProductCategoryService.GetProductCategoriesAsync(CancellationTokenSource.Token);
+        var result = await dialog.Result;
 
-        row.ProductCategories = Mapper.Map<List<ProductCategoryVm>>(response);
-
-        row.ProductCategory = row.ProductCategories.FirstOrDefault(x => x.Name == row.CategoryName) ??
-                              new ProductCategoryVm { Id = 0, Name = "انتخاب کنید" };
-
+        if (!result.Canceled)
+            if (result.Data is EditProductVm data)
+            {
+                var item = Mapper.Map<ProductListVm>(data);
+                _products.Remove(context);
+                _products.Add(item);
+            }
         StateHasChanged();
     }
 }

@@ -1,0 +1,106 @@
+﻿@using JewelryApp.Shared.Enums
+@using JewelryApp.Client.ViewModels
+@inherits UserComponentBase
+
+<MudDialog>
+    <DialogContent>
+        <EditForm Model="@Model" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator />
+            <MudGrid>
+                <MudItem xs="12" md="6" lg="6">
+                    <MudStack Row AlignItems="AlignItems.Center">
+                         <MudItem xs="10">
+                             <MudTextField Label="بارکد" AutoFocus="true" @bind-Value="Model.Barcode" For="@(() => Model.Barcode)" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                         </MudItem>
+                         <MudItem xs="2">
+                             <MudIconButton Color="Color.Primary" OnClick="GenerateBarcode" Icon="@Icons.Material.Filled.Refresh" Variant="Variant.Filled"></MudIconButton>
+                         </MudItem>
+                     </MudStack>
+                 </MudItem>
+                 <MudItem xs="12" md="6" lg="6">
+                     <div class="mud-input-control mud-input-control-margin-dense mud-input-input-control">
+                         <div class="mud-input-control-input-container">
+                             <div class="autocomplete mud-input mud-input-outlined mud-input-margin-dense mud-shrink">
+                                 <input @bind=Model.Name @oninput=HandleNameChange class="mud-input-slot mud-input-root mud-input-root-outlined mud-input-root-margin-dense" type="text"
+                                        inputmode="text" maxlength="524288" aria-invalid="false" _bl_39="">
+                                 @if (_inputProducts is not null)
+                                {
+                                    <ul class="options">
+                                        @if (_inputProducts.Any())
+                                        {
+                                            @foreach (var product in _inputProducts)
+                                            {
+                                                <li class="option" @onclick=@(_ => SelectProduct(product))>
+                                                    <span class="option-text">@product.Name</span>
+                                                </li>
+                                            }
+                                        }
+                                    </ul>
+                                }
+                                <div class="mud-input-slot mud-input-root mud-input-root-outlined mud-input-root-margin-dense" style="display:none" tabindex="‎−1" _bl_40=""></div>
+                                <div class="mud-input-outlined-border"></div>
+                            </div>
+                            <label class="mud-input-label mud-input-label-animated mud-input-label-outlined mud-input-label-margin-dense mud-input-label-inputcontrol">نام جنس</label>
+                        </div>
+                    </div>
+                </MudItem>
+                <MudItem xs="12" md="6" lg="6">
+                    <MudNumericField Label="وزن" @bind-Value="Model.Weight" For="@(() => Model.Weight)" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem xs="12" md="6" lg="6">
+                    <MudSelect T="ProductType" Label="نوع جنس" @bind-Value="Model.ProductType" For="() => Model.ProductType" Margin="Margin.Dense" Variant="Variant.Outlined">
+                        @foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
+                        {
+                            <MudSelectItem T="ProductType" Value="productType">@productType.GetDisplayName()</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" md="6" lg="6">
+                    <MudNumericField Label="اجرت" @bind-Value="Model.Wage" For="@(() => Model.Wage)" Variant="Variant.Outlined" Margin="Margin.Dense" Step="1" />
+                </MudItem>
+                <MudItem xs="12" md="6" lg="6">
+                    <MudSelect T="CaratType" Label="عیار" @bind-Value="Model.CaratType" For="() => Model.CaratType" Margin="Margin.Dense" Variant="Variant.Outlined">
+                        @foreach (CaratType caratType in Enum.GetValues(typeof(CaratType)))
+                        {
+                            <MudSelectItem T="CaratType" Value="caratType">@caratType.GetDisplayName()</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" md="6" lg="6">
+                    <MudSelect T="WageType" Label="نوع اجرت" @bind-Value="Model.WageType" For="() => Model.WageType" Margin="Margin.Dense" Variant="Variant.Outlined">
+                        @foreach (WageType wageType in Enum.GetValues(typeof(WageType)))
+                        {
+                            <MudSelectItem T="WageType" Value="wageType">@wageType.GetDisplayName()</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" md="6" lg="6">
+                    <MudSelect T="ProductCategoryVm" Label="دسته بندی" @bind-Value="Model.ProductCategory" For="() => Model.ProductCategory" Margin="Margin.Dense" Variant="Variant.Outlined">
+                        @foreach (var productCategory in Model.ProductCategories)
+                        {
+                            <MudSelectItem T="ProductCategoryVm" Value="productCategory">@productCategory.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+
+            <MudStack Row Justify="Justify.FlexEnd" Class="mt-5">
+                 <MudButton OnClick="Cancel" Variant="Variant.Filled" Color="Color.Error">لغو</MudButton>
+                 <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Disabled="@_processing">
+                     @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">در حال ذخیره</MudText>
+                    }
+                    else
+                    {
+                        <MudText>ذخیره</MudText>
+                    }
+                </MudButton>
+            </MudStack>
+        </EditForm>
+    </DialogContent>
+    <DialogActions>
+
+    </DialogActions>
+</MudDialog>

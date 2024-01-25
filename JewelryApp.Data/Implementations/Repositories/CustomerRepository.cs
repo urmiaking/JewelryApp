@@ -18,5 +18,11 @@ public class CustomerRepository : RepositoryBase<Customer>, ICustomerRepository
     }
 
     public async Task<bool> CheckCustomerExistsAsync(Customer customer, CancellationToken cancellationToken = default)
-        => await Get().AnyAsync(x => x.PhoneNumber == customer.PhoneNumber, cancellationToken);
+        => await Get().AnyAsync(x => x.NationalCode == customer.NationalCode, cancellationToken);
+
+    public async Task<Customer?> GetByPhoneNumber(string? phoneNumber, CancellationToken cancellationToken = default)
+        => await Get().FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber, cancellationToken);
+
+    public async Task<Customer?> GetByNationalCode(string? nationalCode, CancellationToken cancellationToken = default)
+        => await Get().FirstOrDefaultAsync(x => x.NationalCode == nationalCode, cancellationToken);
 }

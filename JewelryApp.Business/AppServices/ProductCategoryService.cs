@@ -1,16 +1,14 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using ErrorOr;
-using JewelryApp.Application.Interfaces;
 using JewelryApp.Core.DomainModels;
 using JewelryApp.Core.Interfaces.Repositories;
 using JewelryApp.Shared.Abstractions;
 using JewelryApp.Shared.Attributes;
+using JewelryApp.Shared.Errors;
 using JewelryApp.Shared.Requests.ProductCategories;
 using JewelryApp.Shared.Responses.ProductCategories;
 using Microsoft.EntityFrameworkCore;
-using Errors = JewelryApp.Shared.Errors.Errors;
-
 namespace JewelryApp.Application.AppServices;
 
 [ScopedService<IProductCategoryService>]
@@ -64,20 +62,20 @@ public class ProductCategoryService : IProductCategoryService
         return _mapper.Map<UpdateProductCategoryResponse>(productCategory);
     }
 
-    public async Task<ErrorOr<RemoveProductCategoryResponse>> RemoveProductCategoryAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<ErrorOr<RemoveProductCategoryResponse>> RemoveProductCategoryAsync(int id, bool deletePermanently = false, CancellationToken cancellationToken = default)
     {
         var productCategory = await _productCategoryRepository.GetByIdAsync(id, cancellationToken);
 
         if (productCategory is null)
             return Errors.ProductCategory.NotFound;
 
-        if (productCategory.Deleted)
+        if (productCategory.Deleted && !deletePermanently)
             return Errors.ProductCategory.Deleted;
 
         if (await _productCategoryRepository.CheckUsedAsync(productCategory.Id, cancellationToken))
             return Errors.ProductCategory.Used;
 
-        await _productCategoryRepository.DeleteAsync(productCategory, cancellationToken);
+        await _productCategoryRepository.DeleteAsync(productCategory, cancellationToken, deletePermanently: deletePermanently);
 
         return new RemoveProductCategoryResponse(productCategory.Id);
     }

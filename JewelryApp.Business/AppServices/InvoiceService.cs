@@ -106,17 +106,17 @@ public class InvoiceService : IInvoiceService
         return _mapper.Map<UpdateInvoiceResponse>(invoice);
     }
 
-    public async Task<ErrorOr<RemoveInvoiceResponse>> RemoveInvoiceAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<ErrorOr<RemoveInvoiceResponse>> RemoveInvoiceAsync(int id, bool deletePermanently = false, CancellationToken cancellationToken = default)
     {
         var invoice = await _invoiceRepository.GetByIdAsync(id, cancellationToken);
 
         if (invoice is null)
             return Errors.Invoice.NotFound;
 
-        if (invoice.Deleted)
+        if (invoice.Deleted && !deletePermanently)
             return Errors.Invoice.Deleted;
         
-        await _invoiceRepository.DeleteAsync(invoice, cancellationToken);
+        await _invoiceRepository.DeleteAsync(invoice, cancellationToken, deletePermanently: deletePermanently);
 
         return new RemoveInvoiceResponse(invoice.Id);
     }

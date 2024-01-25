@@ -6,10 +6,10 @@ using JewelryApp.Core.DomainModels;
 using JewelryApp.Core.Interfaces.Repositories;
 using JewelryApp.Shared.Abstractions;
 using JewelryApp.Shared.Attributes;
+using JewelryApp.Shared.Errors;
 using JewelryApp.Shared.Requests.Products;
 using JewelryApp.Shared.Responses.Products;
 using Microsoft.EntityFrameworkCore;
-using Errors = JewelryApp.Shared.Errors.Errors;
 
 namespace JewelryApp.Application.AppServices;
 
@@ -17,12 +17,14 @@ namespace JewelryApp.Application.AppServices;
 public class ProductService : IProductService
 {
     private readonly IProductRepository _productRepository;
+    private readonly IInvoiceItemRepository _invoiceItemRepository;
     private readonly IMapper _mapper;
 
-    public ProductService(IMapper mapper, IProductRepository productRepository)
+    public ProductService(IMapper mapper, IProductRepository productRepository, IInvoiceItemRepository invoiceItemRepository)
     {
         _mapper = mapper;
         _productRepository = productRepository;
+        _invoiceItemRepository = invoiceItemRepository;
     }
 
     public async Task<ErrorOr<AddProductResponse>> AddProductAsync(AddProductRequest request, CancellationToken token = default)
@@ -53,22 +55,22 @@ public class ProductService : IProductService
         return response;
     }
 
-    public async Task<ErrorOr<RemoveProductResponse>> RemoveProductAsync(int id, CancellationToken token = default)
+    public async Task<ErrorOr<RemoveProductResponse>> RemoveProductAsync(int id, bool deletePermanently = false, CancellationToken token = default)
     {
         var product = await _productRepository.GetByIdAsync(id, token);
 
         if (product is null)
             return Errors.Product.NotFound;
 
-        if (product.Deleted)
+        if (product.Deleted && !deletePermanently)
             return Errors.Product.Deleted;
 
-        var isSold = await _productRepository.CheckProductIsSoldAsync(product.Id, token);
+        var isSold = await _invoiceItemRepository.CheckProductIsSoldAsync(product.Id, token);
 
         if (isSold)
             return Errors.Product.Sold;
 
-        await _productRepository.DeleteAsync(product, token);
+        await _productRepository.DeleteAsync(product, token, deletePermanently: deletePermanently);
 
         return new RemoveProductResponse(product.Id);
     }
@@ -113,6 +115,11 @@ public class ProductService : IProductService
         if (product is null)
             return Errors.Product.NotFound;
 
+        var productSold = await _invoiceItemRepository.CheckProductIsSoldAsync(product.Id, token);
+
+        if (productSold)
+            return Errors.Product.Sold;
+
         await _productRepository.LoadReferenceAsync(product, x => x.ProductCategory, token);
         var response = _mapper.Map<Product, GetProductResponse>(product);
 
@@ -123,7 +130,7 @@ public class ProductService : IProductService
     {
         var products = _productRepository.Get().Where(x => x.Name.Contains(name));
 
-        return (await products.ProjectTo<GetProductResponse>(_mapper.ConfigurationProvider).ToListAsync()).DistinctBy(x => x.Name);
+        return (await products.ProjectTo<GetProductResponse>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken)).DistinctBy(x => x.Name);
     }
 
     public async Task<ErrorOr<GetProductResponse>> GetProductByIdAsync(int id, CancellationToken cancellationToken = default)

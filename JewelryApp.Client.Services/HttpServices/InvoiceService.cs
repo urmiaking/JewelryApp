@@ -77,11 +77,11 @@ public class InvoiceService : IInvoiceService
         }
     }
 
-    public async Task<ErrorOr<RemoveInvoiceResponse>> RemoveInvoiceAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<ErrorOr<RemoveInvoiceResponse>> RemoveInvoiceAsync(int id, bool deletePermanently = false, CancellationToken cancellationToken = default)
     {
         try
         {
-            var response = await _authorizedClient.DeleteAsync($"{Urls.Invoices}/{id}", cancellationToken);
+            var response = await _authorizedClient.DeleteAsync($"{Urls.Invoices}/{id}/{deletePermanently}", cancellationToken);
 
             return await response.GenerateErrorOrResponseAsync<RemoveInvoiceResponse>(cancellationToken);
         }

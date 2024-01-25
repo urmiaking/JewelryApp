@@ -1,14 +1,12 @@
 ﻿using AutoMapper;
 using ErrorOr;
-using JewelryApp.Application.Interfaces;
 using JewelryApp.Core.DomainModels;
 using JewelryApp.Core.Interfaces.Repositories;
 using JewelryApp.Shared.Abstractions;
 using JewelryApp.Shared.Attributes;
+using JewelryApp.Shared.Errors;
 using JewelryApp.Shared.Requests.Customer;
 using JewelryApp.Shared.Responses.Customer;
-using Microsoft.EntityFrameworkCore;
-using Errors = JewelryApp.Shared.Errors.Errors;
 
 namespace JewelryApp.Application.AppServices;
 
@@ -33,7 +31,7 @@ public class CustomerService : ICustomerService
         var customerExists = await _customerRepository.CheckCustomerExistsAsync(customer, token);
 
         if (customerExists)
-            return Errors.Customer.Exists;
+            return _mapper.Map<AddCustomerResponse>(await _customerRepository.GetByPhoneNumber(request.PhoneNumber, token));
 
         await _customerRepository.AddAsync(customer, token);
 
@@ -56,7 +54,19 @@ public class CustomerService : ICustomerService
 
     public async Task<ErrorOr<GetCustomerResponse>> GetCustomerByPhoneNumberAsync(string phoneNumber, CancellationToken token = default)
     {
-        var customer = await _customerRepository.Get().FirstOrDefaultAsync(x => x.PhoneNumber.Equals(phoneNumber), token);
+        var customer = await _customerRepository.GetByPhoneNumber(phoneNumber, token);
+
+        if (customer is null)
+            return Errors.Customer.NotFound;
+
+        var response = _mapper.Map<GetCustomerResponse>(customer);
+
+        return response;
+    }
+
+    public async Task<ErrorOr<GetCustomerResponse>> GetCustomerByNationalCodeAsync(string nationalCode, CancellationToken token = default)
+    {
+        var customer = await _customerRepository.GetByNationalCode(nationalCode, token);
 
         if (customer is null)
             return Errors.Customer.NotFound;
@@ -80,7 +90,7 @@ public class CustomerService : ICustomerService
 
     public async Task<ErrorOr<UpdateCustomerResponse>> UpdateCustomerAsync(UpdateCustomerRequest request, CancellationToken token = default)
     {
-        var customer = await _customerRepository.Get(retrieveDeletedRecords: true).FirstOrDefaultAsync(x => x.Id == request.Id, token);
+        var customer = await _customerRepository.GetByIdAsync(request.Id, token);
 
         if (customer is null)
             return Errors.Customer.NotFound;
@@ -92,17 +102,17 @@ public class CustomerService : ICustomerService
         return new UpdateCustomerResponse(customer.Id);
     }
 
-    public async Task<ErrorOr<RemoveCustomerResponse>> RemoveCustomerAsync(int id, CancellationToken token = default)
+    public async Task<ErrorOr<RemoveCustomerResponse>> RemoveCustomerAsync(int id, bool deletePermanently = false, CancellationToken token = default)
     {
         var customer = await _customerRepository.GetByIdAsync(id, token);
 
         if (customer is null)
             return Errors.Customer.NotFound;
 
-        if (customer.Deleted)
+        if (customer.Deleted && !deletePermanently)
             return Errors.Customer.Deleted;
 
-        await _customerRepository.DeleteAsync(customer, token);
+        await _customerRepository.DeleteAsync(customer, token, deletePermanently: deletePermanently);
 
         return new RemoveCustomerResponse(customer.Id);
     }

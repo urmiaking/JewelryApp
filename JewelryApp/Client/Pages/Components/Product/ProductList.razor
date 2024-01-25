@@ -29,8 +29,9 @@
         </MudPaper>
     }
 
-    <MudTable MultiSelection="true" Bordered="true" RowEditPreview="((e) => RowEditPreview(e))" RowClassFunc="SelectedRowClassFunc" RowClass="cursor-pointer" SelectOnRowClick="false" @bind-SelectedItems="_selectedItems" Elevation="15" ServerData="@(new Func<TableState, Task<TableData<ProductListVm>>>(ServerReload))"
-              Hover="true" @ref="_table" CanCancelEdit="true" RowEditCommit="async e => await CommitItemAsync(e)" Dense="true" EditTrigger="TableEditTrigger.EditButton">
+    <MudTable MultiSelection="true" Bordered="true" RowClass="cursor-pointer" SelectOnRowClick="false" @bind-SelectedItems="_selectedItems" 
+              Elevation="15" ServerData="@(new Func<TableState, Task<TableData<ProductListVm>>>(ServerReload))"
+              Hover="true" @ref="_table" Dense="true" EditTrigger="TableEditTrigger.EditButton">
         <ToolBarContent>
             <MudText Typo="Typo.h6">لیست اجناس</MudText>
             <MudSpacer />
@@ -68,51 +69,18 @@
                                        Color="@Color.Primary"></MudIconButton>
                     </MudTooltip>
                     @if (!context.Deleted)
-                {
-                    <MudTooltip Text="حذف جنس">
-                        <MudIconButton OnClick="@((e) => OpenDeleteProductDialog(_dialogOptions, context))"
-                                       Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Delete" Color="@Color.Error"></MudIconButton>
-                    </MudTooltip>
-                }
+                    {
+                        <MudTooltip Text="حذف جنس">
+                            <MudIconButton OnClick="@(_ => RemoveRow(context))"
+                                           Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Delete" Color="@Color.Error"></MudIconButton>
+                        </MudTooltip>
+                        <MudTooltip Text="ویرایش جنس">
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Variant="Variant.Filled"
+                                           Color="Color.Primary" OnClick="_ => EditRow(context)"></MudIconButton>
+                        </MudTooltip>
+                    }
             </MudTd>
         </RowTemplate>
-        <RowEditingTemplate>
-            <MudTd DataLabel="بارکد جنس">@context.Barcode</MudTd>
-                <MudTd DataLabel="نام جنس">
-                    <MudTextField @bind-Value="context.Name" Required />
-             </MudTd>
-             <MudTd DataLabel="CategoryName">
-                 <MudSelect T="ProductCategoryVm" @bind-Value="context.ProductCategory" For="() => context.ProductCategory" Margin="Margin.Dense">
-                     @foreach (var productCategory in context.ProductCategories)
-                    {
-                        <MudSelectItem T="ProductCategoryVm" Value="productCategory">@productCategory.Name</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudTd>
-            <MudTd DataLabel="وزن">
-                <MudNumericField @bind-Value="context.Weight" Required Min="0.01" />
-             </MudTd>
-             <MudTd DataLabel="اجرت">
-                 <MudNumericField @bind-Value="context.Wage" Required Min="0" />
-             </MudTd>
-             <MudTd DataLabel="نوع جنس">
-                 <MudSelect T="ProductType" @bind-Value="context.ProductType" Variant="Variant.Text">
-                     @foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
-                    {
-                        <MudSelectItem T="ProductType" Value="productType">@productType.GetDisplayName()</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudTd>
-            <MudTd DataLabel="عیار">
-                <MudSelect T="CaratType" @bind-Value="context.CaratType" Variant="Variant.Text">
-                    @foreach (CaratType caratType in Enum.GetValues(typeof(CaratType)))
-                    {
-                        <MudSelectItem T="CaratType" Value="caratType">@caratType.GetDisplayName()</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudTd>
-
-        </RowEditingTemplate>
         <NoRecordsContent>
             <MudText>هیچ جنسی یافت نشد</MudText>
         </NoRecordsContent>

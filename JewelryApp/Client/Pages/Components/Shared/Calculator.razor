@@ -35,7 +35,7 @@
              <MudGrid>
                  <MudItem xs="12">
                      <MudText Typo="Typo.caption">نوع جنس</MudText>
-                     <MudRadioGroup T="CalculationProductType" @bind-SelectedOption="@_model.ProductType">
+                     <MudRadioGroup T="CalculationProductType" @bind-Value="@_model.ProductType">
                          @foreach (CalculationProductType productType in Enum.GetValues(typeof(CalculationProductType)))
                         {
                             <MudRadio T="CalculationProductType" Class="ml-5 mr-5" Option="@productType" Dense="true" Color="Color.Primary" UnCheckedColor="Color.Default">@productType.GetDisplayName()</MudRadio>
@@ -46,7 +46,7 @@
             <MudGrid>
                 <MudItem xs="12">
                     <MudText Typo="Typo.caption">عیار</MudText>
-                    <MudRadioGroup T="CaratType" @bind-SelectedOption="_model.CaratType">
+                    <MudRadioGroup T="CaratType" @bind-Value="_model.CaratType">
                         @foreach (CaratType caratType in Enum.GetValues(typeof(CaratType)))
                         {
                             <MudRadio Option="@caratType" T="CaratType" Class="ml-5 mr-5" Dense="true" Color="Color.Secondary" UnCheckedColor="Color.Default">@caratType.GetDisplayName()</MudRadio>
@@ -57,7 +57,7 @@
             <MudGrid>
                 <MudItem xs="12">
                     <MudText Typo="Typo.caption">نوع اجرت</MudText>
-                    <MudRadioGroup T="WageType" @bind-SelectedOption="@_model.WageType">
+                    <MudRadioGroup T="WageType" @bind-Value="@_model.WageType">
                         @foreach (WageType wageType in Enum.GetValues(typeof(WageType)))
                         {
                             <MudRadio T="WageType" Class="ml-5 mr-5" Option="@wageType" Dense="true" Color="Color.Error" UnCheckedColor="Color.Default">@wageType.GetDisplayName()</MudRadio>

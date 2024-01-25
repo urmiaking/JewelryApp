@@ -23,4 +23,6 @@ public class AddInvoiceVm
 
     [Display(Name = "موعد بدهی")]
     public DateTime? DebtDate { get; set; } = DateTime.Now;
+
+    public int CustomerId { get; set; }
 }

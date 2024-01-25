@@ -5,6 +5,8 @@ namespace JewelryApp.Client.ViewModels.Invoice;
 public class AddInvoiceItemVm
 {
     public int Id { set; get; }
+    public int InvoiceId { set; get; }
+    public int ProductId { set; get; }
     public string Name { set; get; } = default!;
     public double Weight { set; get; }
     public double Wage { set; get; }

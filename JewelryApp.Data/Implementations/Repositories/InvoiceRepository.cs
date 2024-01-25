@@ -28,6 +28,6 @@ public class InvoiceRepository : RepositoryBase<Invoice>, IInvoiceRepository
         var invoice = await Get().OrderByDescending(x => x.InvoiceNumber)
             .FirstOrDefaultAsync(x => x.ModifiedUserId == _elevatedAccessService.GetUserId(), cancellationToken);
 
-        return invoice?.InvoiceNumber ?? 1;
+        return invoice?.InvoiceNumber + 1 ?? 1;
     }
 }

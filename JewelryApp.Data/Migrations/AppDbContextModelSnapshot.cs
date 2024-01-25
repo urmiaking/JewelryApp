@@ -43,6 +43,9 @@ namespace JewelryApp.Infrastructure.Migrations
                     b.Property<Guid?>("ModifiedUserId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("NationalCode")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -342,9 +345,6 @@ namespace JewelryApp.Infrastructure.Migrations
                     b.Property<double>("Profit")
                         .HasColumnType("float");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
                     b.Property<double>("Tax")
                         .HasColumnType("float");
 
@@ -523,9 +523,6 @@ namespace JewelryApp.Infrastructure.Migrations
 
                     b.Property<int>("ProductType")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("SellDateTime")
-                        .HasColumnType("datetime2");
 
                     b.Property<double>("Wage")
                         .HasColumnType("float");

@@ -47,11 +47,11 @@ public class CustomerService : ICustomerService
         }
     }
 
-    public async Task<ErrorOr<RemoveCustomerResponse>> RemoveCustomerAsync(int id, CancellationToken token = default)
+    public async Task<ErrorOr<RemoveCustomerResponse>> RemoveCustomerAsync(int id, bool deletePermanently = false, CancellationToken token = default)
     {
         try
         {
-            var response = await _authorizedClient.DeleteAsync($"{Urls.Customers}/{id}", token);
+            var response = await _authorizedClient.DeleteAsync($"{Urls.Customers}/{id}/{deletePermanently}", token);
 
             return await response.GenerateErrorOrResponseAsync<RemoveCustomerResponse>(token);
         }
@@ -80,6 +80,21 @@ public class CustomerService : ICustomerService
         try
         {
             var response = await _authorizedClient.GetAsync($"{Urls.Customers}/phoneNumber/{phoneNumber}", token);
+
+            return await response.GenerateErrorOrResponseAsync<GetCustomerResponse>(token);
+        }
+        catch (Exception e)
+        {
+            return Error.Failure(description: e.Message);
+        }
+    }
+
+    public async Task<ErrorOr<GetCustomerResponse>> GetCustomerByNationalCodeAsync(string nationalCode,
+        CancellationToken token = default)
+    {
+        try
+        {
+            var response = await _authorizedClient.GetAsync($"{Urls.Customers}/nationalCode/{nationalCode}", token);
 
             return await response.GenerateErrorOrResponseAsync<GetCustomerResponse>(token);
         }

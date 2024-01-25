@@ -63,28 +63,28 @@ public partial class InvoiceList
 
     private async Task DeleteInvoice(DialogOptions options, int invoiceId)
     {
-        var parameters = new DialogParameters<PromptDialog>
-        {
-            { x => x.ContentText, "آیا مطمئن هستید؟ اطلاعات فاکتور حذف شده غیر قابل بازیابی خواهد بود" },
-            { x => x.ButtonText, "حذف" },
-            { x => x.Color, Color.Error },
-            { x => x.EndIcon, Icons.Material.Filled.Delete },
-            { x => x.EndpointUrl, $"/api/Invoices/{invoiceId}"}
-        };
+        //var parameters = new DialogParameters<PromptDialog>
+        //{
+        //    { x => x.ContentText, "آیا مطمئن هستید؟ اطلاعات فاکتور حذف شده غیر قابل بازیابی خواهد بود" },
+        //    { x => x.ButtonText, "حذف" },
+        //    { x => x.Color, Color.Error },
+        //    { x => x.EndIcon, Icons.Material.Filled.Delete },
+        //    { x => x.EndpointUrl, $"/api/Invoices/{invoiceId}"}
+        //};
 
-        var dialog = await Dialog.ShowAsync<PromptDialog>("حذف فاکتور", parameters, options);
+        //var dialog = await Dialog.ShowAsync<PromptDialog>("حذف فاکتور", parameters, options);
 
-        var result = await dialog.Result;
+        //var result = await dialog.Result;
 
-        if (!result.Canceled)
-        {
-            var isDeleted = (bool)result.Data;
+        //if (!result.Canceled)
+        //{
+        //    var isDeleted = (bool)result.Data;
 
-            if (isDeleted)
-            {
-                await _table.ReloadServerData();
-            }
-        }
+        //    if (isDeleted)
+        //    {
+        //        await _table.ReloadServerData();
+        //    }
+        //}
     }
 
     private void EditInvoice(int contextInvoiceId)

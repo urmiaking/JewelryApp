@@ -64,10 +64,10 @@ public class InvoicesController : ApiController
         return response.Match(Ok, Problem);
     }
 
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Remove(int id, CancellationToken cancellationToken)
+    [HttpDelete("{id:int}/{deletePermanently:bool}")]
+    public async Task<IActionResult> Remove(int id, bool deletePermanently = false, CancellationToken cancellationToken = default)
     {
-        var result = await _invoiceService.RemoveInvoiceAsync(id, cancellationToken);
+        var result = await _invoiceService.RemoveInvoiceAsync(id, deletePermanently, cancellationToken);
 
         return result.Match(Ok, Problem);
     }

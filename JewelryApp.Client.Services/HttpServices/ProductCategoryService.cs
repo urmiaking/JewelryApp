@@ -76,11 +76,11 @@ public class ProductCategoryService : IProductCategoryService
         }
     }
 
-    public async Task<ErrorOr<RemoveProductCategoryResponse>> RemoveProductCategoryAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<ErrorOr<RemoveProductCategoryResponse>> RemoveProductCategoryAsync(int id, bool deletePermanently = false, CancellationToken cancellationToken = default)
     {
         try
         {
-            var response = await _authorizedClient.DeleteAsync($"{Urls.ProductCategories}/{id}", cancellationToken);
+            var response = await _authorizedClient.DeleteAsync($"{Urls.ProductCategories}/{id}/{deletePermanently}", cancellationToken);
 
             return await response.GenerateErrorOrResponseAsync<RemoveProductCategoryResponse>(cancellationToken);
         }

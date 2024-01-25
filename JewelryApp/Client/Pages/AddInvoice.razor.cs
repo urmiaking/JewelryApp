@@ -1,4 +1,4 @@
-﻿using JewelryApp.Client.Extensions;
+﻿using ErrorOr;
 using JewelryApp.Client.Pages.Components.Invoice;
 using JewelryApp.Client.Pages.Components.Product;
 using JewelryApp.Client.ViewModels.Invoice;
@@ -6,9 +6,15 @@ using JewelryApp.Shared.Abstractions;
 using JewelryApp.Shared.Requests.Customer;
 using JewelryApp.Shared.Requests.InvoiceItems;
 using JewelryApp.Shared.Requests.Invoices;
+using JewelryApp.Shared.Requests.OldGolds;
+using JewelryApp.Shared.Responses.Customer;
+using JewelryApp.Shared.Responses.InvoiceItems;
+using JewelryApp.Shared.Responses.Invoices;
+using JewelryApp.Shared.Responses.OldGolds;
 using JewelryApp.Shared.Responses.Prices;
 using JewelryApp.Shared.Responses.Products;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 
 namespace JewelryApp.Client.Pages;
@@ -20,15 +26,15 @@ public partial class AddInvoice
     [Inject] private ICustomerService CustomerService { get; set; } = default!;
     [Inject] private IProductService ProductService { get; set; } = default!;
     [Inject] private IPriceService PriceService { get; set; } = default!;
+    [Inject] private IOldGoldService OldGoldService { get; set; } = default!;
     [Inject] private IDialogService DialogService { get; set; } = default!;
 
-    private readonly AddCustomerVm _customerModel = new();
+    private AddCustomerVm _customerModel = new();
     private readonly AddInvoiceVm _invoiceModel = new();
     private readonly List<AddInvoiceItemVm> _items = new();
     private readonly List<AddOldGoldVm> _oldGoldItems = new();
     private PriceResponse? _price;
     private bool _processing;
-    private string? _barcodeText;
 
     protected override async Task OnInitializedAsync()
     {
@@ -173,8 +179,10 @@ public partial class AddInvoice
         var result = await dialog.Result;
 
         if (!result.Canceled)
-            if (result.Data is AddOldGoldVm item) 
+            if (result.Data is AddOldGoldVm item)
+            {
                 _oldGoldItems.Add(item);
+            }
         StateHasChanged();
     }
 
@@ -201,60 +209,160 @@ public partial class AddInvoice
 
     private async Task SaveInvoice()
     {
-        // 1- Ensure all data is validated
         if (string.IsNullOrEmpty(_customerModel.Name) || _invoiceModel.InvoiceNumber == 0 || !_invoiceModel.BuyDateTime.HasValue || !_items.Any())
         {
             SnackBar.Add("لطفا اطلاعات فاکتور را کامل کرده و سپس ذخیره نمایید", Severity.Error); return;
         }
 
-        // 2- Add Customer
-        var customer = Mapper.Map<AddCustomerRequest>(_customerModel);
+        _processing = true;
+        // 1- Ensure all data is validated
 
-        var customerResponse = await CustomerService.AddCustomerAsync(customer, CancellationTokenSource.Token);
+        ErrorOr<AddCustomerResponse> customerResponse = default;
+        ErrorOr<AddInvoiceResponse> invoiceResponse = default;
+        List<ErrorOr<AddInvoiceItemResponse>> invoiceItemsResponseList = new();
+        List<ErrorOr<AddOldGoldResponse>> oldGoldsResponseList = new();
 
-        if (customerResponse.IsError)
+        try
         {
-            foreach (var error in customerResponse.Errors)
+            // 2- Add Customer
+            var customer = Mapper.Map<AddCustomerRequest>(_customerModel);
+
+            customerResponse = await CustomerService.AddCustomerAsync(customer, CancellationTokenSource.Token);
+
+            if (customerResponse.IsError)
             {
-                SnackBar.Add(error.Description);
-            }
-            return;
-        }
-
-        // 3- Add Invoice
-        var invoice = Mapper.Map<AddInvoiceRequest>(_invoiceModel);
-        var invoiceResponse = await InvoiceService.AddInvoiceAsync(invoice, CancellationTokenSource.Token);
-
-        if (invoiceResponse.IsError)
-        {
-            // Rollback changes to customer
-            await CustomerService.RemoveCustomerAsync(customerResponse.Value.Id, CancellationTokenSource.Token);
-
-            foreach (var error in invoiceResponse.Errors)
-            {
-                SnackBar.Add(error.Description);
-            }
-            return;
-        }
-
-        // 4- Add InvoiceItems
-        var invoiceItems = Mapper.Map<List<AddInvoiceItemRequest>>(_items);
-        foreach (var invoiceItem in invoiceItems) 
-        {
-            var invoiceItemsResponse = await InvoiceItemService.AddInvoiceItemAsync(invoiceItem, CancellationTokenSource.Token);
-
-            // Rollback previous changes
-            if (invoiceItemsResponse.IsError)
-            {
-                await CustomerService.RemoveCustomerAsync(customerResponse.Value.Id, CancellationTokenSource.Token);
-
-                foreach (var item in invoiceItems)
+                foreach (var error in customerResponse.Errors)
                 {
-                    await InvoiceItemService.RemoveInvoiceItemAsync(item.InvoiceId);
+                    SnackBar.Add(error.Description);
+                }
+
+                return;
+            }
+
+            SnackBar.Add("اطلاعات مشتری اضافه شد");
+
+            // 3- Add Invoice
+            _invoiceModel.CustomerId = customerResponse.Value.Id;
+            var invoice = Mapper.Map<AddInvoiceRequest>(_invoiceModel);
+
+            invoiceResponse = await InvoiceService.AddInvoiceAsync(invoice, CancellationTokenSource.Token);
+
+            if (invoiceResponse.IsError)
+            {
+                await RollBack(customerResponse.Value.Id);
+
+                foreach (var error in invoiceResponse.Errors)
+                {
+                    SnackBar.Add(error.Description);
+                }
+
+                return;
+            }
+
+            SnackBar.Add("فاکتور اضافه شد");
+
+            // 4- Add InvoiceItems
+
+            foreach (var item in _items)
+                item.InvoiceId = invoiceResponse.Value.Id;
+
+            var invoiceItems = Mapper.Map<List<AddInvoiceItemRequest>>(_items);
+
+            foreach (var invoiceItem in invoiceItems)
+            {
+                var invoiceItemsResponse =
+                    await InvoiceItemService.AddInvoiceItemAsync(invoiceItem, CancellationTokenSource.Token);
+
+                if (!invoiceItemsResponse.IsError)
+                    invoiceItemsResponseList.Add(invoiceItemsResponse);
+
+                else
+                {
+                    SnackBar.Add(invoiceItemsResponse.FirstError.Description, Severity.Error);
+                    await RollBack(customerResponse.Value.Id, invoiceResponse.Value.Id, invoiceItemsResponseList);
+                    return;
                 }
             }
+
+            SnackBar.Add("اجناس فاکتور اضافه شد");
+
+            // 5- Add Old Golds (if any)
+
+            if (_oldGoldItems.Any())
+            {
+                foreach (var oldGoldVm in _oldGoldItems)
+                    oldGoldVm.InvoiceId = invoiceResponse.Value.Id;
+
+                var oldGoldItems = Mapper.Map<List<AddOldGoldRequest>>(_oldGoldItems);
+
+                foreach (var request in oldGoldItems)
+                {
+                    var oldGoldResponse = await OldGoldService.AddOldGoldAsync(request, CancellationTokenSource.Token);
+
+                    if (!oldGoldResponse.IsError)
+                        oldGoldsResponseList.Add(oldGoldResponse);
+
+                    else
+                    {
+                        SnackBar.Add(oldGoldResponse.FirstError.Description, Severity.Error);
+                        await RollBack(customerResponse.Value.Id, invoiceResponse.Value.Id, invoiceItemsResponseList,
+                            oldGoldsResponseList);
+                        return;
+                    }
+                }
+
+                SnackBar.Add("طلاهای کهنه اضافه شدند");
+            }
+        }
+        catch (Exception e)
+        {
+            SnackBar.Add(e.Message, Severity.Error);
+
+            await RollBack(customerResponse.Value.Id, invoiceResponse.Value.Id, invoiceItemsResponseList,
+                oldGoldsResponseList);
+        }
+        finally
+        {
+            _processing = false;
+        }
+        
+    }
+
+    private async Task RollBack(int? customerId = 0, int? invoiceId = 0, List<ErrorOr<AddInvoiceItemResponse>>? invoiceItems = default,
+        List<ErrorOr<AddOldGoldResponse>>? oldGolds = default)
+    {
+        if (customerId.HasValue)
+        {
+            await CustomerService.RemoveCustomerAsync(customerId.Value, true, CancellationTokenSource.Token);
         }
 
-        // 5- Add Old Golds (if any)
+        if (invoiceId.HasValue)
+        {
+            await InvoiceService.RemoveInvoiceAsync(invoiceId.Value, true, CancellationTokenSource.Token);
+        }
+
+        if (invoiceItems is not null)
+            foreach (var invoiceItemId in invoiceItems)
+                await InvoiceItemService.RemoveInvoiceItemAsync(invoiceItemId.Value.Id, true, CancellationTokenSource.Token);
+
+        if (oldGolds is not null)
+            foreach (var oldGoldId in oldGolds)
+                await OldGoldService.RemoveOldGoldAsync(oldGoldId.Value.Id, true, CancellationTokenSource.Token);
+    }
+
+    private async Task CheckNationalCode(KeyboardEventArgs arg)
+    {
+        if (arg.Code is "NumpadEnter" or "Enter")
+        {
+            var customerResponse =
+                await CustomerService.GetCustomerByNationalCodeAsync(_customerModel.NationalCode ?? string.Empty,
+                    CancellationTokenSource.Token);
+
+            if (!customerResponse.IsError)
+            {
+                var customerVm = Mapper.Map<AddCustomerVm>(customerResponse.Value);
+                _customerModel = customerVm;
+            }
+        }
     }
 }

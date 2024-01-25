@@ -75,10 +75,10 @@ public class ProductsController : ApiController
         return response.Match(Ok, Problem);
     }
 
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Remove(int id, CancellationToken cancellationToken)
+    [HttpDelete("{id:int}/{deletePermanently:bool}")]
+    public async Task<IActionResult> Remove(int id, bool deletePermanently = false, CancellationToken cancellationToken = default)
     {
-        var response = await _productService.RemoveProductAsync(id, cancellationToken);
+        var response = await _productService.RemoveProductAsync(id, deletePermanently, cancellationToken);
         return response.Match(Ok, Problem);
     }
 

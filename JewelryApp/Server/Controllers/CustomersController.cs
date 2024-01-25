@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using JewelryApp.Api.Common.Extensions;
-using JewelryApp.Application.Interfaces;
 using JewelryApp.Shared.Abstractions;
 using JewelryApp.Shared.Requests.Customer;
 using Microsoft.AspNetCore.Mvc;
@@ -47,6 +46,14 @@ public class CustomersController : ApiController
         return response.Match(Ok, Problem);
     }
 
+    [HttpGet("nationalCode/{nationalCode}")]
+    public async Task<IActionResult> GetByNationalCode(string nationalCode, CancellationToken token)
+    {
+        var response = await _customerService.GetCustomerByNationalCodeAsync(nationalCode, token);
+
+        return response.Match(Ok, Problem);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Add(AddCustomerRequest request, CancellationToken token)
     {
@@ -79,10 +86,10 @@ public class CustomersController : ApiController
         return response.Match(Ok, Problem);
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Remove(int id, CancellationToken token)
+    [HttpDelete("{id:int}/{deletePermanently:bool}")]
+    public async Task<IActionResult> Remove(int id, bool deletePermanently = false, CancellationToken token = default)
     {
-        var response = await _customerService.RemoveCustomerAsync(id, token);
+        var response = await _customerService.RemoveCustomerAsync(id, deletePermanently, token);
 
         return response.Match(Ok, Problem);
     }

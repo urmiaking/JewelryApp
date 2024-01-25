@@ -48,12 +48,6 @@ public class InvoiceItemService : IInvoiceItemService
         
         var invoiceItems = _invoiceItemRepository.GetInvoiceItemsByInvoiceId(invoiceId);
 
-        //foreach ( var item in await invoiceItems.ToListAsync())
-        //{
-        //    await _invoiceItemRepository.LoadReferenceAsync(item, a => a.Product);
-        //    await _invoiceItemRepository.LoadReferenceAsync(item, a => a.Invoice);
-        //}
-
         var response = await invoiceItems.ProjectTo<GetInvoiceItemResponse>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
 
@@ -109,17 +103,17 @@ public class InvoiceItemService : IInvoiceItemService
         return _mapper.Map<UpdateInvoiceItemResponse>(invoiceItem);
     }
 
-    public async Task<ErrorOr<RemoveInvoiceItemResponse>> RemoveInvoiceItemAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<ErrorOr<RemoveInvoiceItemResponse>> RemoveInvoiceItemAsync(int id, bool deletePermanently = false, CancellationToken cancellationToken = default)
     {
         var invoiceItem = await _invoiceItemRepository.GetByIdAsync(id, cancellationToken);
 
         if (invoiceItem is null)
             return Errors.InvoiceItem.NotFound;
 
-        if (invoiceItem.Deleted)
+        if (invoiceItem.Deleted && !deletePermanently)
             return Errors.InvoiceItem.Deleted;
         
-        await _invoiceItemRepository.DeleteAsync(invoiceItem, cancellationToken);
+        await _invoiceItemRepository.DeleteAsync(invoiceItem, cancellationToken, deletePermanently: deletePermanently);
 
         return new RemoveInvoiceItemResponse(invoiceItem.Id);
     }

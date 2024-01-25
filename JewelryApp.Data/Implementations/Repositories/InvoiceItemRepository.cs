@@ -21,4 +21,7 @@ public class InvoiceItemRepository : RepositoryBase<InvoiceItem>, IInvoiceItemRe
 
     public async Task<bool> CheckInvoiceItemExistsAsync(int invoiceId, int productId, CancellationToken cancellationToken = default)
         => await Get().AnyAsync(x => x.InvoiceId == invoiceId && x.ProductId == productId, cancellationToken);
+
+    public async Task<bool> CheckProductIsSoldAsync(int productId, CancellationToken token = default)
+        => await Get(asNoTracking: false).AnyAsync(x => x.ProductId == productId, token);
 }
