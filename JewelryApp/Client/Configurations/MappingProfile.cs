@@ -10,7 +10,9 @@ using JewelryApp.Shared.Requests.OldGolds;
 using JewelryApp.Shared.Requests.ProductCategories;
 using JewelryApp.Shared.Requests.Products;
 using JewelryApp.Shared.Responses.Customer;
+using JewelryApp.Shared.Responses.InvoiceItems;
 using JewelryApp.Shared.Responses.Invoices;
+using JewelryApp.Shared.Responses.OldGolds;
 using JewelryApp.Shared.Responses.ProductCategories;
 using JewelryApp.Shared.Responses.Products;
 
@@ -40,6 +42,7 @@ public class MappingProfile : Profile
         CreateMap<AddInvoiceVm, AddInvoiceRequest>()
             .ConstructUsing(x => new AddInvoiceRequest(x.InvoiceNumber, x.BuyDateTime!.Value, x.Debt, x.DebtDate,
                 x.AdditionalPrices, x.Discount, default));
+        CreateMap<GetInvoiceResponse, ViewInvoiceVm>();
 
         #endregion
 
@@ -65,6 +68,8 @@ public class MappingProfile : Profile
         CreateMap<AddInvoiceItemVm, AddInvoiceItemRequest>()
             .ConstructUsing(x => new AddInvoiceItemRequest(x.InvoiceId, x.ProductId, x.Profit, x.GramPrice,
                 x.DollarPrice, x.TaxOffset, x.Tax, x.FinalPrice));
+
+        CreateMap<GetInvoiceItemResponse, ViewInvoiceItemVm>();
 
         #endregion
 
@@ -92,6 +97,7 @@ public class MappingProfile : Profile
         CreateMap<AddCustomerVm, AddCustomerRequest>();
         CreateMap<AddCustomerResponse, AddCustomerVm>();
         CreateMap<GetCustomerResponse, AddCustomerVm>();
+        CreateMap<GetCustomerResponse, ViewCustomerVm>();
 
         #endregion
 
@@ -99,6 +105,10 @@ public class MappingProfile : Profile
 
         CreateMap<AddOldGoldVm, AddOldGoldRequest>()
             .ConstructUsing(x => new AddOldGoldRequest(x.Name, x.Weight, x.InvoiceId, x.Price, x.BuyDateTime));
+
+        CreateMap<List<GetOldGoldResponse>, ViewOldGoldsVm>()
+            .ForMember(x => x.TotalCount, a => a.MapFrom(x => x.Count))
+            .ForMember(x => x.Price, a => a.MapFrom(x => x.Sum(b => b.Price)));
 
         #endregion
     }

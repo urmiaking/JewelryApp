@@ -1,4 +1,4 @@
 ﻿namespace JewelryApp.Shared.Responses.InvoiceItems;
 
-public record GetInvoiceItemResponse(int ProductId, int InvoiceId, string ProductName, double ProductWeight, int CategoryId, double ProductWage, int ProductWageType,
-    int CaratType, double TaxOffset, double Profit, double Tax, double RawPrice);
+public record GetInvoiceItemResponse(string Barcode, string Name, double Weight, string CategoryName, double Wage, string WageType,
+    string CaratType, string ProductType, double TaxOffset, double Profit, double Tax, double Price, double GramPrice);

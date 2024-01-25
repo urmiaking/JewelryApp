@@ -17,6 +17,14 @@ public class OldGoldsController : ApiController
         _addOldGoldValidator = addOldGoldValidator;
     }
 
+    [HttpGet("{invoiceId:int}")]
+    public async Task<IActionResult> Get(int invoiceId, CancellationToken cancellationToken)
+    {
+        var response = await _oldGoldService.GetOldGoldsByInvoiceIdAsync(invoiceId, cancellationToken);
+
+        return response.Match(Ok, Problem);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Add(AddOldGoldRequest request, CancellationToken cancellationToken)
     {

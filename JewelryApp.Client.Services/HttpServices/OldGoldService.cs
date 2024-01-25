@@ -5,7 +5,6 @@ using JewelryApp.Shared.Abstractions;
 using JewelryApp.Shared.Attributes;
 using JewelryApp.Shared.Common;
 using JewelryApp.Shared.Requests.OldGolds;
-using JewelryApp.Shared.Responses.Invoices;
 using JewelryApp.Shared.Responses.OldGolds;
 
 namespace JewelryApp.Client.Services.HttpServices;
@@ -27,6 +26,20 @@ public class OldGoldService : IOldGoldService
             var response = await _authorizedClient.PostAsJsonAsync(Urls.OldGolds, request, cancellationToken);
 
             return await response.GenerateErrorOrResponseAsync<AddOldGoldResponse>(cancellationToken);
+        }
+        catch (Exception e)
+        {
+            return Error.Failure(description: e.Message);
+        }
+    }
+
+    public async Task<ErrorOr<List<GetOldGoldResponse>>> GetOldGoldsByInvoiceIdAsync(int invoiceId, CancellationToken token = default)
+    {
+        try
+        {
+            var response = await _authorizedClient.GetAsync($"{Urls.OldGolds}/{invoiceId}", token);
+
+            return await response.GenerateErrorOrResponseAsync<List<GetOldGoldResponse>>(token);
         }
         catch (Exception e)
         {

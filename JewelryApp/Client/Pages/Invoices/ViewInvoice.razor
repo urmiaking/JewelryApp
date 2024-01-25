@@ -1,0 +1,154 @@
+﻿@page "/invoices/view/{InvoiceId:int}"
+@using JewelryApp.Shared.Enums
+@using JewelryApp.Client.Extensions
+@inherits UserComponentBase
+
+<div class="row">
+    <div class="col-lg-3 col-sm-12 d-flex justify-content-start align-items-start">
+        <MudText Typo="Typo.h4" Class="mt-5 p-3">فاکتور @_invoice.InvoiceNumber</MudText>
+    </div>
+    <MudHidden Breakpoint="Breakpoint.SmAndDown">
+        <div class="col-6 d-flex align-items-start justify-content-center">
+            <MudImage Src="/img/title.png" Width="885" Alt="logo" Height="141"></MudImage>
+        </div>
+        <div class="col-3 d-flex align-items-start justify-content-end">
+            <MudImage Src="/img/logo.png" Width="120" Alt="logo" Height="120"></MudImage>
+        </div>
+    </MudHidden>
+</div>
+
+<div class="row">
+    <div class="col-lg-4 col-sm-6">
+        <MudText Typo="Typo.h6">مشخصات مشتری</MudText>
+        <hr />
+        <MudStack Spacing="0">
+            <p>نام و نام خانوادگی مشتری: @_customer.Name</p>
+            @if (!string.IsNullOrEmpty(_customer.PhoneNumber))
+            {
+                <p>تلفن همراه مشتری: @_customer.PhoneNumber</p>
+            }
+            @if (!string.IsNullOrEmpty(_customer.NationalCode))
+            {
+                <p>کد ملی مشتری: @_customer.NationalCode</p>
+            }
+        </MudStack>
+    </div>
+    <div class="col-lg-4 col-sm-6">
+        <MudText Typo="Typo.h6">اطلاعات فاکتور</MudText>
+        <hr />
+        <MudStack Spacing="0">
+            <p>تاریخ صدور فاکتور: @_invoice.BuyDateTime</p>
+            <p>شماره فاکتور: @_invoice.InvoiceNumber</p>
+            @if (_items.Any())
+            {
+                <p>نرخ روز گرم: @_items.First().GramPrice.ToCurrency()</p>
+            }
+            
+        </MudStack>
+    </div>
+    <div class="col-lg-4 col-sm-6">
+        <MudText Typo="Typo.h6">مشخصات فروشنده</MudText>
+        <hr />
+        <MudStack Spacing="0">
+            <p>آدرس: خوی، مجتمع تجاری آنا آتا</p>
+            <p>تلفن: 04436367917 - 09143610649</p>
+            <p>آدرس اینستاگرام: FANI_JEWELLERY</p>
+        </MudStack>
+    </div>
+</div>
+<div class="row mt-2">
+    <div class="col-12">
+        <MudText Typo="Typo.h6">لیست اجناس فاکتور</MudText>
+        <hr />
+        <MudTable Items="@_items" Hover="true" Outlined="true" Breakpoint="Breakpoint.Sm" Dense="true" Class="mt-3">
+            <HeaderContent>
+                <MudTh>کد جنس</MudTh>
+                <MudTh>دسته بندی</MudTh>
+                <MudTh>نام</MudTh>
+                <MudTh>نوع</MudTh>
+                <MudTh>وزن</MudTh>
+                <MudTh>اجرت</MudTh>
+                <MudTh>سود</MudTh>
+                <MudTh>عیار</MudTh>
+                <MudTh>ضریب مالیات</MudTh>
+                <MudTh>نرخ گرم</MudTh>
+                <MudTh>قیمت نهایی</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="کد جنس">@context.Barcode</MudTd>
+                <MudTd DataLabel="دسته بندی">@context.CategoryName</MudTd>
+                <MudTd DataLabel="نام کالا">@context.Name</MudTd>
+                <MudTd DataLabel="نوع کالا">@context.ProductType.GetDisplayName()</MudTd>
+                <MudTd DataLabel="وزن">@context.Weight گرم</MudTd>
+                <MudTd DataLabel="اجرت">@context.Wage @context.WageType.GetDisplayName()</MudTd>
+                <MudTd DataLabel="سود">@context.Profit درصد</MudTd>
+                <MudTd DataLabel="عیار">@context.CaratType.GetDisplayName()</MudTd>
+                <MudTd DataLabel="مالیات">@context.TaxOffset درصد</MudTd>
+                <MudTd DataLabel="نرخ گرم روز">@context.GramPrice.ToCurrency()</MudTd>
+                <MudTd DataLabel="قیمت نهایی">@context.FinalPrice.ToCurrency()</MudTd>
+            </RowTemplate>
+            <NoRecordsContent>
+                <MudText>هیچ جنسی در فاکتور موجود نیست</MudText>
+            </NoRecordsContent>
+        </MudTable>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-lg-4 col-sm-6">
+        <MudText Typo="Typo.h6">اطلاعات پرداخت</MudText>
+        <hr />
+        <MudStack Spacing="0">
+            @if (_items.Any())
+            {
+                <p>جمع کل مبلغ اجناس فاکتور: @_items.Sum(x => x.FinalPrice).ToCurrency()</p>
+            }
+            @if (_invoice.AdditionalPrices != 0)
+            {
+                <p>هزینه های اضافی: @_invoice.AdditionalPrices.ToCurrency()</p>
+            }
+            @if (_invoice.Discount != 0)
+            {
+                <p>تخفیف: @_invoice.Discount.ToCurrency()</p>
+            }
+            <p>مبلغ قابل پرداخت: 5,253,500 تومان</p>
+        </MudStack>
+    </div>
+    @if (_invoice.DebtDate.HasValue)
+    {
+        <div class="col-lg-4 col-sm-6">
+            <MudText Typo="Typo.h6">بدهی</MudText>
+            <hr />
+            <MudStack Spacing="0">
+                <p>مبلغ بدهی: @_invoice.Debt.ToCurrency()</p>
+                <p>موعد بدهی: @_invoice.DebtDate</p>
+            </MudStack>
+        </div>
+    }
+    
+    @if (_oldGolds.TotalCount != 0)
+    {
+        <div class="col-lg-4 col-sm-6">
+            <MudText Typo="Typo.h6">طلای کهنه خریداری شده</MudText>
+            <hr />
+            <MudStack Spacing="0">
+                <p>تعداد اجناس: @_oldGolds.TotalCount</p>
+                <p>مبلغ کل : @_oldGolds.Price.ToCurrency()</p>
+            </MudStack>
+        </div>
+    }
+</div>
+
+<MudGrid Justify="Justify.FlexEnd">
+    <MudItem xs="6" lg="1">
+        <MudButton Color="Color.Info" Variant="Variant.Filled" FullWidth="true"
+                   EndIcon="@Icons.Material.Filled.Print">
+            <MudText>چاپ</MudText>
+        </MudButton>
+    </MudItem>
+    <MudItem xs="6" lg="1">
+        <MudButton Color="Color.Info" Variant="Variant.Filled" FullWidth="true"
+                   EndIcon="@Icons.Material.Filled.ModeEdit">
+            <MudText>ویرایش</MudText>
+        </MudButton>
+    </MudItem>
+</MudGrid>

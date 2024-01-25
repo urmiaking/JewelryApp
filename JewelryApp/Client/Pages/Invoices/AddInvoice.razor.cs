@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 
-namespace JewelryApp.Client.Pages;
+namespace JewelryApp.Client.Pages.Invoices;
 
 public partial class AddInvoice
 {

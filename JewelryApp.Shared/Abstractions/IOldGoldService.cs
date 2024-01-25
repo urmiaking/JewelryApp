@@ -7,5 +7,6 @@ namespace JewelryApp.Shared.Abstractions;
 public interface IOldGoldService
 {
     Task<ErrorOr<AddOldGoldResponse>> AddOldGoldAsync(AddOldGoldRequest request, CancellationToken cancellationToken = default);
+    Task<ErrorOr<List<GetOldGoldResponse>>> GetOldGoldsByInvoiceIdAsync(int invoiceId, CancellationToken token = default);
     Task<ErrorOr<RemoveOldGoldResponse>> RemoveOldGoldAsync(int id, bool deletePermanently = false, CancellationToken cancellationToken = default);
 }

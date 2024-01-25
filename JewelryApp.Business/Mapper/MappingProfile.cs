@@ -11,6 +11,7 @@ using JewelryApp.Shared.Requests.Products;
 using JewelryApp.Shared.Responses.Customer;
 using JewelryApp.Shared.Responses.InvoiceItems;
 using JewelryApp.Shared.Responses.Invoices;
+using JewelryApp.Shared.Responses.OldGolds;
 using JewelryApp.Shared.Responses.Prices;
 using JewelryApp.Shared.Responses.ProductCategories;
 using JewelryApp.Shared.Responses.Products;
@@ -84,15 +85,14 @@ public class MappingProfile : Profile
         #region InvoiceItem
 
         CreateMap<InvoiceItem, GetInvoiceItemResponse>()
-            .ConstructUsing(x => new GetInvoiceItemResponse(x.ProductId, x.InvoiceId, x.Product.Name, x.Product.Weight,
-                x.Product.ProductCategoryId, x.Product.Wage,
-                (int)x.Product.WageType, (int)x.Product.Carat, x.TaxOffset, x.Profit, x.Tax,
-                x.CalculateRawPrice()));
+            .ConstructUsing(x => new GetInvoiceItemResponse(x.Product.Barcode, x.Product.Name, x.Product.Weight,
+                x.Product.ProductCategory.Name, x.Product.Wage,
+                x.Product.WageType.ToString(), x.Product.Carat.ToString(), x.Product.ProductType.ToString(), x.TaxOffset, x.Profit, x.Tax, x.Price, x.GramPrice));
 
         CreateProjection<InvoiceItem, GetInvoiceItemResponse>()
-            .ConstructUsing(x => new GetInvoiceItemResponse(x.ProductId, x.InvoiceId, x.Product.Name, x.Product.Weight,
-                x.Product.ProductCategoryId, x.Product.Wage,
-                (int)x.Product.WageType, (int)x.Product.Carat, x.TaxOffset, x.Profit, x.Tax, 0));
+            .ConstructUsing(x => new GetInvoiceItemResponse(x.Product.Barcode, x.Product.Name, x.Product.Weight,
+                x.Product.ProductCategory.Name, x.Product.Wage,
+                x.Product.WageType.ToString(), x.Product.Carat.ToString(), x.Product.ProductType.ToString(), x.TaxOffset, x.Profit, x.Tax, x.Price, x.GramPrice));
 
         CreateMap<AddInvoiceItemRequest, InvoiceItem>();
 
@@ -137,6 +137,8 @@ public class MappingProfile : Profile
         #region Old Golds
 
         CreateMap<AddOldGoldRequest, OldGold>();
+        CreateMap<OldGold, GetOldGoldResponse>()
+            .ConstructUsing(x => new GetOldGoldResponse(x.Id, x.Weight, x.Name, x.Price, x.InvoiceId));
 
         #endregion
     }
