@@ -22,5 +22,14 @@
     <ProjectReference Include="..\Client\JewelryApp.Client.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\reports\barcode.mrt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\reports\invoice.mrt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 
 </Project>

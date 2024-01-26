@@ -1,0 +1,61 @@
+﻿@page "/invoices/print"
+@using Stimulsoft.Base
+@using Stimulsoft.Report
+@using Stimulsoft.Report.Blazor
+@using JewelryApp.Shared.Abstractions
+@using JewelryApp.Shared.Common
+@using Stimulsoft.Report.Web
+@using Color = System.Drawing.Color
+@inherits UserComponentBase
+
+<StiBlazorViewer Options="@_options" Report="@_report" Localization="reports/fa.xml" Theme="StiViewerTheme.Office2013LightGrayPurple" />
+
+@code
+{
+    private StiReport? _report;
+    private readonly StiBlazorViewerOptions? _options = new()
+    {
+        Toolbar = new StiBlazorViewerOptions.ToolbarOptions
+        {
+            Alignment = StiContentAlignment.Right,
+            AutoHide = true,
+            FontFamily = "B Roya",
+            ShowAboutButton = false,
+            ShowOpenButton = false,
+            ShowBookmarksButton = false,
+            ShowButtonCaptions = false,
+            ShowParametersButton = false,
+            BackgroundColor = Color.AliceBlue,
+            FontColor = Color.Black,
+            PrintDestination = StiPrintDestination.Direct,
+        },
+        Appearance = new StiBlazorViewerOptions.AppearanceOptions()
+        {
+            ShowPageShadow = true
+        }
+    };
+
+    [Inject]
+    public IReportService ReportService { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        StiLicense.Key = Keys.StimulsoftKey;
+
+        _report = new StiReport();
+
+        var reportResponse = await ReportService.GetReportFileAsync("invoice.mrt", CancellationTokenSource.Token);
+
+        if (!reportResponse.IsError)
+        {
+            var reportBytes = reportResponse.Value;
+            _report.Load(reportBytes);
+        }
+        else
+        {
+            SnackBar.Add(reportResponse.FirstError.Description);
+        }
+    }
+}

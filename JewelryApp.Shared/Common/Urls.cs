@@ -52,4 +52,10 @@ public static class Urls
     public const string OldGolds = "/api/OldGolds";
 
     #endregion
+
+    #region Reports
+
+    public const string Reports = "/api/Reports";
+
+    #endregion
 }

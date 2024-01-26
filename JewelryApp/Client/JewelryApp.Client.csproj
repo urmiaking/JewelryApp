@@ -25,6 +25,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.11" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Stimulsoft.Reports.Blazor" Version="2023.1.1" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.2.0" />
 		<PackageReference Include="MudBlazor" Version="6.14.0" />
 	</ItemGroup>
@@ -36,6 +37,12 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\JewelryApp.Client.Services\JewelryApp.Client.Services.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Update="wwwroot\reports\fa.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 </Project>

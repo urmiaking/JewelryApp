@@ -1,5 +1,4 @@
 ﻿using ErrorOr;
-using JewelryApp.Shared.Responses.OldGolds;
 
 namespace JewelryApp.Shared.Errors;
 
