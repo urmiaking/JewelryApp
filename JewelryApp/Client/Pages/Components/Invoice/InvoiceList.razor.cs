@@ -61,7 +61,7 @@ public partial class InvoiceList
         }
     }
 
-    private async Task DeleteInvoice(DialogOptions options, int invoiceId)
+    private void DeleteInvoice(DialogOptions options, int invoiceId)
     {
         //var parameters = new DialogParameters<PromptDialog>
         //{
