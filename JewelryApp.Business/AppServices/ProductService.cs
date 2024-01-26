@@ -77,7 +77,7 @@ public class ProductService : IProductService
 
     public async Task<IEnumerable<GetProductResponse>?> GetProductsAsync(GetProductsRequest request, CancellationToken token = default)
     {
-        var products = _productRepository.Get(retrieveDeletedRecords: true);
+        var products = _productRepository.GetProductsInStock();
 
         if (!string.IsNullOrEmpty(request.SearchString))
         {
@@ -128,7 +128,7 @@ public class ProductService : IProductService
 
     public async Task<IEnumerable<GetProductResponse>?> GetProductsByNameAsync(string name, CancellationToken cancellationToken = default)
     {
-        var products = _productRepository.Get().Where(x => x.Name.Contains(name));
+        var products = _productRepository.Get().OrderByDescending(x => x.CreatedAt).Where(x => x.Name.Contains(name));
 
         return (await products.ProjectTo<GetProductResponse>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken)).DistinctBy(x => x.Name);
     }

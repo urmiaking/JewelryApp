@@ -22,7 +22,7 @@ public class AddInvoiceVm
     public double Debt { get; set; }
 
     [Display(Name = "موعد بدهی")]
-    public DateTime? DebtDate { get; set; } = DateTime.Now;
+    public DateTime? DebtDate { get; set; }
 
     public int CustomerId { get; set; }
 }

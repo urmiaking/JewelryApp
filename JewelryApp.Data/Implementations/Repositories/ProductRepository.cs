@@ -12,10 +12,11 @@ namespace JewelryApp.Infrastructure.Implementations.Repositories;
 [ScopedService<IProductRepository>]
 public class ProductRepository : RepositoryBase<Product>, IProductRepository
 {
-    public ProductRepository(AppDbContext context, IElevatedAccessService elevatedAccessService, UserManager<AppUser> userManager) 
+    private readonly IInvoiceItemRepository _invoiceItemRepository;
+    public ProductRepository(AppDbContext context, IElevatedAccessService elevatedAccessService, UserManager<AppUser> userManager, IInvoiceItemRepository invoiceItemRepository) 
         : base(context, elevatedAccessService, userManager)
     {
-
+        _invoiceItemRepository = invoiceItemRepository;
     }
 
     public async Task<bool> CheckBarcodeExistsAsync(string barcode, CancellationToken token = default) => 
@@ -26,4 +27,9 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
 
     public async Task<int> GetProductsCountAsync(CancellationToken token = default)
         => await Get(retrieveDeletedRecords: true).CountAsync(token);
+
+    public IQueryable<Product> GetProductsInStock()
+    {
+        return Get().Where(p => !_invoiceItemRepository.GetSoldProductIds().Contains(p.Id));
+    }
 }

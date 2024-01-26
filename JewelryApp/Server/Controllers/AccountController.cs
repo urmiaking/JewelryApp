@@ -2,6 +2,7 @@
 using JewelryApp.Api.Common.Extensions;
 using JewelryApp.Shared.Abstractions;
 using JewelryApp.Shared.Requests.Authentication;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Errors = JewelryApp.Shared.Errors.Errors;
@@ -70,9 +71,16 @@ public class AccountController : ApiController
             return ValidationProblem(ModelState);
         }
 
-        var response = await _service.ChangePasswordAsync(request);
+        var response = await _service.ChangePasswordAsync(request, cancellationToken);
 
         return response.Match(Ok, Problem);
+    }
+
+    [HttpGet(nameof(Logout))]
+    public async Task<IActionResult> Logout(CancellationToken cancellationToken)
+    {
+        await _service.LogoutAsync(cancellationToken);
+        return Ok();
     }
 }
 

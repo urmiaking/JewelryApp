@@ -18,17 +18,6 @@
 </style>
 
 <div class="mt-5 mb-5">
-    @if (_selectedItems.Any())
-    {
-        <MudPaper Elevation="15">
-            <MudToolBar>
-                <MudButton EndIcon="@Icons.Material.Outlined.Print" Color="Color.Info" Variant="Variant.Filled">چاپ بارکد</MudButton>
-                <MudSpacer />
-                <MudButton EndIcon="@Icons.Material.Filled.DeleteForever" Color="Color.Error" Variant="Variant.Filled">حذف اجناس</MudButton>
-            </MudToolBar>
-        </MudPaper>
-    }
-
     <MudTable MultiSelection="true" Bordered="true" RowClass="cursor-pointer" SelectOnRowClick="false" @bind-SelectedItems="_selectedItems" 
               Elevation="15" ServerData="@(new Func<TableState, Task<TableData<ProductListVm>>>(ServerReload))"
               Hover="true" @ref="_table" Dense="true" EditTrigger="TableEditTrigger.EditButton">
@@ -38,9 +27,28 @@
             <MudTextField T="string" ValueChanged="@(OnSearch)" Placeholder="جستجو" Adornment="Adornment.Start"
                           AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Style="max-width: 200px;" Class="mt-0"></MudTextField>
             <MudSpacer />
+            
+            @if (_selectedItems.Any())
+            {
+                <MudHidden Breakpoint="Breakpoint.SmAndDown">
+                    <MudButton EndIcon="@Icons.Material.Filled.DeleteForever" Class="ml-2" Color="Color.Error"
+                               OnClick="RemoveSelectedProducts" Variant="Variant.Filled">حذف اجناس</MudButton>
+                </MudHidden>
+                <MudHidden Breakpoint="Breakpoint.MdAndUp">
+                    <MudIconButton ClickPropagation="true" Size="@Size.Small" Class="ml-2" Variant="@Variant.Filled"
+                                   Icon="@Icons.Material.Filled.DeleteForever" Color="@Color.Error"></MudIconButton>
+                </MudHidden>
+            }
+            
+            <MudHidden Breakpoint="Breakpoint.SmAndDown">
+                <MudButton Color="Color.Primary" OnClick="@(_ => OpenAddProductDialog(_dialogOptions, "افزودن جنس"))"
+                           EndIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled">افزودن</MudButton>
+            </MudHidden>
 
-            <MudButton Color="Color.Primary" OnClick="@((e) => OpenAddProductDialog(_dialogOptions, "افزودن جنس"))"
-                       EndIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled">افزودن</MudButton>
+            <MudHidden Breakpoint="Breakpoint.MdAndUp">
+                <MudIconButton OnClick="@(_ => OpenAddProductDialog(_dialogOptions, "افزودن جنس"))" ClickPropagation="true"
+                               Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Add" Color="@Color.Primary"></MudIconButton>
+            </MudHidden>
 
         </ToolBarContent>
         <HeaderContent>
@@ -62,23 +70,20 @@
                     @(context.Wage) @context.WageType.GetDisplayName()
             </MudTd>
             <MudTd DataLabel="نوع جنس">@context.ProductType.GetDisplayName()</MudTd>
-                <MudTd DataLabel="عیار">@context.CaratType.GetDisplayName()</MudTd>
-                <MudTd DataLabel="عملیات">
-                    <MudTooltip Text="چاپ بارکد">
-                        <MudIconButton Size="@Size.Small" Class="mr-2" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Print"
-                                       Color="@Color.Primary"></MudIconButton>
-                    </MudTooltip>
-                    @if (!context.Deleted)
-                    {
-                        <MudTooltip Text="حذف جنس">
-                            <MudIconButton OnClick="@(_ => RemoveRow(context))"
-                                           Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Delete" Color="@Color.Error"></MudIconButton>
-                        </MudTooltip>
-                        <MudTooltip Text="ویرایش جنس">
-                            <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Variant="Variant.Filled"
-                                           Color="Color.Primary" OnClick="_ => EditRow(context)"></MudIconButton>
-                        </MudTooltip>
-                    }
+            <MudTd DataLabel="عیار">@context.CaratType.GetDisplayName()</MudTd>
+            <MudTd DataLabel="عملیات">
+                <MudTooltip Text="چاپ بارکد">
+                    <MudIconButton Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Print"
+                                   Color="@Color.Primary"></MudIconButton>
+                </MudTooltip>
+                <MudTooltip Text="حذف جنس">
+                    <MudIconButton OnClick="@(_ => OpenRemoveProductDialog(context))" ClickPropagation="true"
+                                   Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Delete" Color="@Color.Error"></MudIconButton>
+                </MudTooltip>
+                <MudTooltip Text="ویرایش جنس">
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Variant="Variant.Filled"
+                               Color="Color.Primary" OnClick="_ => OpenEditProductDialog(context)"></MudIconButton>
+                </MudTooltip>
             </MudTd>
         </RowTemplate>
         <NoRecordsContent>

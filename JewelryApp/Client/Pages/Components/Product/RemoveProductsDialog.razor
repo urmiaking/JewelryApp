@@ -1,0 +1,12 @@
+﻿@inherits UserComponentBase
+
+<MudDialog>
+    <DialogContent>
+        <MudText>آیا برای حذف اجناس زیر مطمئن هستید؟</MudText>
+        <MudText Class="mt-2" Typo="Typo.body2">@string.Join(" , ", Names)</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">لغو</MudButton>
+        <MudButton Color="@Color.Error" Variant="Variant.Filled" OnClick="Submit" EndIcon="@Icons.Material.Filled.Delete">حذف</MudButton>
+    </DialogActions>
+</MudDialog>

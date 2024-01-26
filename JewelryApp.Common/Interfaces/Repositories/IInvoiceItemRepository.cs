@@ -8,4 +8,5 @@ public interface IInvoiceItemRepository : IRepository<InvoiceItem>
     IQueryable<InvoiceItem> GetInvoiceItemsByInvoiceId(int invoiceId);
     Task<bool> CheckInvoiceItemExistsAsync(int invoiceId, int productId, CancellationToken cancellationToken = default);
     Task<bool> CheckProductIsSoldAsync(int productId, CancellationToken token = default);
+    IQueryable<int> GetSoldProductIds();
 }

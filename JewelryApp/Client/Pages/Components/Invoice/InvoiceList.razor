@@ -41,10 +41,10 @@
                 <MudIconButton Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Print"
                                Color="@Color.Primary"></MudIconButton>
             </MudTooltip>
-            <MudTooltip Text="حذف فاکتور">
+            <MudTooltip Text="مشاهده فاکتور">
                 <MudIconButton OnClick="@((e) => DeleteInvoice(_dialogOptions, context.Id))" 
-                               Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.Delete"
-                               Color="@Color.Error"></MudIconButton>
+                               Size="@Size.Small" Variant="@Variant.Filled" Icon="@Icons.Material.Filled.ContentPasteSearch"
+                               Color="@Color.Secondary"></MudIconButton>
             </MudTooltip>
         </MudTd>
     </RowTemplate>

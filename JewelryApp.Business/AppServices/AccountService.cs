@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using ErrorOr;
@@ -7,13 +8,15 @@ using JewelryApp.Core.DomainModels.Identity;
 using JewelryApp.Core.Settings;
 using JewelryApp.Shared.Abstractions;
 using JewelryApp.Shared.Attributes;
+using JewelryApp.Shared.Errors;
 using JewelryApp.Shared.Requests.Authentication;
 using JewelryApp.Shared.Responses.Authentication;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Errors = JewelryApp.Shared.Errors.Errors;
 
 namespace JewelryApp.Application.AppServices;
 
@@ -25,6 +28,7 @@ public class AccountService : IAccountService
     private readonly JwtSettings _jwtSettings;
     private readonly UserManager<AppUser> _userManager;
     private readonly RoleManager<AppRole> _roleManager;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly SignInManager<AppUser> _signinManager;
 
     public AccountService(
@@ -33,6 +37,7 @@ public class AccountService : IAccountService
         TokenValidationParameters tokenValidationParameters,
         UserManager<AppUser> userManager,
         RoleManager<AppRole> roleManager,
+        IHttpContextAccessor httpContextAccessor,
         SignInManager<AppUser> signinManager)
     {
         _refreshTokenService = refreshTokenService;
@@ -40,6 +45,7 @@ public class AccountService : IAccountService
         _jwtSettings = jwtSettingsOption.Value;
         _userManager = userManager;
         _roleManager = roleManager;
+        _httpContextAccessor = httpContextAccessor;
         _signinManager = signinManager;
     }
 
@@ -115,6 +121,15 @@ public class AccountService : IAccountService
             return new ChangePasswordResponse("تغییر رمز با موفقیت انجام شد", true);
 
         return Errors.Authentication.PasswordNotValid;
+    }
+
+    public async Task LogoutAsync(CancellationToken token = default)
+    {
+        await _httpContextAccessor.HttpContext!.SignOutAsync();
+        var identity = new ClaimsIdentity(); // Create a new ClaimsIdentity with an empty set of claims
+        var principal = new ClaimsPrincipal(identity);
+        _httpContextAccessor.HttpContext!.User = principal; // Set the new ClaimsPrincipal as the user's identity in the HttpContext
+        await Task.CompletedTask;
     }
 
     private async Task<AuthenticationResponse?> GenerateTokenForUserAsync(string userName)

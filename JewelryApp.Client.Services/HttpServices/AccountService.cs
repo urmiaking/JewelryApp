@@ -62,4 +62,18 @@ public class AccountService : IAccountService
             return Error.Failure(description: e.Message);
         }
     }
+
+    public async Task LogoutAsync(CancellationToken token = default)
+    {
+        try
+        {
+            await _authorizedClient.GetAsync(Urls.Logout, token);
+
+            await Task.CompletedTask;
+        }
+        catch
+        {
+            //ignore
+        }
+    }
 }

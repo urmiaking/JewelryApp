@@ -81,6 +81,10 @@ public class MappingProfile : Profile
         CreateMap<GetProductResponse, ProductListVm>();
         CreateMap<GetProductResponse, AddProductVm>();
         CreateMap<GetProductResponse, EditProductVm>();
+        CreateMap<ProductListVm, EditProductVm>().ReverseMap();
+        CreateMap<EditProductVm, UpdateProductRequest>()
+            .ConstructUsing(x => new UpdateProductRequest(x.Id, x.Name, x.Weight, x.Wage, x.WageType.ToString(), x.ProductType.ToString(), x.CaratType.ToString(),
+                x.ProductCategory.Id, x.Barcode));
 
         #endregion
 

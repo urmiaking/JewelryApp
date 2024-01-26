@@ -14,7 +14,6 @@ public partial class ProductList
 {
     [Inject] public IDialogService DialogService { get; set; } = default!;
     [Inject] public IProductService ProductService { get; set; } = default!;
-    [Inject] private IProductCategoryService ProductCategoryService { get; set; } = default!;
 
 
     [Parameter] 
@@ -31,8 +30,6 @@ public partial class ProductList
     private int _totalItems;
 
     private string? _searchString;
-
-    private int _selectedRowNumber = -1;
 
     private async Task<TableData<ProductListVm>> ServerReload(TableState state)
     {
@@ -89,7 +86,7 @@ public partial class ProductList
         StateHasChanged();
     }
 
-    private async Task RemoveRow(ProductListVm model)
+    private async Task OpenRemoveProductDialog(ProductListVm model)
     {
         var parameters = new DialogParameters<RemoveProductDialog>
         {
@@ -119,7 +116,7 @@ public partial class ProductList
         _table.NavigateTo(i - 1);
     }
 
-    private async Task EditRow(ProductListVm context)
+    private async Task OpenEditProductDialog(ProductListVm context)
     {
         var editProductVm = Mapper.Map<EditProductVm>(context);
 
@@ -137,5 +134,33 @@ public partial class ProductList
                 _products.Add(item);
             }
         StateHasChanged();
+    }
+
+    private async Task RemoveSelectedProducts()
+    {
+        if (_selectedItems.Any())
+        {
+
+            var parameters = new DialogParameters<RemoveProductsDialog>
+            {
+                { x => x.Ids, _selectedItems.Select(x => x.Id).ToList() },
+                { x => x.Names, _selectedItems.Select(x => x.Name).ToList() }
+            };
+
+            var dialog = await DialogService.ShowAsync<RemoveProductsDialog>("حذف اجناس انتخابی", parameters, _dialogOptions);
+
+            var result = await dialog.Result;
+
+            if (!result.Canceled)
+            {
+                var isDeleted = (bool)result.Data;
+
+                if (isDeleted)
+                {
+                    SnackBar.Add("اجناس مورد نظر با موفقیت حذف شد", Severity.Success);
+                    await _table.ReloadServerData();
+                }
+            }
+        }
     }
 }

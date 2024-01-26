@@ -7,6 +7,7 @@ public static class Urls
     public const string Login = "/api/account/Login";
     public const string RefreshToken = "/api/account/Refresh";
     public const string ChangePassword = "/api/account/ChangePassword";
+    public const string Logout = "/api/account/Logout";
 
     #endregion
 
