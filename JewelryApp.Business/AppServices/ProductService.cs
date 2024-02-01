@@ -103,7 +103,7 @@ public class ProductService : IProductService
 
     public async Task<GetProductsCountResponse> GetTotalProductsCount(CancellationToken cancellationToken = default)
     {
-        var count = await _productRepository.GetProductsCountAsync(cancellationToken);
+        var count = await _productRepository.GetProductsInStock().CountAsync(cancellationToken);
 
         return new GetProductsCountResponse(count);
     }

@@ -127,7 +127,7 @@ public class ProductService : IProductService
 
             return await response.GenerateResponseAsync<List<GetProductResponse>>(cancellationToken);
         }
-        catch (Exception e)
+        catch
         {
             return new List<GetProductResponse>();
         }

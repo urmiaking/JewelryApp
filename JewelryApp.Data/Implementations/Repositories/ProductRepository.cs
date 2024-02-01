@@ -25,11 +25,6 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
     public async Task<Product?> GetByBarcodeAsync(string barcode, CancellationToken token = default)
         => await Get().FirstOrDefaultAsync(x => x.Barcode == barcode, token);
 
-    public async Task<int> GetProductsCountAsync(CancellationToken token = default)
-        => await Get(retrieveDeletedRecords: true).CountAsync(token);
-
     public IQueryable<Product> GetProductsInStock()
-    {
-        return Get().Where(p => !_invoiceItemRepository.GetSoldProductIds().Contains(p.Id));
-    }
+        => Get().Where(p => !_invoiceItemRepository.GetSoldProductIds().Contains(p.Id));
 }
